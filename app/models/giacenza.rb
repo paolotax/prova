@@ -29,6 +29,15 @@ class Giacenza < ApplicationRecord
   # Sospensione dei trigger per-riga durante gli import bulk
   thread_mattr_accessor :ricalcolo_sospeso
 
+  def disponibilita_libera
+    disponibile - impegnato
+  end
+
+  # Copie previste dalle adozioni che non sono coperte dal magazzino libero.
+  def fabbisogno
+    [libro.adozioni_count - disponibilita_libera, 0].max
+  end
+
   def self.sospendi_ricalcolo
     self.ricalcolo_sospeso = true
     yield

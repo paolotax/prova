@@ -190,10 +190,13 @@ class UpdateMieAdozioniJob < ApplicationJob
       FROM (
         SELECT a.libro_id, COUNT(*) as cnt
         FROM adozioni a
+        JOIN classi c ON c.id = a.classe_id
         WHERE a.account_id = :account_id
           AND a.libro_id IS NOT NULL
           AND a.mia = true
           AND a.da_acquistare = true
+          AND c.stato = 'attiva'
+          AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
         GROUP BY a.libro_id
       ) sub
       WHERE libri.id = sub.libro_id
@@ -210,10 +213,13 @@ class UpdateMieAdozioniJob < ApplicationJob
       WHERE libri.account_id = :account_id
         AND libri.id NOT IN (
           SELECT DISTINCT a.libro_id FROM adozioni a
+          JOIN classi c ON c.id = a.classe_id
           WHERE a.account_id = :account_id
             AND a.libro_id IS NOT NULL
             AND a.mia = true
             AND a.da_acquistare = true
+            AND c.stato = 'attiva'
+            AND a.anno_scolastico IS NOT DISTINCT FROM c.anno_scolastico
         )
     SQL
 

@@ -1,0 +1,76 @@
+<% @page_title = "Giacenze" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "", :back %>
+  </div>
+  <h1 class="header__title divider divider--fade full-width">
+    <span class="overflow-ellipsis">Giacenze di magazzino</span>
+  </h1>
+  <div class="header__actions header__actions--end"></div>
+<% end %>
+
+<div class="ca-page">
+<div class="analytics-summary">
+  <% [
+       [:disponibile, "disponibili", "txt-positive"],
+       [:impegnato, "da consegnare", nil],
+       [:campionario, "campionario", nil],
+       [:fabbisogno, "fabbisogno", "txt-negative"]
+     ].each do |chiave, etichetta, value_class| %>
+    <div class="analytics-summary__card">
+      <p class="analytics-summary__value <%= value_class %>"><%= number_with_delimiter(@totali.fetch(chiave)) %></p>
+      <p class="analytics-summary__label"><%= etichetta %></p>
+    </div>
+  <% end %>
+</div>
+
+<%= form_with url: giacenze_path, method: :get, class: "panel flex gap-half flex-wrap align-end margin-block-end", data: { turbo_frame: "search_results" } do |form| %>
+  <div style="flex: 1 1 16rem;">
+    <%= form.label :q, "Cerca titolo, ISBN o editore", class: "form-label" %>
+    <%= form.search_field :q, value: params[:q], class: "input", placeholder: "Cerca…" %>
+  </div>
+  <div>
+    <%= form.label :stato, "Mostra", class: "form-label" %>
+    <%= form.select :stato, [["Tutti", "tutti"], ["Adottati", "adottati"], ["Con fabbisogno", "fabbisogno"], ["Da consegnare", "impegnati"], ["Disponibilità negativa", "sotto_scorta"]], { selected: @stato }, class: "input input--select" %>
+  </div>
+  <div>
+    <%= form.label :ordinamento, "Ordina per", class: "form-label" %>
+    <%= form.select :ordinamento, [["Fabbisogno", "fabbisogno"], ["Titolo", "titolo"], ["Disponibile", "disponibile"], ["Da consegnare", "impegnato"]], { selected: @ordinamento }, class: "input input--select" %>
+  </div>
+  <%= form.submit "Applica", class: "btn btn--primary" %>
+<% end %>
+
+<%= turbo_frame_tag :search_results do %>
+  <p class="txt-small txt-subtle margin-block-end-half">
+    <%= @total_count %> <%= @total_count == 1 ? "titolo" : "titoli" %> · Il fabbisogno è dato da adozioni meno disponibilità libera.
+  </p>
+
+  <div class="data-table" style="--cols: minmax(15rem, 1fr) 7rem repeat(6, 6rem);">
+    <div class="data-table__head">
+      <% ["Titolo", "ISBN", "Disponibile", "Da consegnare", "Libero", "Adozioni", "Fabbisogno", "Campionario"].each_with_index do |label, indice| %>
+        <div class="data-table__th <%= 'data-table__th--end' if indice > 1 %>"><%= label %></div>
+      <% end %>
+    </div>
+
+    <%= with_automatic_pagination :giacenze, @page, id: "giacenze-lista" do %>
+      <% @page.records.each do |libro| %>
+        <% giacenza = libro.giacenza || Giacenza.new(libro: libro) %>
+        <div class="data-row">
+          <div class="data-row__cell">
+            <%= link_to libro.titolo, libro_path(libro), class: "font-weight-bold txt-link", data: { turbo_frame: "_top" } %>
+            <div class="txt-xx-small txt-subtle"><%= libro.editore&.editore %></div>
+          </div>
+          <div class="data-row__cell txt-small"><%= libro.codice_isbn %></div>
+          <div class="data-row__cell txt-align-end font-weight-bold"><%= giacenza.disponibile %></div>
+          <div class="data-row__cell txt-align-end"><%= giacenza.impegnato %></div>
+          <div class="data-row__cell txt-align-end <%= 'txt-negative font-weight-bold' if giacenza.disponibilita_libera.negative? %>"><%= giacenza.disponibilita_libera %></div>
+          <div class="data-row__cell txt-align-end"><%= libro.adozioni_count %></div>
+          <div class="data-row__cell txt-align-end <%= 'txt-negative font-weight-black' if giacenza.fabbisogno.positive? %>"><%= giacenza.fabbisogno %></div>
+          <div class="data-row__cell txt-align-end"><%= giacenza.campionario %></div>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+<% end %>
+</div>

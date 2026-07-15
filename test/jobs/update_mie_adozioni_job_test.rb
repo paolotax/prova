@@ -13,7 +13,7 @@ class UpdateMieAdozioniJobRaising < UpdateMieAdozioniJob
 end
 
 class UpdateMieAdozioniJobTest < ActiveJob::TestCase
-  fixtures :accounts, :users, :memberships, :editori, :mandati, :scuole, :classi, :adozioni
+  fixtures :accounts, :users, :memberships, :editori, :categorie, :libri, :mandati, :scuole, :classi, :adozioni
 
   setup do
     @fizzy = accounts(:fizzy)
@@ -99,6 +99,34 @@ class UpdateMieAdozioniJobTest < ActiveJob::TestCase
     UpdateMieAdozioniJobSilent.perform_now(@fizzy)
     assert_equal base + 1, mandato.reload.sezioni_count,
       "l'annata corrente su classe attiva deve contare"
+  end
+
+  test "adozioni_count dei libri esclude anni storici e classi non attive" do
+    libro = libri(:libro_fizzy)
+    scuola = scuole(:scuola_fizzy)
+    archiviata = @fizzy.classi.create!(scuola: scuola, anno_scolastico: "202425",
+      anno_corso: "4", sezione: "Y", stato: "archiviata",
+      codice_ministeriale_origine: scuola.codice_ministeriale,
+      classe_origine: "4", sezione_origine: "Y")
+    @fizzy.adozioni.create!(classe: archiviata, libro: libro,
+      codice_isbn: libro.codice_isbn, anno_scolastico: "202425",
+      editore: "Zanichelli", da_acquistare: true)
+
+    UpdateMieAdozioniJobSilent.perform_now(@fizzy)
+    assert_equal 0, libro.reload.adozioni_count,
+      "l'adozione della classe archiviata non deve contare"
+
+    attiva = @fizzy.classi.create!(scuola: scuola, anno_scolastico: "202526",
+      anno_corso: "5", sezione: "Y", stato: "attiva",
+      codice_ministeriale_origine: scuola.codice_ministeriale,
+      classe_origine: "5", sezione_origine: "Y")
+    @fizzy.adozioni.create!(classe: attiva, libro: libro,
+      codice_isbn: libro.codice_isbn, anno_scolastico: "202526",
+      editore: "Zanichelli", da_acquistare: true)
+
+    UpdateMieAdozioniJobSilent.perform_now(@fizzy)
+    assert_equal 1, libro.reload.adozioni_count,
+      "deve contare solo l'adozione dell'anno della classe attiva"
   end
 
   test "sets adozioni_aggiornamento_started_at on entry and adozioni_aggiornate_at at end" do

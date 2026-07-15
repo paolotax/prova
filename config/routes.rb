@@ -308,6 +308,8 @@ Rails.application.routes.draw do
 
     resources :vendite, only: [:index]
 
+    resources :giacenze, only: [:index]
+
     resources :libri do
       collection do
         get 'situazione'
