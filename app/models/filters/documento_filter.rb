@@ -43,8 +43,8 @@ module Filters
       base = filtered_scope
       {
         "attivi"        => base.attivi.count,
-        "da_consegnare" => base.attivi.da_consegnare.count,
-        "da_pagare"     => base.attivi.da_pagare.count,
+        "da_consegnare" => base.da_consegnare.count,
+        "da_pagare"     => base.da_pagare.count,
         "completati"    => base.completati.count,
         "tutti"         => base.count
       }
@@ -114,8 +114,10 @@ module Filters
 
     def apply_stato_documento(scope)
       case stato_documento
-      when "da_consegnare" then scope.attivi.da_consegnare
-      when "da_pagare"     then scope.attivi.da_pagare
+      # Su tutti i documenti, non solo gli attivi: il residuo conta anche se
+      # il documento e' stato chiuso.
+      when "da_consegnare" then scope.da_consegnare
+      when "da_pagare"     then scope.da_pagare
       when "completati"    then scope.completati
       when "tutti"         then scope
       else                      scope.attivi # "attivi" e default
