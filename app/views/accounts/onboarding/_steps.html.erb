@@ -1,0 +1,11 @@
+<nav class="wizard__steps-bar">
+  <ol class="wizard__steps">
+    <% [[:azienda, "Azienda"], [:zone, "Zone"], [:importazione, "Import dati"], [:mandati, "Mandati"]].each_with_index do |(chiave, label), i| %>
+      <% posizione = Account::Onboarding::STEPS.index(chiave) <=> Account::Onboarding::STEPS.index(corrente) %>
+      <li class="wizard__step <%= "wizard__step--completed" if posizione.negative? %> <%= "wizard__step--active" if posizione.zero? %>">
+        <span class="wizard__step-number"><%= i + 1 %></span>
+        <span class="wizard__step-label"><%= label %></span>
+      </li>
+    <% end %>
+  </ol>
+</nav>

@@ -1,0 +1,49 @@
+<% @page_title = "Benvenuto" %>
+<%= turbo_stream_from Current.account, "configurazione" %>
+
+<div class="configurazione">
+  <%= render "accounts/onboarding/steps", corrente: @onboarding.step %>
+
+  <% case @onboarding.step %>
+  <% when :azienda %>
+    <div class="panel shadow center">
+      <h2 class="divider divider--fade margin-block-end">Dati aziendali</h2>
+      <p class="txt-small txt-subtle txt-center">Dai un nome al tuo account e inserisci i dati della tua azienda: serviranno per i documenti.</p>
+      <%= render "accounts/aziende/form", azienda: @azienda,
+            url: accounts_onboarding_azienda_path, with_account_name: true %>
+    </div>
+  <% when :zone %>
+    <div class="panel shadow center">
+      <h2 class="divider divider--fade margin-block-end">Le mie zone</h2>
+      <p class="txt-small txt-subtle txt-center">Scegli le province e i gradi scolastici in cui lavori. Puoi aggiungere più zone.</p>
+      <%= render "accounts/zone/form", regioni: @regioni %>
+      <div class="margin-block-start-double">
+        <%= render "accounts/zone/zone_list", account_zone: @account_zone %>
+      </div>
+      <% if @account_zone.any? %>
+        <%= link_to "Continua", accounts_onboarding_path, class: "btn btn--primary center fit-content margin-block-start-double" %>
+      <% end %>
+    </div>
+  <% when :importazione %>
+    <div class="panel shadow center">
+      <h2 class="divider divider--fade margin-block-end">Import dati</h2>
+      <p class="txt-small txt-subtle txt-center">Importo scuole, classi e adozioni ministeriali (anno corrente e storico) per le tue zone. Puoi restare su questa pagina: l'elenco si aggiorna da solo. A importazione finita premi Continua.</p>
+      <%= button_to accounts_importazione_path, class: "btn center fit-content margin-block-start-double", style: "--btn-background: oklch(var(--lch-yellow-dark)); --btn-border-color: oklch(var(--lch-yellow-dark));" do %>
+        <%= icon_tag "refresh" %>
+        <span>Avvia importazione</span>
+      <% end %>
+      <div class="margin-block-start-double">
+        <%= render "accounts/zone/zone_list", account_zone: @account_zone %>
+      </div>
+      <%= link_to "Continua", accounts_onboarding_path, class: "btn center fit-content margin-block-start-double" %>
+    </div>
+  <% when :mandati %>
+    <div class="panel shadow center">
+      <h2 class="divider divider--fade margin-block-end">I miei mandati</h2>
+      <p class="txt-small txt-subtle txt-center">Scegli gli editori che rappresenti, poi premi "Aggiorna adozioni" per marcare le tue adozioni.</p>
+      <%= render "accounts/mandati/form", gruppi: @gruppi, editori: @editori %>
+      <%= render "accounts/configurazione/pulsante_aggiorna_adozioni", account: Current.account %>
+      <%= link_to "Fine", accounts_configurazione_path, class: "btn btn--primary center fit-content margin-block-start-double" %>
+    </div>
+  <% end %>
+</div>

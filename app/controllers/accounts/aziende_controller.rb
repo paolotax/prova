@@ -62,14 +62,7 @@ module Accounts
     end
 
     def azienda_params
-      params.require(:azienda).permit(
-        :ragione_sociale, :partita_iva, :codice_fiscale, :regime_fiscale,
-        :indirizzo, :cap, :comune, :provincia, :nazione,
-        :email, :telefono, :indirizzo_telematico,
-        :iban, :banca,
-        :sconto_defiscalizzato,
-        :codice_intermediario
-      )
+      params.require(:azienda).permit(*Azienda.permitted_params)
     end
   end
 end

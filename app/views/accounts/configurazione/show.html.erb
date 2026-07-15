@@ -5,6 +5,16 @@
 
 <div class="configurazione">
 
+  <% onboarding = Account::Onboarding.new(Current.account) %>
+  <% if onboarding.da_completare? && Current.admin? %>
+    <div class="panel shadow center fill-shade">
+      <p class="txt-small txt-center">
+        La configurazione dell'account non è completa.
+        <%= link_to "Riprendi la procedura guidata", accounts_onboarding_path, class: "txt-bold" %>
+      </p>
+    </div>
+  <% end %>
+
   <div class="panel shadow center">
 
     <h2 class="divider divider--fade margin-block-end">Le mie Zone</h2>

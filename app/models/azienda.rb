@@ -32,6 +32,14 @@
 #  index_aziende_on_user_id                        (user_id)
 #
 class Azienda < ApplicationRecord
+  # Unica lista permit per AziendeController e Onboarding::AziendeController.
+  def self.permitted_params
+    %i[ragione_sociale partita_iva codice_fiscale regime_fiscale
+       indirizzo cap comune provincia nazione
+       email telefono indirizzo_telematico
+       iban banca sconto_defiscalizzato codice_intermediario]
+  end
+
   # Primary association: Azienda belongs to Account (multi-tenancy)
   belongs_to :account
 

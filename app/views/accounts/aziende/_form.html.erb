@@ -1,4 +1,7 @@
-<%= form_with(model: azienda, url: accounts_azienda_path, method: azienda&.persisted? ? :patch : :post, class: "flex flex-column gap") do |form| %>
+<%= form_with(model: azienda,
+      url: local_assigns.fetch(:url) { accounts_azienda_path },
+      method: local_assigns[:url] ? :post : (azienda&.persisted? ? :patch : :post),
+      class: "flex flex-column gap") do |form| %>
   <% if azienda.errors.any? %>
     <div class="panel pad border-radius txt-negative fill-shade">
       <h3 class="font-weight-black"><%= pluralize(azienda.errors.count, "errore", "errori") %> da correggere:</h3>
@@ -8,6 +11,16 @@
         <% end %>
       </ul>
     </div>
+  <% end %>
+
+  <% if local_assigns[:with_account_name] %>
+    <section class="panel shadow center" style="--panel-size: 55ch;">
+      <strong class="divider txt-large">Nome account</strong>
+      <div class="form-field">
+        <%= label_tag :account_name, "Nome dell'account", class: "form-label" %>
+        <%= text_field_tag :account_name, Current.account.name, class: "input" %>
+      </div>
+    </section>
   <% end %>
 
   <!-- Dati Fiscali -->

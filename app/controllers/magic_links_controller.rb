@@ -124,12 +124,23 @@ class MagicLinksController < ApplicationController
     if accounts.count == 0
       account = Account.create!(name: user.name)
       account.memberships.create!(user: user, role: :owner)
-      create_session_and_redirect(user, account)
+      create_session_and_redirect(user, account, redirect_to: onboarding_target(user, account))
     elsif accounts.count == 1
-      create_session_and_redirect(user, accounts.first)
+      account = accounts.first
+      create_session_and_redirect(user, account, redirect_to: onboarding_target(user, account))
     else
       create_session_and_redirect(user, accounts.first, redirect_to: accounts_path)
     end
+  end
+
+  # Redirect al wizard solo per account mai configurati (niente azienda ne'
+  # zone) e solo per chi puo' configurarli (admin/owner). nil = default.
+  def onboarding_target(user, account)
+    membership = user.memberships.find_by(account: account)
+    return nil unless membership&.admin? || membership&.owner?
+    return nil unless Account::Onboarding.new(account).da_iniziare?
+
+    accounts_onboarding_path(account_id: account.id)
   end
 
   def create_session_and_redirect(user, account, redirect_to: nil)

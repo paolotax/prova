@@ -144,9 +144,31 @@ class MagicLinksControllerTest < ActionDispatch::IntegrationTest
       end
     end
 
-    # Il nuovo account creato è l'ultimo
+    # Il nuovo account creato è l'ultimo: mai configurato -> wizard onboarding
     new_account = Account.order(:created_at).last
-    assert_redirected_to account_root_path(new_account)
+    assert_redirected_to accounts_onboarding_path(account_id: new_account.id)
+  end
+
+  test "verify redirige all'onboarding per account invitato mai configurato" do
+    user = User.create!(email: "invitato@example.com", name: "invitato")
+    account = Account.create!(name: "invitato")
+    account.memberships.create!(user: user, role: :owner)
+    magic_link = user.magic_links.create!
+
+    get verify_magic_links_path(code: magic_link.code)
+
+    assert_redirected_to accounts_onboarding_path(account_id: account.id)
+  end
+
+  test "verify non manda all'onboarding un member semplice" do
+    user = User.create!(email: "membro@example.com", name: "membro")
+    account = Account.create!(name: "team")
+    account.memberships.create!(user: user, role: :member)
+    magic_link = user.magic_links.create!
+
+    get verify_magic_links_path(code: magic_link.code)
+
+    assert_redirected_to account_root_path(account)
   end
 
   test "new redirects if already authenticated" do

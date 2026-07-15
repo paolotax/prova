@@ -146,6 +146,9 @@ Rails.application.routes.draw do
     # =========================================
     namespace :accounts, path: '' do
       resource :configurazione, only: [:show], controller: 'configurazione'
+      resource :onboarding, only: [:show], controller: 'onboarding' do
+        resource :azienda, only: [:create], module: :onboarding
+      end
       resource :azienda, only: %i[show new create edit update]
 
       resources :zone, only: %i[index new create destroy] do
