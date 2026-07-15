@@ -5,7 +5,9 @@ class CountScuolePerZonaJob < ApplicationJob
   include ActionView::RecordIdentifier
 
   def perform(account_zona)
-    count = account_zona.import_scuole_per_zona.count
+    raise Miur::ImportError, "anno_corrente nil (miur_scuole vuota): conteggio zona abortito" if Miur.anno_corrente.nil?
+
+    count = account_zona.miur_scuole_per_zona.count
     account_zona.update!(scuole_count: count, stato: "pronta")
     broadcast_zone_update(account_zona)
   end

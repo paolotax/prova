@@ -53,9 +53,10 @@ module Accounts
       stato == "attiva" && scuole_importate_count < scuole_count
     end
 
-    def import_scuole_per_zona
+    # Scuole ministeriali (miur_scuole, anno corrente) di provincia+grado della zona.
+    def miur_scuole_per_zona
       tipi = TipoScuola.where(grado: grado).pluck(:tipo)
-      ImportScuola.where(PROVINCIA: provincia, DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA: tipi)
+      Miur::Scuola.per_anno(Miur.anno_corrente).where(provincia: provincia, tipo_scuola: tipi)
     end
 
     private
