@@ -12,5 +12,6 @@ module User::AvailableFilters
     has_many :entry_filter_filters, class_name: "Filters::EntryFilter", foreign_key: :creator_id, dependent: :destroy
     has_many :propaganda_filter_filters, class_name: "Filters::PropagandaFilter", foreign_key: :creator_id, dependent: :destroy
     has_many :persona_filter_filters, class_name: "Filters::PersonaFilter", foreign_key: :creator_id, dependent: :destroy
+    has_many :giacenza_filter_filters, class_name: "Filters::GiacenzaFilter", foreign_key: :creator_id, dependent: :destroy
   end
 end

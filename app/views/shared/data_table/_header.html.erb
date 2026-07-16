@@ -1,11 +1,13 @@
 <%# locals: (columns:, sort:, registry:, url:) -%>
 
 <div class="data-table__head" role="row" data-controller="column-sort">
-  <span class="data-table__th"></span>
+  <% if registry.checkbox %>
+    <span class="data-table__th"></span>
+  <% end %>
 
   <% columns.each do |column| %>
     <% direction = sort.direction_for(column.key) %>
-    <%= tag.span role: "columnheader",
+    <%= tag.span role: "columnheader", title: column.label,
         class: class_names("data-table__th",
                            "data-table__th--end": column.align == :end,
                            "data-table__th--sortable": column.sortable?,

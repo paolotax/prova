@@ -16,6 +16,10 @@
 class DataTable::Columns
   class_attribute :prefix, instance_accessor: false
 
+  # Colonna iniziale dei checkbox (bulk actions): i registri delle liste
+  # senza multi-selezione la spengono con `self.checkbox = false`.
+  class_attribute :checkbox, instance_accessor: false, default: true
+
   class << self
     def columns
       @columns ||= []
@@ -46,18 +50,28 @@ class DataTable::Columns
       visible_columns.reduce(scope) { |current, column| column.scope ? column.scope.call(current) : current }
     end
 
-    # grid-template-columns: checkbox + colonne attive + ingranaggio
+    # grid-template-columns: checkbox (se attiva) + colonne attive + ingranaggio
     def grid_template(visible_columns)
-      ([ "2.25rem" ] + visible_columns.map(&:width) + [ "2.5rem" ]).join(" ")
+      tracks(visible_columns).join(" ")
     end
 
     # Larghezza minima della tabella per lo scroll orizzontale
-    # (.data-table-scroller): somma dei minimi delle colonne (primo
+    # (.data-table--scroller): somma dei minimi delle colonne (primo
     # argomento dei minmax) più checkbox, ingranaggio e gap.
     def min_inline_size(visible_columns)
-      tracks = [ "2.25rem" ] + visible_columns.map(&:width) + [ "2.5rem" ]
+      tracks = tracks(visible_columns)
       rems = tracks.sum { |track| (track[/minmax\(\s*([\d.]+)rem/, 1] || track[/([\d.]+)rem/, 1]).to_f }
       "calc(#{rems}rem + #{tracks.size - 1}ch)"
     end
+
+    # Style inline completo per il container .data-table
+    def style(visible_columns)
+      "--cols: #{grid_template(visible_columns)}; --min-inline-size: #{min_inline_size(visible_columns)};"
+    end
+
+    private
+      def tracks(visible_columns)
+        (checkbox ? [ "2.25rem" ] : []) + visible_columns.map(&:width) + [ "2.5rem" ]
+      end
   end
 end

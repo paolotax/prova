@@ -16,61 +16,39 @@
        [:disponibile, "disponibili", "txt-positive"],
        [:impegnato, "da consegnare", nil],
        [:campionario, "campionario", nil],
-       [:fabbisogno, "fabbisogno", "txt-negative"]
+       [:fabbisogno, "fabbisogno", "txt-negative"],
+       [:venduto_copie, "vendute", nil]
      ].each do |chiave, etichetta, value_class| %>
     <div class="analytics-summary__card">
       <p class="analytics-summary__value <%= value_class %>"><%= number_with_delimiter(@totali.fetch(chiave)) %></p>
       <p class="analytics-summary__label"><%= etichetta %></p>
     </div>
   <% end %>
+  <div class="analytics-summary__card">
+    <p class="analytics-summary__value txt-positive"><%= number_to_currency @totali.fetch(:venduto_cents) / 100.0, locale: :it %></p>
+    <p class="analytics-summary__label">venduto</p>
+  </div>
 </div>
 
-<%= form_with url: giacenze_path, method: :get, class: "panel flex gap-half flex-wrap align-end margin-block-end", data: { turbo_frame: "search_results" } do |form| %>
-  <div style="flex: 1 1 16rem;">
-    <%= form.label :q, "Cerca titolo, ISBN o editore", class: "form-label" %>
-    <%= form.search_field :q, value: params[:q], class: "input", placeholder: "Cerca…" %>
-  </div>
-  <div>
-    <%= form.label :stato, "Mostra", class: "form-label" %>
-    <%= form.select :stato, [["Tutti", "tutti"], ["Adottati", "adottati"], ["Con fabbisogno", "fabbisogno"], ["Da consegnare", "impegnati"], ["Disponibilità negativa", "sotto_scorta"]], { selected: @stato }, class: "input input--select" %>
-  </div>
-  <div>
-    <%= form.label :ordinamento, "Ordina per", class: "form-label" %>
-    <%= form.select :ordinamento, [["Fabbisogno", "fabbisogno"], ["Titolo", "titolo"], ["Disponibile", "disponibile"], ["Da consegnare", "impegnato"]], { selected: @ordinamento }, class: "input input--select" %>
-  </div>
-  <%= form.submit "Applica", class: "btn btn--primary" %>
-<% end %>
+<%= render "filters/settings",
+      filter_url: giacenze_path,
+      filter_type: "giacenza_filter",
+      user_filtering: @user_filtering,
+      no_filtering_url: giacenze_path %>
 
 <%= turbo_frame_tag :search_results do %>
   <p class="txt-small txt-subtle margin-block-end-half">
     <%= @total_count %> <%= @total_count == 1 ? "titolo" : "titoli" %> · Il fabbisogno è dato da adozioni meno disponibilità libera.
   </p>
 
-  <div class="data-table" style="--cols: minmax(15rem, 1fr) 7rem repeat(6, 6rem);">
-    <div class="data-table__head">
-      <% ["Titolo", "ISBN", "Disponibile", "Da consegnare", "Libero", "Adozioni", "Fabbisogno", "Campionario"].each_with_index do |label, indice| %>
-        <div class="data-table__th <%= 'data-table__th--end' if indice > 1 %>"><%= label %></div>
-      <% end %>
-    </div>
+  <%= tag.div class: "data-table data-table--scroller", style: Giacenza::Columns.style(@columns) do %>
+    <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Giacenza::Columns, url: giacenze_path %>
 
     <%= with_automatic_pagination :giacenze, @page, id: "giacenze-lista" do %>
       <% @page.records.each do |libro| %>
-        <% giacenza = libro.giacenza || Giacenza.new(libro: libro) %>
-        <div class="data-row">
-          <div class="data-row__cell">
-            <%= link_to libro.titolo, libro_path(libro), class: "font-weight-bold txt-link", data: { turbo_frame: "_top" } %>
-            <div class="txt-xx-small txt-subtle"><%= libro.editore&.editore %></div>
-          </div>
-          <div class="data-row__cell txt-small"><%= libro.codice_isbn %></div>
-          <div class="data-row__cell txt-align-end font-weight-bold"><%= giacenza.disponibile %></div>
-          <div class="data-row__cell txt-align-end"><%= giacenza.impegnato %></div>
-          <div class="data-row__cell txt-align-end <%= 'txt-negative font-weight-bold' if giacenza.disponibilita_libera.negative? %>"><%= giacenza.disponibilita_libera %></div>
-          <div class="data-row__cell txt-align-end"><%= libro.adozioni_count %></div>
-          <div class="data-row__cell txt-align-end <%= 'txt-negative font-weight-black' if giacenza.fabbisogno.positive? %>"><%= giacenza.fabbisogno %></div>
-          <div class="data-row__cell txt-align-end"><%= giacenza.campionario %></div>
-        </div>
+        <%= render "giacenze/table/row", libro: libro, columns: @columns %>
       <% end %>
     <% end %>
-  </div>
+  <% end %>
 <% end %>
 </div>

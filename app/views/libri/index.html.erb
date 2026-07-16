@@ -57,7 +57,7 @@
       <%= tag.div class: "flex flex-column", data: { controller: "bulk-actions" } do %>
         <%= render "libri/bulk_bar/bar" %>
 
-        <%= tag.div class: "data-table", style: "--cols: #{Libro::Columns.grid_template(@columns)};" do %>
+        <%= tag.div class: "data-table data-table--scroller", style: Libro::Columns.style(@columns) do %>
           <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Libro::Columns, url: libri_path %>
 
           <%= with_automatic_pagination :libri, @page,

@@ -69,7 +69,7 @@
         <%= render "scuole/bulk_bar/bar" %>
 
         <% if @vista == "tabella" %>
-          <%= tag.div class: "data-table", style: "--cols: #{Scuola::Columns.grid_template(@columns)};" do %>
+          <%= tag.div class: "data-table data-table--scroller", style: Scuola::Columns.style(@columns) do %>
             <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Scuola::Columns, url: scuole_path %>
 
             <%= with_automatic_pagination :scuole, @page,

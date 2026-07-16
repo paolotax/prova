@@ -21,7 +21,7 @@
     </p>
 
     <% if @vista == "tabella" %>
-      <%= tag.div class: "data-table", style: "--cols: #{Persona::Columns.grid_template(@columns)};" do %>
+      <%= tag.div class: "data-table data-table--scroller", style: Persona::Columns.style(@columns) do %>
         <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Persona::Columns, url: persone_path %>
 
         <%= with_automatic_pagination :persone, @page,

@@ -91,7 +91,7 @@
           <% end %>
         </div>
       <% else %>
-        <%= tag.div class: "data-table", style: "--cols: #{Documento::Columns.grid_template(@columns)};" do %>
+        <%= tag.div class: "data-table data-table--scroller", style: Documento::Columns.style(@columns) do %>
           <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Documento::Columns, url: documenti_path %>
 
           <%= with_automatic_pagination :documenti, @page,

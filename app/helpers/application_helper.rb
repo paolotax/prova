@@ -8,6 +8,20 @@ module ApplicationHelper
     tag.span class: class_names("icon icon--#{name}", options.delete(:class)), "aria-hidden": true, **options
   end
 
+  # Regola generale delle tabelle: zero e vuoto si mostrano come trattino
+  # muted, non come 0. Il blocco opzionale formatta il valore quando presente:
+  #   <%= dash_if_zero(giacenza.impegnato) %>
+  #   <%= dash_if_zero(libro.adozioni_count) { |n| tag.strong(n) } %>
+  def dash_if_zero(value)
+    if value.blank? || (value.respond_to?(:zero?) && value.zero?)
+      tag.span("—", class: "data-row__muted")
+    elsif block_given?
+      yield value
+    else
+      value
+    end
+  end
+
   # Badge di stato triage per un record entryable (Documento, Appunto):
   # colonna triage, "Da gestire", "Rimandato" o "Completato".
   def stato_badge_for(record)

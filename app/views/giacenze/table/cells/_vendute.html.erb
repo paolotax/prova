@@ -1,0 +1,8 @@
+<%# locals: (libro:, giacenza:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <%= dash_if_zero(giacenza.venduto_copie) %>
+  <% if giacenza.venduto_copie.positive? %>
+    <div class="txt-xx-small txt-subtle"><%= number_to_currency giacenza.venduto_cents / 100.0, locale: :it %></div>
+  <% end %>
+</div>

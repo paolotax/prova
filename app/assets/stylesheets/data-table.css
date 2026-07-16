@@ -15,6 +15,27 @@
     inline-size: 100%;
   }
 
+  /* Scroller orizzontale per il layout standard, dove la pagina non può
+     scorrere in orizzontale (reset.css clippa l'overflow). Header e righe
+     tengono la larghezza minima delle colonne (--min-inline-size, emessa da
+     DataTable::Columns.style) così sfondi e bordi coprono tutta l'area
+     scrollata. Sotto il breakpoint mobile le righe si impilano e il minimo
+     non serve. Nota: dentro lo scroller la sticky dell'header aggancia lo
+     scroller, non più lo scroll di pagina. */
+  .data-table--scroller {
+    max-inline-size: 100%;
+    overflow-x: auto;
+  }
+
+  @media (min-width: 640px) {
+    .data-table--scroller {
+      .data-table__head,
+      .data-row {
+        min-inline-size: var(--min-inline-size, auto);
+      }
+    }
+  }
+
   /* Variante per i contesti dove la pagina scorre in orizzontale (es. admin,
      che nel layout riabilita l'overflow clippato da reset.css): header e
      righe mantengono la larghezza minima delle colonne (--min-inline-size,

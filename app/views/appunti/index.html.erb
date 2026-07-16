@@ -52,7 +52,7 @@
       <%= render "appunti/bulk_bar/bar" %>
 
       <% if @vista == "tabella" %>
-        <%= tag.div class: "data-table", style: "--cols: #{Appunto::Columns.grid_template(@columns)};" do %>
+        <%= tag.div class: "data-table data-table--scroller", style: Appunto::Columns.style(@columns) do %>
           <%= render "shared/data_table/header", columns: @columns, sort: @sort, registry: Appunto::Columns, url: appunti_path %>
 
           <%= with_automatic_pagination :appunti, @page,
