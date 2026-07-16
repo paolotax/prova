@@ -8,21 +8,32 @@ class GiacenzeControllerTest < ActionDispatch::IntegrationTest
     @user = users(:one)
     @libro = libri(:libro_fizzy)
     @libro.update_column(:adozioni_count, 12)
-    Giacenza.create!(account: @account, libro: @libro, disponibile: 8, impegnato: 3, campionario: 2)
+    Giacenza.create!(account: @account, libro: @libro,
+      disponibile: 8, impegnato: 3, campionario: 2, venduto_copie: 4, venduto_cents: 6000)
     sign_in_as(@user, @account)
   end
 
-  test "mostra giacenze e fabbisogno calcolato" do
+  test "mostra giacenze, fabbisogno calcolato e venduto" do
     get giacenze_path(account_id: @account.id)
 
     assert_response :success
     assert_select "h1", /Giacenze di magazzino/
-    assert_select ".ca-page .analytics-summary .analytics-summary__card", count: 4
-    assert_select "select.input.input--select", count: 2
+    assert_select ".ca-page .analytics-summary .analytics-summary__card", count: 6
+    assert_select ".filters"
     assert_select ".data-row", minimum: 1
     assert_match "Libro Test Fizzy", response.body
     assert_match(/Fabbisogno/, response.body)
     assert_select ".data-row", text: /\b7\b/ # 12 adozioni - (8 disponibili - 3 impegnate)
+    assert_match "4", response.body # copie vendute
+    assert_match "60,00", response.body # importo venduto
+    assert_select ".data-row__muted", minimum: 1 # gli zeri diventano trattini
+  end
+
+  test "ordina per titolo di default" do
+    get giacenze_path(account_id: @account.id)
+
+    assert_response :success
+    assert_operator response.body.index("Atlante Fascicolo 1"), :<, response.body.index("Libro Test Fizzy")
   end
 
   test "filtra i titoli con fabbisogno" do
@@ -34,11 +45,13 @@ class GiacenzeControllerTest < ActionDispatch::IntegrationTest
   end
 
   test "filtra i titoli da consegnare" do
+    altro = libri(:confezione_fizzy)
+
     get giacenze_path(account_id: @account.id, stato: "impegnati")
 
     assert_response :success
-    assert_select "select#stato option[selected]", text: "Da consegnare"
     assert_match "Libro Test Fizzy", response.body
+    assert_no_match altro.titolo, response.body
   end
 
   test "filtra gli adottati usando il counter da acquistare" do
@@ -48,16 +61,23 @@ class GiacenzeControllerTest < ActionDispatch::IntegrationTest
     get giacenze_path(account_id: @account.id, stato: "adottati")
 
     assert_response :success
-    assert_select "select#stato option[selected]", text: "Adottati"
     assert_match "Libro Test Fizzy", response.body
     assert_no_match altro.titolo, response.body
   end
 
-  test "applica ordinamento anche con un filtro attivo" do
+  test "filtra per terms" do
+    get giacenze_path(account_id: @account.id, terms: [ "confezione atlante" ])
+
+    assert_response :success
+    assert_match "Confezione Atlante", response.body
+    assert_no_match "Libro Test Fizzy", response.body
+  end
+
+  test "applica il sort di colonna anche con un filtro attivo" do
     altro = libri(:confezione_fizzy)
     altro.update_column(:adozioni_count, 2)
 
-    get giacenze_path(account_id: @account.id, stato: "adottati", ordinamento: "titolo")
+    get giacenze_path(account_id: @account.id, stato: "adottati", sort: "titolo.asc")
 
     assert_response :success
     assert_operator response.body.index(altro.titolo), :<, response.body.index(@libro.titolo)

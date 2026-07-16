@@ -6,7 +6,7 @@ class GiacenzeController < ApplicationController
 
   before_action :authenticate_user!
 
-  ORDINE_DEFAULT = "#{Giacenza::Columns::FABBISOGNO_SQL} DESC, libri.titolo ASC".freeze
+  ORDINE_DEFAULT = "libri.titolo ASC".freeze
 
   def index
     @columns = resolve_colonne(Giacenza::Columns)
