@@ -35,6 +35,9 @@
     <% end %>
   </article>
 
-  <%# TODO(Task 8): aggiungere qui il link "Vai al confronto adozioni comunicate" verso
-      adozioni_comunicate_path (route non ancora esistente, arriva col Task 8). %>
+  <article class="panel panel--wide center txt-align-start margin-block-start">
+    <%= link_to adozioni_comunicate_path, class: "btn" do %>
+      <span>Vai al confronto adozioni comunicate</span>
+    <% end %>
+  </article>
 <% end %>

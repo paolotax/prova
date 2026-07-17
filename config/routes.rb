@@ -391,6 +391,10 @@ Rails.application.routes.draw do
                path: "controllo_adozioni/scuole_nuove", as: :controllo_adozioni_scuole_nuove
     end
 
+    get  "adozioni_comunicate", to: "adozioni/comunicate#index", as: :adozioni_comunicate
+    post "adozioni_comunicate/rimatch", to: "adozioni/rimatches#create", as: :adozioni_comunicate_rimatch
+    post "adozioni_comunicate/:id/distribuzione", to: "adozioni/distribuzioni#create", as: :adozioni_comunicata_distribuzione
+
     namespace :miur do
       resources :import_runs, only: %i[index show] do
         resource :reconcile, only: :create, module: :import_runs

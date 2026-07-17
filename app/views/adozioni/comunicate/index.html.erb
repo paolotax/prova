@@ -1,0 +1,76 @@
+<% @page_title = "Adozioni comunicate" %>
+
+<% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= header_back_link account_root_path, label: "Dashboard" %>
+  </div>
+  <h1 class="header__title"><%= @page_title %> <span class="txt-subtle"><%= @anno_scolastico %></span></h1>
+  <div class="header__actions header__actions--end">
+    <%= button_to "Ri-esegui matching", adozioni_comunicate_rimatch_path(anno_scolastico: @anno_scolastico), class: "btn" %>
+  </div>
+<% end %>
+
+<article class="panel panel--wide center txt-align-start">
+  <div class="flex align-center gap justify-between flex-wrap">
+    <div class="flex gap txt-small">
+      <span><strong><%= @totale %></strong> righe</span>
+      <span class="txt-positive"><strong><%= @matched %></strong> matched</span>
+      <span class="txt-negative"><strong><%= @discrepanze %></strong> discrepanze</span>
+    </div>
+
+    <%= form_with url: adozioni_comunicate_path, method: :get, class: "flex gap-half align-center" do %>
+      <%= hidden_field_tag :anno_scolastico, @anno_scolastico %>
+      <%= select_tag :editore,
+          options_for_select([["Tutti gli editori", ""]] + @editori.map { |e| [e, e] }, params[:editore]),
+          class: "input input--select", onchange: "this.form.requestSubmit()" %>
+      <%= select_tag :stato_match,
+          options_for_select([["Tutti gli stati", ""]] + Adozioni::Comunicata::STATI_MATCH.map { |s| [s.humanize, s] }, params[:stato_match]),
+          class: "input input--select", onchange: "this.form.requestSubmit()" %>
+    <% end %>
+  </div>
+</article>
+
+<article class="panel panel--wide center txt-align-start margin-block-start">
+  <div style="overflow-x: auto;">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>Scuola</th>
+          <th>EAN / Titolo</th>
+          <th>Classe</th>
+          <th class="txt-align-end">Alunni</th>
+          <th>Editore</th>
+          <th>Stato</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @comunicate.each do |riga| %>
+          <tr>
+            <td>
+              <div class="font-weight-bold"><%= riga.codicescuola %></div>
+              <div class="txt-x-small txt-subtle"><%= [riga.descrizione_scuola, riga.comune].compact.join(" — ") %></div>
+            </td>
+            <td>
+              <div class="txt-small"><%= riga.ean %></div>
+              <div class="txt-x-small txt-subtle"><%= riga.titolo %></div>
+            </td>
+            <td><%= riga.anno_corso %><%= riga.sezioni.presence && " #{riga.sezioni}" %></td>
+            <td class="txt-align-end"><%= riga.alunni %></td>
+            <td class="txt-small"><%= riga.editore %></td>
+            <td>
+              <span class="txt-small <%= riga.stato_match.in?(%w[matched multi_sezione_distribuita]) ? 'txt-positive' : 'txt-negative' %>">
+                <%= riga.stato_match.humanize %>
+              </span>
+            </td>
+            <td>
+              <% if riga.stato_match == "multi_sezione" %>
+                <%= button_to "Distribuisci", adozioni_comunicata_distribuzione_path(riga), class: "btn btn--small" %>
+              <% end %>
+            </td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</article>
