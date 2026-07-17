@@ -258,51 +258,27 @@ CREATE TABLE public.adozioni (
 --
 
 CREATE TABLE public.adozioni_comunicate (
-    id bigint NOT NULL,
-    cod_agente character varying,
-    anno_scolastico character varying,
-    cod_ministeriale character varying,
+    id uuid DEFAULT gen_random_uuid() NOT NULL,
+    account_id uuid NOT NULL,
+    anno_scolastico character varying NOT NULL,
+    editore character varying,
+    fonte character varying DEFAULT 'excel'::character varying NOT NULL,
+    import_record_id uuid,
+    codicescuola character varying NOT NULL,
+    ean character varying NOT NULL,
+    titolo character varying,
+    anno_corso character varying NOT NULL,
+    sezioni character varying DEFAULT ''::character varying NOT NULL,
+    alunni integer NOT NULL,
+    adozione_id uuid,
+    classe_id uuid,
+    stato_match character varying DEFAULT 'da_verificare'::character varying NOT NULL,
     descrizione_scuola character varying,
-    indirizzo character varying,
-    cap character varying,
     comune character varying,
     provincia character varying,
-    cod_scuola character varying,
-    editore character varying,
-    ean character varying,
-    titolo character varying,
-    classe character varying,
-    sezione character varying,
-    alunni integer,
-    codice_scuola_match character varying,
-    codice_isbn_match character varying,
-    anno_corso_match character varying,
-    sezione_anno_match character varying,
-    user_id bigint NOT NULL,
-    import_adozione_id bigint,
     created_at timestamp(6) without time zone NOT NULL,
-    updated_at timestamp(6) without time zone NOT NULL,
-    da_acquistare character varying
+    updated_at timestamp(6) without time zone NOT NULL
 );
-
-
---
--- Name: adozioni_comunicate_id_seq; Type: SEQUENCE; Schema: public; Owner: -
---
-
-CREATE SEQUENCE public.adozioni_comunicate_id_seq
-    START WITH 1
-    INCREMENT BY 1
-    NO MINVALUE
-    NO MAXVALUE
-    CACHE 1;
-
-
---
--- Name: adozioni_comunicate_id_seq; Type: SEQUENCE OWNED BY; Schema: public; Owner: -
---
-
-ALTER SEQUENCE public.adozioni_comunicate_id_seq OWNED BY public.adozioni_comunicate.id;
 
 
 --
@@ -3559,13 +3535,6 @@ ALTER TABLE ONLY public.active_storage_variant_records ALTER COLUMN id SET DEFAU
 
 
 --
--- Name: adozioni_comunicate id; Type: DEFAULT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.adozioni_comunicate ALTER COLUMN id SET DEFAULT nextval('public.adozioni_comunicate_id_seq'::regclass);
-
-
---
 -- Name: ahoy_events id; Type: DEFAULT; Schema: public; Owner: -
 --
 
@@ -5044,45 +5013,24 @@ CREATE UNIQUE INDEX index_active_storage_variant_records_uniqueness ON public.ac
 
 
 --
--- Name: index_adozioni_comunicate_on_cod_ministeriale; Type: INDEX; Schema: public; Owner: -
+-- Name: index_adozioni_comunicate_on_account_id_and_stato_match; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_adozioni_comunicate_on_cod_ministeriale ON public.adozioni_comunicate USING btree (cod_ministeriale);
-
-
---
--- Name: index_adozioni_comunicate_on_ean; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_adozioni_comunicate_on_ean ON public.adozioni_comunicate USING btree (ean);
+CREATE INDEX index_adozioni_comunicate_on_account_id_and_stato_match ON public.adozioni_comunicate USING btree (account_id, stato_match);
 
 
 --
--- Name: index_adozioni_comunicate_on_import_adozione_id; Type: INDEX; Schema: public; Owner: -
+-- Name: index_adozioni_comunicate_on_adozione_id; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_adozioni_comunicate_on_import_adozione_id ON public.adozioni_comunicate USING btree (import_adozione_id);
-
-
---
--- Name: index_adozioni_comunicate_on_user_id; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_adozioni_comunicate_on_user_id ON public.adozioni_comunicate USING btree (user_id);
+CREATE INDEX index_adozioni_comunicate_on_adozione_id ON public.adozioni_comunicate USING btree (adozione_id);
 
 
 --
--- Name: index_adozioni_comunicate_on_user_id_and_cod_ministeriale; Type: INDEX; Schema: public; Owner: -
+-- Name: index_adozioni_comunicate_unicita; Type: INDEX; Schema: public; Owner: -
 --
 
-CREATE INDEX index_adozioni_comunicate_on_user_id_and_cod_ministeriale ON public.adozioni_comunicate USING btree (user_id, cod_ministeriale);
-
-
---
--- Name: index_adozioni_comunicate_on_user_id_and_ean; Type: INDEX; Schema: public; Owner: -
---
-
-CREATE INDEX index_adozioni_comunicate_on_user_id_and_ean ON public.adozioni_comunicate USING btree (user_id, ean);
+CREATE UNIQUE INDEX index_adozioni_comunicate_unicita ON public.adozioni_comunicate USING btree (account_id, anno_scolastico, codicescuola, ean, anno_corso, sezioni);
 
 
 --
@@ -7647,14 +7595,6 @@ ALTER TABLE ONLY public.registrazioni
 
 
 --
--- Name: adozioni_comunicate fk_rails_44e111a5db; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.adozioni_comunicate
-    ADD CONSTRAINT fk_rails_44e111a5db FOREIGN KEY (user_id) REFERENCES public.users(id);
-
-
---
 -- Name: libri fk_rails_5271b24524; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8109,6 +8049,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260717090000'),
 ('20260712080000'),
 ('20260712070000'),
 ('20260710090500'),

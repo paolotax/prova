@@ -25,7 +25,7 @@
 class ImportAdozione < ApplicationRecord
   # import_adozioni e' una vista ponte READ-ONLY sulla partizione 202526 di
   # miur_adozioni: le viste non dichiarano PK, quindi la esplicitiamo perche'
-  # Adozione/AdozioneComunicata la risolvono via belongs_to :import_adozione (per id).
+  # Adozione la risolve via belongs_to :import_adozione (per id).
   self.primary_key = "id"
 
   belongs_to :import_scuola, foreign_key: 'CODICESCUOLA', primary_key: 'CODICESCUOLA'
@@ -34,8 +34,6 @@ class ImportAdozione < ApplicationRecord
   has_one :classe, class_name: 'Views::Classe',
                    primary_key: %i[CODICESCUOLA ANNOCORSO SEZIONEANNO COMBINAZIONE],
                    foreign_key: %i[codice_ministeriale classe sezione combinazione]
-
-  has_one :adozione_comunicata
 
   has_many :user_scuole, through: :import_scuola
   has_many :users, through: :user_scuole
