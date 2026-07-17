@@ -115,6 +115,45 @@ class ImportsControllerJsonTest < ActionDispatch::IntegrationTest
     assert_equal 1, json["imported"]
   end
 
+  test "imports adozioni comunicate via JSON" do
+    scuola = Scuola.create!(account: @account, denominazione: "PRIMARIA TEST JSON",
+                            codice_ministeriale: "TESTJSON01X")
+    classe = Classe.create!(account: @account, scuola: scuola, anno_corso: "3",
+                            sezione: "B", combinazione: "", stato: "attiva",
+                            anno_scolastico: "202627")
+    Adozione.create!(account: @account, classe: classe, codice_isbn: "9788809917583",
+                     anno_scolastico: "202627", codicescuola: "TESTJSON01X", anno_corso: "3")
+
+    post "/#{@account.id}/imports.json",
+      params: {
+        type: "adozioni_comunicate",
+        anno_scolastico: "202627",
+        editore: "GIUNTI SCUOLA",
+        items: [
+          { codicescuola: "TESTJSON01X", ean: "978-88-0991-7583", classe: "3", sezioni: "B", alunni: 25 }
+        ]
+      },
+      headers: { "Authorization" => "Bearer #{@token.token}" }
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert json["ok"]
+    assert_equal 1, json["importate"]
+    assert_equal 1, json["matched"]
+    assert_equal 25, classe.reload.numero_alunni
+  end
+
+  test "returns error when anno_scolastico missing for adozioni comunicate" do
+    post "/#{@account.id}/imports.json",
+      params: { type: "adozioni_comunicate", items: [] },
+      headers: { "Authorization" => "Bearer #{@token.token}" }
+
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal false, json["ok"]
+    assert_includes json["error"], "anno_scolastico"
+  end
+
   test "returns error for invalid import type" do
     post "/#{@account.id}/imports.json",
       params: { type: "invalid_type", items: [{ foo: "bar" }] },

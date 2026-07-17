@@ -44,6 +44,8 @@ class ImportsController < ApplicationController
 
   def import_from_json
     type = params[:type]
+    return import_adozioni_comunicate_from_json if type == "adozioni_comunicate"
+
     importer_class = IMPORTERS[type]
     return { ok: false, error: "Tipo non valido: #{type}" } unless importer_class
 
@@ -67,6 +69,24 @@ class ImportsController < ApplicationController
         importer.batch_result
       end
     end
+  end
+
+  # Firma diversa dagli altri importer (kwargs account/anno_scolastico/fonte/editore
+  # + #import_rows(items) + #riepilogo), quindi ramo dedicato invece di IMPORTERS.
+  def import_adozioni_comunicate_from_json
+    anno_scolastico = params[:anno_scolastico]
+    return { ok: false, error: "anno_scolastico obbligatorio" } if anno_scolastico.blank?
+
+    items = params[:items]&.map { |i| i.permit!.to_h } || []
+
+    importer = ::Adozioni::Comunicate::Importer.new(
+      account: current_account,
+      anno_scolastico: anno_scolastico,
+      fonte: "mcp",
+      editore: params[:editore].presence
+    )
+    importer.import_rows(items)
+    importer.riepilogo.merge(ok: true)
   end
 
   def set_import
