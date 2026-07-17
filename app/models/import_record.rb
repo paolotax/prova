@@ -39,7 +39,8 @@ class ImportRecord < ApplicationRecord
     documenti: 2,
     confezioni: 3,
     ministeriali: 4,
-    insegnanti: 5
+    insegnanti: 5,
+    adozioni_comunicate: 6
   }
 
   enum :status, {
@@ -57,7 +58,11 @@ class ImportRecord < ApplicationRecord
   def process!
     update_columns(status: self.class.statuses[:processing], started_at: Time.current)
 
-    result = processor_class.new(file, user, metadata: metadata&.stringify_keys, account: account).call
+    result = processor_class.new(
+      file, user,
+      metadata: (metadata&.stringify_keys || {}).merge("import_record_id" => id),
+      account: account
+    ).call
 
     update_columns(
       status: result.success? ? self.class.statuses[:completed] : self.class.statuses[:failed],
