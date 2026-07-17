@@ -6,13 +6,13 @@ class Adozioni::Comunicate::MatcherTest < ActiveSupport::TestCase
   setup do
     @account = accounts(:fizzy)
     Current.account = @account
-    @scuola = scuole(:scuola_fizzy)
-    @scuola.update!(codice_ministeriale: "REEE81001P")
+    @scuola = Scuola.create!(account: @account, denominazione: "PRIMARIA TEST MATCHER",
+                             codice_ministeriale: "TESTMATCH01")
     @classe_3b = crea_classe("3", "B")
     @adozione = Adozione.create!(
       account: @account, classe: @classe_3b, codice_isbn: "9788809917583",
       titolo: "NUOVO VIVA CRESCERE 3", anno_scolastico: "202627",
-      codicescuola: "REEE81001P", anno_corso: "3"
+      codicescuola: "TESTMATCH01", anno_corso: "3"
     )
   end
 
@@ -26,7 +26,7 @@ class Adozioni::Comunicate::MatcherTest < ActiveSupport::TestCase
 
   def crea_comunicata(overrides = {})
     Adozioni::Comunicata.create!({
-      account: @account, anno_scolastico: "202627", codicescuola: "REEE81001P",
+      account: @account, anno_scolastico: "202627", codicescuola: "TESTMATCH01",
       ean: "9788809917583", anno_corso: "3", sezioni: "B", alunni: 25, fonte: "mcp"
     }.merge(overrides))
   end

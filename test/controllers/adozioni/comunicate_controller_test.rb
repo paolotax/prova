@@ -6,18 +6,18 @@ class Adozioni::ComunicateControllerTest < ActionDispatch::IntegrationTest
   setup do
     @account = accounts(:fizzy)
     @user = users(:one)
-    @scuola = scuole(:scuola_fizzy)
-    @scuola.update!(codice_ministeriale: "REEE81001P")
     Current.account = @account
+    @scuola = Scuola.create!(account: @account, denominazione: "PRIMARIA TEST CONTROLLER",
+                             codice_ministeriale: "TESTCTRL01")
 
     @classe = Classe.create!(account: @account, scuola: @scuola, anno_corso: "3",
                              sezione: "B", combinazione: "", stato: "attiva",
                              anno_scolastico: "202627")
     @adozione = Adozione.create!(account: @account, classe: @classe, codice_isbn: "9788809917583",
                                  titolo: "NUOVO VIVA CRESCERE 3", anno_scolastico: "202627",
-                                 codicescuola: "REEE81001P", anno_corso: "3")
+                                 codicescuola: "TESTCTRL01", anno_corso: "3")
     @comunicata = Adozioni::Comunicata.create!(
-      account: @account, anno_scolastico: "202627", codicescuola: "REEE81001P",
+      account: @account, anno_scolastico: "202627", codicescuola: "TESTCTRL01",
       ean: "9788809917583", anno_corso: "3", sezioni: "B", alunni: 25, fonte: "excel"
     )
 
@@ -31,14 +31,14 @@ class Adozioni::ComunicateControllerTest < ActionDispatch::IntegrationTest
     get adozioni_comunicate_path(account_id: @account.id, anno_scolastico: "202627")
 
     assert_response :success
-    assert_match "REEE81001P", @response.body
+    assert_match "TESTCTRL01", @response.body
     assert_select "table.table"
   end
 
   test "index filtra per stato_match" do
     Current.account = @account
     Adozioni::Comunicata.create!(
-      account: @account, anno_scolastico: "202627", codicescuola: "REEE81001P",
+      account: @account, anno_scolastico: "202627", codicescuola: "TESTCTRL01",
       ean: "9791223235485", anno_corso: "4", sezioni: "A", alunni: 10,
       fonte: "excel", stato_match: "adozione_non_trovata"
     )
@@ -64,7 +64,7 @@ class Adozioni::ComunicateControllerTest < ActionDispatch::IntegrationTest
                               sezione: "C", combinazione: "", stato: "attiva",
                               anno_scolastico: "202627", numero_alunni: 10)
     riga_multi = Adozioni::Comunicata.create!(
-      account: @account, anno_scolastico: "202627", codicescuola: "REEE81001P",
+      account: @account, anno_scolastico: "202627", codicescuola: "TESTCTRL01",
       ean: "9788809917583", anno_corso: "3", sezioni: "B,C", alunni: 45,
       fonte: "excel", stato_match: "multi_sezione"
     )

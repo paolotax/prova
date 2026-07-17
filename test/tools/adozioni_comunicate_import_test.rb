@@ -6,14 +6,14 @@ class AdozioniComunicateImportToolTest < ActiveSupport::TestCase
   setup do
     @account = accounts(:fizzy)
     @user = @account.users.first
-    scuola = scuole(:scuola_fizzy)
-    scuola.update!(codice_ministeriale: "REEE81001P")
     Current.account = @account
+    scuola = Scuola.create!(account: @account, denominazione: "PRIMARIA TEST TOOL",
+                            codice_ministeriale: "TESTTOOL01")
     classe = Classe.create!(account: @account, scuola: scuola, anno_corso: "5",
                             sezione: "A", combinazione: "", stato: "attiva",
                             anno_scolastico: "202627")
     Adozione.create!(account: @account, classe: classe, codice_isbn: "9788883886201",
-                     anno_scolastico: "202627", codicescuola: "REEE81001P", anno_corso: "5")
+                     anno_scolastico: "202627", codicescuola: "TESTTOOL01", anno_corso: "5")
     Current.reset
   end
 
@@ -24,7 +24,7 @@ class AdozioniComunicateImportToolTest < ActiveSupport::TestCase
       anno_scolastico: "202627",
       editore: "TREDIECI",
       righe: [
-        { "codicescuola" => "REEE81001P", "ean" => "9788883886201",
+        { "codicescuola" => "TESTTOOL01", "ean" => "9788883886201",
           "titolo" => "LEGGO CON TE 5", "classe" => "5", "sezioni" => "A", "alunni" => 13 },
         { "codicescuola" => "REEE99999X", "ean" => "9788883886195",
           "classe" => "4", "sezioni" => "A", "alunni" => 23 }

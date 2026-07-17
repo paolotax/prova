@@ -6,20 +6,20 @@ class Imports::AdozioniComunicateProcessorTest < ActiveSupport::TestCase
   setup do
     @account = accounts(:fizzy)
     Current.account = @account
-    @scuola = scuole(:scuola_fizzy)
-    @scuola.update!(codice_ministeriale: "REEE81001P")
+    @scuola = Scuola.create!(account: @account, denominazione: "PRIMARIA TEST PROCESSOR",
+                             codice_ministeriale: "TESTPROC01")
     classe = Classe.create!(account: @account, scuola: @scuola, anno_corso: "3",
                             sezione: "B", combinazione: "", stato: "attiva",
                             anno_scolastico: "202627")
     Adozione.create!(account: @account, classe: classe, codice_isbn: "9788809917583",
-                     anno_scolastico: "202627", codicescuola: "REEE81001P", anno_corso: "3")
+                     anno_scolastico: "202627", codicescuola: "TESTPROC01", anno_corso: "3")
   end
 
   teardown { Current.reset }
 
   test "importa il tracciato Giunti e matcha" do
     path = crea_xlsx([
-      ["011302200T", "202627", "REEE81001P", "S. PROSPERO", "VIA ALLENDE 3", "42100",
+      ["011302200T", "202627", "TESTPROC01", "S. PROSPERO", "VIA ALLENDE 3", "42100",
        "REGGIO NELL'EMILIA", "RE", "A0650", "E0650", "9788809917583",
        "NUOVO VIVA CRESCERE CL. 3", "3", "B", "25"]
     ])
