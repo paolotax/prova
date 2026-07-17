@@ -120,6 +120,7 @@
          when "clienti" then clienti_path
          when "documenti" then documenti_path
          when "insegnanti" then @import.metadata&.dig("scuola_id") ? scuola_path(@import.metadata["scuola_id"]) : account_root_path
+         when "adozioni_comunicate" then adozioni_comunicate_path(anno_scolastico: @import.metadata&.dig("anno_scolastico"))
          else account_root_path
        end %>
     <%= link_to target_path, class: "btn" do %>
