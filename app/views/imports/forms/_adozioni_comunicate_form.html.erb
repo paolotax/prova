@@ -1,0 +1,40 @@
+<%= turbo_frame_tag :import_form do %>
+  <article class="panel panel--wide shadow center txt-align-start margin-block-start">
+    <%= form_with model: import, url: imports_path, method: :post,
+        class: "flex flex-column gap",
+        data: { controller: "form upload-preview", turbo_frame: "_top" }, multipart: true do |f| %>
+      <%= f.hidden_field :import_type, value: "adozioni_comunicate" %>
+
+      <h2 class="txt-large margin-none font-weight-black">Importa adozioni comunicate dall'editore</h2>
+
+      <p class="txt-subtle margin-none txt-small">
+        Excel con una riga per classe/sezione (CodMinisteriale, Ean, Classe, Sezione, Alunni).
+        Le righe vengono confrontate con le tue adozioni e il numero alunni aggiorna le classi.
+        Per i PDF usa il tool MCP <code>adozioni_comunicate_import</code> da Claude/GPT.
+      </p>
+
+      <label class="flex flex-column gap-half">
+        <span class="txt-small font-weight-bold">Anno scolastico</span>
+        <%= select_tag "import_record[metadata][anno_scolastico]",
+            options_for_select([["2026/27", "202627"], ["2027/28", "202728"]], "202627"),
+            class: "input input--select" %>
+      </label>
+
+      <label class="btn input--upload">
+        <div data-upload-preview-target="placeholder">Scegli un file Excel...</div>
+        <div data-upload-preview-target="fileName" hidden></div>
+        <%= f.file_field :file,
+            accept: ".xlsx,.xls",
+            required: true,
+            data: { action: "upload-preview#previewFileName", upload_preview_target: "input" } %>
+      </label>
+
+      <%= f.button type: :submit, class: "btn btn--link center" do %>
+        <span>Importa adozioni</span>
+      <% end %>
+    <% end %>
+  </article>
+
+  <%# TODO(Task 8): aggiungere qui il link "Vai al confronto adozioni comunicate" verso
+      adozioni_comunicate_path (route non ancora esistente, arriva col Task 8). %>
+<% end %>

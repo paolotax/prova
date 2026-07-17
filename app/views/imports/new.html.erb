@@ -14,7 +14,7 @@
 
 <article class="panel panel--wide center txt-align-start">
   <div class="flex gap-half">
-    <% %w[libri clienti documenti].each do |type| %>
+    <% %w[libri clienti documenti adozioni_comunicate].each do |type| %>
       <%= link_to new_import_path(type: type),
           class: "btn #{@import_type == type ? 'btn--link' : ''}" do %>
         <%= icon_tag import_type_icon(type), size: "small" %>

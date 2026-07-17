@@ -9,6 +9,7 @@ module ImportsHelper
     when "confezioni" then "cube"
     when "ministeriali" then "folder-arrow-down"
     when "insegnanti" then "academic-cap"
+    when "adozioni_comunicate" then "arrow-down-tray"
     else "arrow-down-tray"
     end
   end
@@ -21,6 +22,7 @@ module ImportsHelper
     when "confezioni" then "Confezioni"
     when "ministeriali" then "A.I.E."
     when "insegnanti" then "Insegnanti"
+    when "adozioni_comunicate" then "Adozioni editore"
     else import_type.to_s.humanize
     end
   end
@@ -31,6 +33,7 @@ module ImportsHelper
     when "clienti" then "txt-positive"
     when "documenti" then "txt-feature"
     when "confezioni" then "txt-alert"
+    when "adozioni_comunicate" then "txt-feature"
     else "txt-subtle"
     end
   end
