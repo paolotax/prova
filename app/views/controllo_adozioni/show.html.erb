@@ -1,6 +1,10 @@
 <% @page_title = @scheda.denominazione.presence || @scheda.codicescuola %>
 
 <% content_for :header do %>
+  <div class="header__actions header__actions--start">
+    <%= back_link_to "", :back %>
+  </div>
+  
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis"><%= @scheda.denominazione.presence || @scheda.codicescuola %></span>
   </h1>
@@ -8,10 +12,6 @@
 
 <div class="ca-page">
   <p class="txt-subtle flex align-center gap-half justify-between">
-    <span>
-      <%= link_to "← Tutte le scuole", controllo_adozioni_index_path(account_id: params[:account_id]) %>
-      &middot; <%= @scheda.codicescuola %>
-    </span>
     <%= link_to "Passaggio anno",
         new_controllo_adozioni_promozione_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
         class: "btn btn--small", data: { turbo_frame: :modal } %>
