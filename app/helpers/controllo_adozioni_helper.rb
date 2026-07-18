@@ -14,7 +14,9 @@ module ControlloAdozioniHelper
   end
 
   # Stato dominante di una Panoramica::Riga per la lista unificata "stato-centrica".
-  # Priorita' (piu' azionabile per prima): promuovi > anomalie > disall > fuori > ok.
+  # Priorita' (piu' azionabile per prima): promuovi > anomalie > fuori > disall > ok.
+  # "fuori" (assente dal MIUR) vince su "disall": con conteggi MIUR 0/0 la scuola
+  # risulterebbe sempre anche disallineata, ma l'informazione utile e' l'assenza.
   # => { stato:, badge_class:, badge_label:, azione: } (azione = simbolo reso nel partial).
   def stato_riga(riga)
     if riga.promuovibile?
@@ -22,10 +24,10 @@ module ControlloAdozioniHelper
     elsif riga.anomalie?
       n = riga.anomalie_count.to_i
       { stato: "anomalie", badge_class: "badge--mancante", badge_label: "#{n} #{n == 1 ? 'anomalia' : 'anomalie'}", azione: :vedi }
-    elsif riga.disallineata?
-      { stato: "disall",   badge_class: "badge--grey",     badge_label: "Disallineata",   azione: :none }
     elsif riga.mancante_miur?
       { stato: "fuori",    badge_class: "badge--grey",     badge_label: "Non nel MIUR",   azione: :none }
+    elsif riga.disallineata?
+      { stato: "disall",   badge_class: "badge--grey",     badge_label: "Disallineata",   azione: :none }
     else
       { stato: "ok",       badge_class: "badge--ok",       badge_label: "A posto",        azione: :none }
     end
