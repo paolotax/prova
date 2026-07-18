@@ -46,6 +46,24 @@ class Miur::Adozione < ApplicationRecord
   scope :per_anno, ->(anno) { where(anno_scolastico: anno) }
   scope :correnti, -> { per_anno(Miur.anno_corrente) }
 
+  # Testi EE di religione/alternativa negli anni "di mezzo" dei volumi
+  # pluriennali (2ª-3ª sul vol. 1-2-3, 5ª sul vol. 4-5): il MIUR li pubblica
+  # con DAACQUIST=Si ma il volume e' gia' posseduto dall'anno d'acquisto —
+  # vanno normalizzati a No (miur:cambia_religione + staging di
+  # miur:importa_adozioni). Le grafie con spazio finale sono reali nei CSV.
+  RELIGIONE_EE_ANNI = %w[2 3 5].freeze
+  RELIGIONE_EE_DISCIPLINE = [
+    "RELIGIONE",
+    "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94",
+    "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 ",
+    "RELIGIONE CATTOLICA/ATTIVITA' ALTERNATIVA",
+    "RELIGIONE CATTOLICA/ATTIVITA' ALTERNATIVA ",
+  ].freeze
+
+  scope :religione_ee_da_normalizzare, -> {
+    where(tipogradoscuola: "EE", annocorso: RELIGIONE_EE_ANNI, disciplina: RELIGIONE_EE_DISCIPLINE)
+  }
+
   # Adozioni degli editori sotto mandato dell'account corrente (ex
   # ImportAdozione.mie_adozioni, che filtrava per Current.user.miei_editori).
   scope :mie_adozioni, -> {

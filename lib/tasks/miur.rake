@@ -148,6 +148,23 @@ namespace :miur do
       SQL
       puts "Duplicati esatti MIUR rimossi dalla staging: #{deleted}"
 
+      # 2b-bis. Normalizzazione religione EE in staging, PRIMA dello swap: il CSV
+      #     MIUR pubblica i pluriennali di religione con DAACQUIST=Si anche negli
+      #     anni in cui il volume e' gia' posseduto. Farlo qui (e non solo col
+      #     task miur:cambia_religione a valle) copre anche i run manuali del
+      #     task senza scraper, elimina la finestra live denormalizzata e il
+      #     churn finto nel diff import. Stessi criteri del task (scope
+      #     religione_ee_da_normalizzare): la sorgente e' Miur::Adozione.
+      normalizzate = conn.execute(ApplicationRecord.sanitize_sql([<<~SQL, Miur::Adozione::RELIGIONE_EE_ANNI, Miur::Adozione::RELIGIONE_EE_DISCIPLINE])).cmd_tuples
+        UPDATE #{MIUR_ADOZIONI_STG}
+        SET daacquist = 'No'
+        WHERE tipogradoscuola = 'EE'
+          AND annocorso IN (?)
+          AND disciplina IN (?)
+          AND daacquist IS DISTINCT FROM 'No'
+      SQL
+      puts "Religione EE normalizzata in staging (daacquist -> No): #{normalizzate} righe"
+
       # 2c. Tripwire anti-rollover: se al cambio campagna l'anagrafe scuole non
       #     è ancora aggiornata, l'anno timbrato è quello VECCHIO e lo swap
       #     sovrascriverebbe la partizione dell'anno passato con i CSV nuovi
@@ -413,10 +430,7 @@ namespace :miur do
     count = nil
     Benchmark.bm do |x|
       x.report("agg. RELIGIONE") {
-        count = Miur::Adozione.correnti
-          .where(tipogradoscuola: "EE")
-          .where(annocorso: ["2", "3", "5"], disciplina: ["RELIGIONE", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94", "ADOZIONE ALTERNATIVA ART. 156 D.L. 297/94 ", "RELIGIONE CATTOLICA/ATTIVITA' ALTERNATIVA", "RELIGIONE CATTOLICA/ATTIVITA' ALTERNATIVA "])
-          .update_all(daacquist: "No")
+        count = Miur::Adozione.correnti.religione_ee_da_normalizzare.update_all(daacquist: "No")
       }
     end
     puts "Righe aggiornate: #{count}"
