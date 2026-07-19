@@ -1,4 +1,8 @@
-<%# Sostituisce la card del libro nella lista index dopo back-navigation. %>
+<%# Sostituisce card/riga del libro nella lista index dopo back-navigation. %>
 <%= turbo_stream.replace dom_id(@libro) do %>
-  <%= render "libri/libro", libro: @libro %>
+  <% if cookies[:libri_vista] == "tabella" %>
+    <%= render "libri/table/row", libro: @libro %>
+  <% else %>
+    <%= render "libri/libro", libro: @libro %>
+  <% end %>
 <% end %>

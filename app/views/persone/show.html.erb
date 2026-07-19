@@ -5,12 +5,15 @@
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
     <% if @persona.scuola.present? %>
-      <%= back_link_to_url @persona.scuola.denominazione.capitalize, scuola_path(@persona.scuola) %>
+      <%= back_link_to @persona.scuola.denominazione.capitalize, scuola_path(@persona.scuola) %>
     <% else %>
-      <%= back_link_to_url "Persone", persone_path %>
+      <%= back_link_to "Persone", persone_path %>
     <% end %>
   </div>
 <% end %>
+
+<%= tag.meta name: "back-refresh-url", content: persona_path(@persona, card: true) %>
+<%= tag.meta name: "back-refresh-target", content: dom_id(@persona) %>
 
 <div class="full-width pad group">
   <%= render "persone/container", persona: @persona, appunti: @appunti,

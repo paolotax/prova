@@ -17,6 +17,7 @@
 <% end %>
 
 <%= tag.meta name: "back-refresh-url", content: libro_path(@libro, card: true) %>
+<%= tag.meta name: "back-refresh-target", content: dom_id(@libro) %>
 
 <div class="full-width card-grid pad group show-navigator">
   <%= render "libri/container", libro: @libro, suggeriti: @suggeriti_fascicoli %>

@@ -12,6 +12,9 @@
   </div>
 <% end %>
 
+<%= tag.meta name: "back-refresh-url", content: scuola_path(@scuola, card: true) %>
+<%= tag.meta name: "back-refresh-target", content: dom_id(@scuola) %>
+
 <% if Current.scuole.where(id: @scuola.id).exists? %>
   <div class="full-width pad group">
     <%= render "scuole/container", scuola: @scuola %>

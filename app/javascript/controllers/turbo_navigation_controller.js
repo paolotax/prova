@@ -6,6 +6,23 @@ const renderStream = (url) =>
     .then(html => html && Turbo.renderStreamMessage(html))
     .catch(e => console.error("Failed to refresh on back-navigation:", e))
 
+// Riporta selezione/focus sull'elemento in lista da cui si è partiti, in modo
+// deterministico tramite il controller navigable-list (no hover/mouseenter).
+const selectInList = (elementId) => {
+  requestAnimationFrame(() => {
+    const el = document.getElementById(elementId)
+    if (!el) return
+    const listEl = el.closest("[data-controller~='navigable-list']")
+    const controller = listEl && window.Stimulus?.getControllerForElementAndIdentifier(listEl, "navigable-list")
+    if (controller) {
+      controller.selectItem(el)
+    } else {
+      el.scrollIntoView({ block: "center" })
+      el.focus({ preventScroll: true })
+    }
+  })
+}
+
 // La selezione (aria-selected) è stato UI transitorio: non deve finire nello
 // snapshot in cache, altrimenti al ritorno la riga vista la volta prima viene
 // ri-evidenziata per un istante prima di selezionare quella giusta (sfarfallio).
@@ -21,8 +38,12 @@ document.addEventListener("turbo:load", () => {
   const refreshUrl = sessionStorage.getItem("lastBackRefreshUrl")
   if (refreshUrl) {
     sessionStorage.removeItem("lastBackRefreshUrl")
+    const targetId = sessionStorage.getItem("lastBackRefreshTargetId")
+    sessionStorage.removeItem("lastBackRefreshTargetId")
     const sep = refreshUrl.includes("?") ? "&" : "?"
-    renderStream(`${refreshUrl}${sep}_=${Date.now()}`)
+    renderStream(`${refreshUrl}${sep}_=${Date.now()}`).then(() => {
+      if (targetId) selectInList(targetId)
+    })
   }
 
   // Entry-based refresh (appunti/documenti/tappe…)
@@ -34,29 +55,18 @@ document.addEventListener("turbo:load", () => {
   const match = window.location.pathname.match(/^\/([a-f0-9-]{36}|\d+)(?:\/|$)/i)
   if (!match) return
 
-  // Sull'index documenti in vista tabella il nodo in lista è una riga, non una
-  // card: chiedi al server la variante "row" (default tabella se il cookie manca).
+  // Su un index in vista tabella il nodo in lista è una riga, non una card:
+  // chiedi al server la variante "row" (default per-risorsa se il cookie manca).
+  const VISTA_DEFAULTS = { documenti: "tabella", appunti: "card" }
   let variant = ""
-  if (/\/documenti(?:\/|\?|$)/.test(window.location.pathname)) {
-    const vista = (document.cookie.match(/(?:^|;\s*)documenti_vista=([^;]+)/) || [])[1]
-    if (vista !== "card") variant = "&as=row"
+  const list = (window.location.pathname.match(/\/(documenti|appunti)(?:\/|$)/) || [])[1]
+  if (list) {
+    const vista = (document.cookie.match(new RegExp(`(?:^|;\\s*)${list}_vista=([^;]+)`)) || [])[1] || VISTA_DEFAULTS[list]
+    if (vista === "tabella") variant = "&as=row"
   }
 
   renderStream(`/${match[1]}/entries/${entryId}?_=${Date.now()}${variant}`).then(() => {
-    // Riporta selezione/focus sulla riga (o card) da cui si è partiti, in modo
-    // deterministico tramite il controller navigable-list (no hover/mouseenter).
-    requestAnimationFrame(() => {
-      const el = document.getElementById(`entry_${entryId}`)
-      if (!el) return
-      const listEl = el.closest("[data-controller~='navigable-list']")
-      const controller = listEl && window.Stimulus?.getControllerForElementAndIdentifier(listEl, "navigable-list")
-      if (controller) {
-        controller.selectItem(el)
-      } else {
-        el.scrollIntoView({ block: "center" })
-        el.focus({ preventScroll: true })
-      }
-    })
+    selectInList(`entry_${entryId}`)
   })
 })
 
@@ -82,6 +92,10 @@ export default class extends Controller {
       const refreshUrl = document.querySelector('meta[name="back-refresh-url"]')?.content
       if (refreshUrl) {
         sessionStorage.setItem("lastBackRefreshUrl", refreshUrl)
+        const targetId = document.querySelector('meta[name="back-refresh-target"]')?.content
+        if (targetId) {
+          sessionStorage.setItem("lastBackRefreshTargetId", targetId)
+        }
       }
       sessionStorage.removeItem("referrerUrl")
 

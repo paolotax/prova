@@ -1,0 +1,8 @@
+<%# Sostituisce card/riga del cliente nella lista index dopo back-navigation. %>
+<%= turbo_stream.replace dom_id(@cliente) do %>
+  <% if cookies[:clienti_vista] == "tabella" %>
+    <%= render "clienti/table/row", cliente: @cliente %>
+  <% else %>
+    <%= render "clienti/cliente", cliente: @cliente %>
+  <% end %>
+<% end %>

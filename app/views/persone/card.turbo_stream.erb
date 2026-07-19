@@ -1,0 +1,8 @@
+<%# Sostituisce card/riga della persona nella lista index dopo back-navigation. %>
+<%= turbo_stream.replace dom_id(@persona) do %>
+  <% if cookies[:persone_vista] == "tabella" %>
+    <%= render "persone/table/row", persona: @persona %>
+  <% else %>
+    <%= render "persone/persona", persona: @persona %>
+  <% end %>
+<% end %>

@@ -1,0 +1,8 @@
+<%# Sostituisce card/riga della scuola nella lista index dopo back-navigation. %>
+<%= turbo_stream.replace dom_id(@scuola) do %>
+  <% if cookies[:scuole_vista] == "tabella" %>
+    <%= render "scuole/table/row", scuola: @scuola %>
+  <% else %>
+    <%= render "scuole/scuola", scuola: @scuola %>
+  <% end %>
+<% end %>

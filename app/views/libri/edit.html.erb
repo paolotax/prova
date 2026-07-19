@@ -13,6 +13,7 @@
 <% end %>
 
 <%= tag.meta name: "back-refresh-url", content: libro_path(@libro, card: true) %>
+<%= tag.meta name: "back-refresh-target", content: dom_id(@libro) %>
 
 <%
   @movimenti = Libro::Movimenti.new(@libro)
