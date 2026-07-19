@@ -16,7 +16,7 @@
 
 <%= tag.article id: (entry ? dom_id(entry) : dom_id(appunto)),
     class: class_names("card", appunto_stato_modifier(appunto), appunto_golden_class(appunto)),
-    style: "--card-color: #{appunto_color(appunto)};",
+    style: "--card-color: #{appunto_color(appunto)}; view-transition-name: #{dom_id(appunto)};",
     tabindex: 0,
     draggable: (draggable && entry.present?),
     data: card_data do %>

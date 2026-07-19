@@ -2,7 +2,7 @@
 
 <%= tag.article id: dom_id(libro),
     class: "card",
-    style: "--card-color: #{libro_color(libro)}",
+    style: "--card-color: #{libro_color(libro)}; view-transition-name: #{dom_id(libro)};",
     tabindex: 0,
     data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection" } do %>
 

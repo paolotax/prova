@@ -4,7 +4,7 @@
 
 <%= tag.div id: dom_id(persona),
       class: "data-row",
-      style: "--card-color: #{persona.scuola ? tipo_scuola_color(persona.scuola.tipo_scuola) : 'var(--color-card-1)'}; --cols: #{Persona::Columns.grid_template(columns)};",
+      style: "--card-color: #{persona.scuola ? tipo_scuola_color(persona.scuola.tipo_scuola) : 'var(--color-card-1)'}; --cols: #{Persona::Columns.grid_template(columns)}; view-transition-name: #{dom_id(persona)};",
       role: "row",
       tabindex: 0,
       data: {

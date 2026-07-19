@@ -2,7 +2,7 @@
 
 <%= tag.article id: dom_id(scuola),
     class: "card",
-    style: "--card-color: #{tipo_scuola_color(scuola.tipo_scuola)}",
+    style: "--card-color: #{tipo_scuola_color(scuola.tipo_scuola)}; view-transition-name: #{dom_id(scuola)};",
     tabindex: 0,
     data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection" } do %>
   <label class="card__checkbox">

@@ -7,7 +7,7 @@
   
   
   <div class="card-perma__bg">
-    <article class="card">
+    <article class="card" style="view-transition-name: <%= dom_id(cliente) %>;">
       <header class="card__header">
         <%= render "clienti/display/perma/board", cliente: cliente %>
       </header>

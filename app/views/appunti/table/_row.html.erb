@@ -6,7 +6,7 @@
 <%= tag.div id: (entry ? dom_id(entry) : dom_id(appunto)),
       class: class_names("data-row", appunto_stato_modifier(appunto), appunto_golden_class(appunto),
                          "data-row--closed": appunto.closed?),
-      style: "--card-color: #{appunto_color(appunto)}; --cols: #{Appunto::Columns.grid_template(columns)};",
+      style: "--card-color: #{appunto_color(appunto)}; --cols: #{Appunto::Columns.grid_template(columns)}; view-transition-name: #{dom_id(appunto)};",
       role: "row",
       tabindex: 0,
       data: {

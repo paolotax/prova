@@ -7,7 +7,7 @@
   </div>
 
   <div class="card-perma__bg">
-    <article class="card <%= appunto_golden_class(appunto) %>">
+    <article class="card <%= appunto_golden_class(appunto) %>" style="view-transition-name: <%= dom_id(appunto) %>;">
       <header class="card__header">
         <%= render "appunti/display/perma/board", appunto: appunto %>
         <%= render "appunti/display/perma/tags", appunto: appunto %>

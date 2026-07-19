@@ -2,7 +2,7 @@
 
 <%= tag.article id: dom_id(persona),
     class: "card",
-    style: "--card-color: #{persona.scuola ? tipo_scuola_color(persona.scuola.tipo_scuola) : 'var(--color-card-1)'}",
+    style: "--card-color: #{persona.scuola ? tipo_scuola_color(persona.scuola.tipo_scuola) : 'var(--color-card-1)'}; view-transition-name: #{dom_id(persona)};",
     tabindex: 0,
     data: { navigable_list_target: "item", action: "mouseenter->navigable-list#hoverSelect" } do %>
 

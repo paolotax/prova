@@ -2,7 +2,7 @@
 
 <section id="<%= dom_id(libro, :container) %>" class="card-perma" style="--card-color: <%= libro_sconto_color(libro) %>;">
   <div class="card-perma__bg">
-    <article class="card">
+    <article class="card" style="view-transition-name: <%= dom_id(libro) %>;">
       <header class="card__header">
         <%= render "libri/display/perma/board", libro: libro %>
       </header>

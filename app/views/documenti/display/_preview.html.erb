@@ -15,7 +15,7 @@
 
 <%= tag.article id: (entry ? dom_id(entry) : dom_id(documento)),
     class: class_names("card", documento_causale_modifier(documento), documento_golden_class(documento)),
-    style: "--card-color: #{documento_color(documento)};",
+    style: "--card-color: #{documento_color(documento)}; view-transition-name: #{dom_id(documento)};",
     tabindex: 0,
     draggable: (draggable && entry.present?),
     data: card_data do %>

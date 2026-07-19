@@ -24,7 +24,7 @@
   </div>
 
   <div class="card-perma__bg">
-    <article class="card <%= 'golden-effect' if documento.golden? %>">
+    <article class="card <%= 'golden-effect' if documento.golden? %>" style="view-transition-name: <%= dom_id(documento) %>;">
       <header class="card__header">
         <div id="<%= dom_id(documento, :board) %>">
           <%= render "documenti/display/perma/board", documento: documento %>

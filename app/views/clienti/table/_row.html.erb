@@ -4,7 +4,7 @@
 
 <%= tag.div id: dom_id(cliente),
       class: "data-row",
-      style: "--card-color: #{cliente_color(cliente)}; --cols: #{Cliente::Columns.grid_template(columns)};",
+      style: "--card-color: #{cliente_color(cliente)}; --cols: #{Cliente::Columns.grid_template(columns)}; view-transition-name: #{dom_id(cliente)};",
       role: "row",
       tabindex: 0,
       data: {

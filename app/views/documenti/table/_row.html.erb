@@ -8,7 +8,7 @@
       class: class_names("data-row", documento_causale_modifier(documento), documento_golden_class(documento),
                          "data-row--closed": documento.closed?,
                          "data-row--selected": @documento == documento),
-      style: "--card-color: #{documento_color(documento)}; --cols: #{Documento::Columns.grid_template(columns)};",
+      style: "--card-color: #{documento_color(documento)}; --cols: #{Documento::Columns.grid_template(columns)}; view-transition-name: #{dom_id(documento)};",
       role: "row",
       tabindex: 0,
       data: {

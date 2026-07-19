@@ -4,7 +4,7 @@
 
 <%= tag.div id: dom_id(libro),
       class: "data-row",
-      style: "--card-color: #{libro_color(libro)}; --cols: #{Libro::Columns.grid_template(columns)};",
+      style: "--card-color: #{libro_color(libro)}; --cols: #{Libro::Columns.grid_template(columns)}; view-transition-name: #{dom_id(libro)};",
       role: "row",
       tabindex: 0,
       data: {

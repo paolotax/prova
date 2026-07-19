@@ -16,7 +16,7 @@
   </div>
 
   <div class="card-perma__bg">
-    <article class="card <%= tappa.golden? ? 'golden-effect' : '' %>">
+    <article class="card <%= tappa.golden? ? 'golden-effect' : '' %>" style="view-transition-name: <%= dom_id(tappa) %>;">
       <header class="card__header">
         <%= render "tappe/display/perma/board", tappa: tappa %>
         <%= render "tappe/display/perma/tags", tappa: tappa %>

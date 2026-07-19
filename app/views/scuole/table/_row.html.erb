@@ -4,7 +4,7 @@
 
 <%= tag.div id: dom_id(scuola),
       class: "data-row",
-      style: "--card-color: #{tipo_scuola_color(scuola.tipo_scuola)}; --cols: #{Scuola::Columns.grid_template(columns)};",
+      style: "--card-color: #{tipo_scuola_color(scuola.tipo_scuola)}; --cols: #{Scuola::Columns.grid_template(columns)}; view-transition-name: #{dom_id(scuola)};",
       role: "row",
       tabindex: 0,
       data: {

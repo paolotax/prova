@@ -12,7 +12,7 @@
 	</div>
 
 	<div class="card-perma__bg">
-		<article class="card">
+		<article class="card" style="view-transition-name: <%= dom_id(scuola) %>;">
 			<header class="card__header">
 				<%= render "scuole/display/perma/board", scuola: scuola %>
 				<%= render "scuole/display/perma/tags", scuola: scuola %>
