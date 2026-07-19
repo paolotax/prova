@@ -162,6 +162,11 @@
       background-color: var(--color-canvas);
       color: var(--color-ink);
     }
+
+    optgroup {
+      background-color: var(--color-canvas);
+      color: var(--color-ink-light);
+    }
   }
 
   .input--date {
