@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class Appunti::PrintsController < ApplicationController
+  include Appunti::BulkResolvable
+
   # POST /appunti/prints
   # Bulk print selected appunti as PDF
   def create
-    @appunti = current_account.appunti.where(id: params[:ids])
+    @appunti = bulk_appunti
 
     respond_to do |format|
       format.pdf do

@@ -1,10 +1,12 @@
 # frozen_string_literal: true
 
 class Appunti::BulkTappeController < ApplicationController
+  include Appunti::BulkResolvable
+
   # POST /appunti/bulk_tappe
   # Create tappe for selected appunti's scuole
   def create
-    @appunti = current_account.appunti.where(id: params[:ids])
+    @appunti = bulk_appunti
     scuola_ids = @appunti.where(appuntabile_type: "Scuola").pluck(:appuntabile_id).uniq
     scuole = current_account.scuole.where(id: scuola_ids)
 
