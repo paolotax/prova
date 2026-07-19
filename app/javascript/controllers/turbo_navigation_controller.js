@@ -23,6 +23,23 @@ const selectInList = (elementId) => {
   })
 }
 
+// Turbo scrolla in cima a fine visita, ma con le view transitions il reset
+// arriva solo dopo la fine dell'animazione — o mai, se il browser scarta la
+// transizione (es. view-transition-name duplicati con più pagine di righe
+// caricate): la show resterebbe alla posizione di scroll della lista.
+// Forza il top al render delle visit advance; restore (posizione ripristinata
+// dalla history) e morph (refresh con scroll preserve) restano esclusi.
+let lastVisitAction = null
+document.addEventListener("turbo:visit", (event) => {
+  lastVisitAction = event.detail?.action
+})
+document.addEventListener("turbo:render", (event) => {
+  if (lastVisitAction === "advance" && event.detail?.renderMethod === "replace" && !window.location.hash) {
+    window.scrollTo(0, 0)
+  }
+})
+document.addEventListener("turbo:load", () => { lastVisitAction = null })
+
 // La selezione (aria-selected) è stato UI transitorio: non deve finire nello
 // snapshot in cache, altrimenti al ritorno la riga vista la volta prima viene
 // ri-evidenziata per un istante prima di selezionare quella giusta (sfarfallio).
