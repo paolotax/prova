@@ -21,9 +21,13 @@
      DataTable::Columns.style) così sfondi e bordi coprono tutta l'area
      scrollata. Sotto il breakpoint mobile le righe si impilano e il minimo
      non serve. Nota: dentro lo scroller la sticky dell'header aggancia lo
-     scroller, non più lo scroll di pagina. */
+     scroller, non più lo scroll di pagina. Come i blocchi Fizzy (.cards--grid,
+     .card-columns), si auto-limita a --main-width centrato: su schermi grandi
+     la tabella non occupa tutta la pagina; se le colonne chiedono più spazio
+     scrolla dentro il box. */
   .data-table--scroller {
-    max-inline-size: 100%;
+    margin-inline: auto;
+    max-inline-size: min(100%, var(--main-width));
     overflow-x: auto;
   }
 

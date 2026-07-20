@@ -4,13 +4,15 @@
 
 @layer components {
 
-  /* Container - Centered, fit-content (cresce con la tabella, max viewport)
+  /* Container - Centered, fit-content (cresce con la tabella, max viewport).
+     Come gli altri blocchi pagina (.cards--grid, .data-table--scroller) il
+     tetto è --main-width: su schermi grandi le tabelle non superano i 1400px.
   /* ------------------------------------------------------------------------ */
 
   .stats-container {
     inline-size: fit-content;
     margin-inline: auto;
-    max-inline-size: 100%;
+    max-inline-size: min(100%, var(--main-width));
     padding-inline: var(--block-space);
     text-align: start;
 
@@ -157,6 +159,8 @@
     border: var(--result-border);
     border-radius: 0.5rem;
     inline-size: 100%;
+    margin-inline: auto;
+    max-inline-size: min(100%, var(--main-width));
     overflow: auto;
   }
 

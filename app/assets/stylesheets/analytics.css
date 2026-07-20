@@ -6,10 +6,10 @@
 
   /* Pagina controllo adozioni (index + show): container a larghezza FISSA.
      A differenza di .stats-container (fit-content, la larghezza segue il contenuto e
-     "salta" tra le pagine), qui la larghezza è stabile e centrata. Ritoccabile via
-     --ca-page-width. */
+     "salta" tra le pagine), qui la larghezza è stabile e centrata. Allineata a
+     --main-width come tutti i blocchi pagina; ritoccabile via --ca-page-width. */
   .ca-page {
-    --ca-page-width: 62rem;
+    --ca-page-width: var(--main-width);
 
     inline-size: min(var(--ca-page-width), 100%);
     margin-inline: auto;

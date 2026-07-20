@@ -4,15 +4,16 @@
  * ========================================================================== */
 
 @layer components {
-  /* Da desktop larghezza fissa e uguale per tutte le pagine admin; sotto
-     i 1024px la pagina riempie lo schermo e solo le tabelle larghe fanno
-     scorrere in orizzontale (override overflow nel layout) */
+  /* Da desktop larghezza fissa e uguale per tutte le pagine admin,
+     allineata a --main-width come il resto dell'app; sotto i 1024px la
+     pagina riempie lo schermo e solo le tabelle larghe fanno scorrere
+     in orizzontale (override overflow nel layout) */
   .admin-container {
     margin-inline: auto;
     padding: var(--block-space);
 
     @media (min-width: 1024px) {
-      inline-size: 960px;
+      inline-size: min(var(--main-width), 100%);
     }
   }
 
