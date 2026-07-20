@@ -15,7 +15,8 @@
 
   <%= tag.div class: "flex-inline", data: {
         controller: "dialog multi-selection-combobox",
-        action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close->multi-selection-combobox#restore",
+        dialog_modal_value: true,
+        action: "keydown.esc->dialog#close:stop dialog:close->multi-selection-combobox#restore",
         multi_selection_combobox_no_selection_label_value: "Colonne di default" } do %>
     <button type="button" class="btn" data-action="click->dialog#toggle:stop"
             data-controller="tooltip" data-tooltip-content-value="Scegli colonne">
@@ -27,7 +28,7 @@
       <%= hidden_field_tag "colonne[]", nil %>
     </template>
 
-    <%= tag.dialog class: "margin-block-start-half popup panel flex-column align-start gap-half fill-white shadow txt-small",
+    <%= tag.dialog class: "popup panel flex-column align-start gap-half fill-white shadow txt-small",
         data: { dialog_target: "dialog", action: "turbo:before-cache@document->dialog#close" },
         aria: { label: "Colonne" } do %>
       <strong class="popup__title">Colonne</strong>

@@ -114,7 +114,21 @@
     justify-content: flex-end;
     position: relative;
 
-    dialog { inset-inline-end: 0; inset-inline-start: auto; }
+    /* Il picker si apre come modale (showModal, top layer): centrato nel
+       viewport e sempre sopra le barre sticky/fixed della pagina. Qui si
+       annullano posizionamento e transform ereditati da .popup (pensati per
+       i dropdown ancorati della barra filtri): il dialog partiva a metà
+       pagina e finiva sotto la bar in fondo. Il tetto di altezza lascia
+       sempre aria sopra e sotto (footer compreso), la lista interna scrolla
+       col footer pinned. */
+    dialog {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      transform: none;
+      block-size: fit-content;
+      max-block-size: min(70dvh, calc(100dvh - 2 * (var(--footer-height) + var(--block-space))));
+    }
   }
 
   /* Riga
