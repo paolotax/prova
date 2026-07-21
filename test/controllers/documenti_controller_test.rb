@@ -17,14 +17,15 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_select "h1", /Documenti/i
     assert_select ".data-table"
-    assert_select ".doc-stato-tabs"
+    assert_select ".analytics-summary"
   end
 
-  test "stato tabs render even with no results" do
+  test "stato cards render even with no results" do
     get documenti_path(account_id: @account.id) # default "attivi", fixtures senza Entry
 
     assert_response :success
-    assert_select ".doc-stato-tabs"
+    assert_select ".analytics-summary"
+    assert_select ".analytics-summary__card--active", /attivi/i
   end
 
   test "index renders document rows" do
@@ -35,11 +36,11 @@ class DocumentiControllerTest < ActionDispatch::IntegrationTest
     assert_match @documento.causale.causale.upcase, response.body
   end
 
-  test "stato tabs filter by stato_documento" do
+  test "stato cards filter by stato_documento" do
     get documenti_path(account_id: @account.id, stato_documento: "completati")
 
     assert_response :success
-    assert_select ".doc-stato-tab--active", /Completati/i
+    assert_select ".analytics-summary__card--active", /completati/i
   end
 
   test "ricerca per numero documento" do

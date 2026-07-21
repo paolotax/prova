@@ -52,7 +52,17 @@
     filter_type: "documento_filter" %>
 
 <%= turbo_frame_tag :search_results do %>
-  <%= render "documenti/stato_tabs", filter: @filter, counts: @stato_counts %>
+  <%= render "shared/analytics_filter_cards",
+        url: documenti_path,
+        param: :stato_documento,
+        current: @filter.stato_documento.presence || "attivi",
+        cards: [
+          { key: "tutti",         value: number_with_delimiter(@stato_counts["tutti"]),         label: "tutti" },
+          { key: "attivi",        value: number_with_delimiter(@stato_counts["attivi"]),        label: "attivi" },
+          { key: "da_consegnare", value: number_with_delimiter(@stato_counts["da_consegnare"]), label: "da consegnare" },
+          { key: "da_pagare",     value: number_with_delimiter(@stato_counts["da_pagare"]),     label: "da pagare" },
+          { key: "completati",    value: number_with_delimiter(@stato_counts["completati"]),    label: "completati", value_class: "txt-positive" }
+        ] %>
 
   <% unless @page.used? %>
     <%= blank_slate_for(:documenti, filtering: @user_filtering) %>
