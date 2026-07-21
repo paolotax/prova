@@ -21,7 +21,9 @@
         class: "flex flex-column gap",
         data: { controller: "form upload-preview", turbo_frame: "_top" }, multipart: true do |f| %>
       <%= f.hidden_field :import_type, value: "documenti" %>
-      <%= f.hidden_field "import_record[metadata][format]", value: doc_subtype %>
+      <%# Name letterale: f.hidden_field lo anniderebbe in import_record[import_record[...]]
+          e permit(metadata: {}) lo scarterebbe. %>
+      <%= hidden_field_tag "import_record[metadata][format]", doc_subtype %>
 
       <% case doc_subtype %>
       <% when "xml" %>
@@ -41,13 +43,13 @@
 
         <div class="flex flex-column gap-half">
           <strong class="txt-small">Documento di destinazione</strong>
-          <%= f.select "import_record[metadata][documento_id]",
+          <%= select_tag "import_record[metadata][documento_id]",
               options_from_collection_for_select(
                 current_account.documenti.order(data_documento: :desc).limit(50),
                 :id,
                 ->(d) { "#{d.numero_documento} - #{d.clientable&.denominazione} (#{d.data_documento&.strftime('%d/%m/%Y')})" }
               ),
-              { prompt: "Seleziona un documento" },
+              prompt: "Seleziona un documento",
               class: "input input--select", required: true %>
         </div>
 

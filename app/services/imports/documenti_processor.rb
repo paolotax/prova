@@ -33,6 +33,11 @@ module Imports
     end
 
     def process_excel
+      if @metadata["documento_id"].blank?
+        add_error("Nessun documento di destinazione selezionato: riprova scegliendo il documento dal form")
+        return
+      end
+
       documento = @account.documenti.find(@metadata["documento_id"])
       righe_con_errori = []
 
