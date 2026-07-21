@@ -9,6 +9,7 @@
     flex-wrap: wrap;
     gap: var(--inline-space-half);
     justify-content: center;
+    margin-block: var(--block-space);
     padding-block-start: 2px; /* prevents input focus-ring clipping on mobile */
     position: relative;
     view-transition-name: filters;
