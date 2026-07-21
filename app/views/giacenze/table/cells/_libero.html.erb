@@ -1,3 +1,0 @@
-<%# locals: (libro:, giacenza:) -%>
-
-<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile <%= 'txt-negative font-weight-bold' if giacenza.disponibilita_libera.negative? %>"><%= dash_if_zero(giacenza.disponibilita_libera) %></div>

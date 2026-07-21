@@ -2,29 +2,27 @@
 
 <%= tag.div class: "quick-filter",
       data: {
-        controller: "dialog filter combobox",
-        action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close@document->filter#clearInput",
+        controller: "dialog filter multi-selection-combobox",
+        action: "keydown.esc->dialog#close click@document->dialog#closeOnClickOutside dialog:close@document->filter#clearInput dialog:close->multi-selection-combobox#restore",
         filter_show: user_filtering.show_stato_giacenza?,
-        combobox_default_label_value: "Stato..." } do %>
+        multi_selection_combobox_no_selection_label_value: "Colonne..." } do %>
   <button type="button" class="btn input input--select flex-inline txt-x-small" data-action="click->dialog#toggle:stop">
-    <span class="overflow-ellipsis" data-combobox-target="label">
-      <%= filter.stato.present? ? user_filtering.stati_giacenza_disponibili[filter.stato] : "Stato..." %>
-    </span>
+    <span class="overflow-ellipsis" data-multi-selection-combobox-target="label"></span>
   </button>
 
-  <template data-combobox-target="hiddenFieldTemplate">
-    <%= hidden_field_tag :stato, nil, data: { filter_settings_target: "field" } %>
+  <template data-multi-selection-combobox-target="hiddenFieldTemplate">
+    <%= hidden_field_tag "stati[]", nil, data: { filter_settings_target: "field" } %>
   </template>
 
-  <%= filter_dialog "Stato..." do %>
-    <strong class="popup__title">Filtra per stato...</strong>
+  <%= filter_dialog "Colonne...", apply_button: true do %>
+    <strong class="popup__title">Filtra per colonne...</strong>
 
     <ul class="popup__list" data-filter-target="list" role="listbox">
       <% user_filtering.stati_giacenza_disponibili.each do |stato_key, stato_label| %>
-        <%= tag.li class: "popup__item", data: {
-              navigable_list_target: "item", combobox_target: "item", combobox_value: stato_key, combobox_label: stato_label },
-              role: "checkbox", aria: { checked: filter.stato == stato_key } do %>
-          <button type="button" class="btn popup__btn" data-action="dialog#close combobox#change filter-settings#change form#submit">
+        <%= content_tag(:li, class: "popup__item", data: {
+              filter_target: "item", navigable_list_target: "item", multi_selection_combobox_target: "item", multi_selection_combobox_value: stato_key, multi_selection_combobox_label: stato_label },
+              role: "checkbox", aria: { checked: filter.stati.include?(stato_key) }) do %>
+          <button type="button" class="btn popup__btn" data-action="multi-selection-combobox#change">
             <span class="overflow-ellipsis flex-item-grow"><%= stato_label %></span>
             <%= icon_tag "check", class: "checked flex-item-justify-end" %>
           </button>

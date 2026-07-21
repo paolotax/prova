@@ -77,3 +77,27 @@ ordine_scuola:
   tipo_movimento: 1
   movimento: 1
   priorita: 70
+
+campionario:
+  causale: "Campionario"
+  magazzino: "campionario"
+  tipo_movimento: 2
+  movimento: 0
+  gestione_pagamento: false
+  gestione_consegna: false
+
+saggi_100:
+  causale: "saggi 100"
+  magazzino: "campionario"
+  tipo_movimento: 2
+  movimento: 1
+  gestione_pagamento: false
+  gestione_consegna: false
+
+saggi_50:
+  causale: "saggi 50"
+  magazzino: "campionario"
+  tipo_movimento: 2
+  movimento: 1
+  gestione_pagamento: false
+  gestione_consegna: false

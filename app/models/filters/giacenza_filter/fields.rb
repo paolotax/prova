@@ -4,19 +4,21 @@ module Filters
       extend ActiveSupport::Concern
 
       PERMITTED_PARAMS = [
-        :stato,
+        :anno,
+        stati: [],
         editori: [],
+        categorie: [],
         terms: []
       ].freeze
 
       class_methods do
         def default_values
-          {}
+          { anno: Date.current.year }
         end
       end
 
       included do
-        store_accessor :fields, :terms, :stato, :editori
+        store_accessor :fields, :terms, :stati, :anno, :editori, :categorie
 
         def terms
           Array(super)
@@ -34,8 +36,24 @@ module Filters
           super(Array(value).filter(&:present?))
         end
 
-        def stato
-          super.presence_in(STATI.keys)
+        def categorie
+          Array(super)
+        end
+
+        def categorie=(value)
+          super(Array(value).filter(&:present?))
+        end
+
+        def stati
+          Array(super) & STATI.keys
+        end
+
+        def stati=(value)
+          super(Array(value).filter(&:present?))
+        end
+
+        def anno
+          (super.presence || Date.current.year).to_i
         end
       end
 
@@ -43,7 +61,9 @@ module Filters
         @as_params ||= {}.tap do |params|
           params[:terms] = terms
           params[:editori] = editori
-          params[:stato] = stato
+          params[:categorie] = categorie
+          params[:stati] = stati
+          params[:anno] = anno
         end.compact_blank.reject { |k, v| self.class.default_value?(k, v) }
       end
     end

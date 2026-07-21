@@ -1,7 +1,6 @@
 <%# locals: (libro:, columns: nil) -%>
 
 <% columns ||= Giacenza::Columns.visible(cookies[:giacenze_colonne].to_s.split(",")) %>
-<% giacenza = libro.giacenza || Giacenza.new(libro: libro) %>
 
 <%= tag.div id: dom_id(libro, :giacenza),
       class: "data-row",
@@ -9,6 +8,6 @@
       role: "row" do %>
 
   <% columns.each do |column| %>
-    <%= render column.partial, libro: libro, giacenza: giacenza %>
+    <%= render column.partial, libro: libro %>
   <% end %>
 <% end %>

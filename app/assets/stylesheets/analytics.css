@@ -67,6 +67,29 @@
     outline-color: var(--color-ink);
   }
 
+  /* Card-filtro server-side (giacenze, documenti): link full-page che filtra.
+     Feedback blu come gli step; l'active con outline var(--color-link). */
+  .analytics-summary__card--link {
+    color: inherit;
+    cursor: pointer;
+    display: block;
+    text-decoration: none;
+  }
+
+  .analytics-summary__card--link:hover {
+    background-color: var(--color-ink-lighter);
+    outline-color: color-mix(in oklch, var(--color-link) 45%, transparent);
+  }
+
+  .analytics-summary__card--link:focus-visible {
+    outline-color: var(--color-link);
+  }
+
+  .analytics-summary__card--link.analytics-summary__card--active {
+    background-color: color-mix(in oklch, var(--color-link) 8%, transparent);
+    outline-color: var(--color-link);
+  }
+
   /* Controllo adozioni: le card KPI filtrano la lista scuole client-side (role=button).
      Feedback blu come gli step (.ca-step): cursore, hover, focus e card attiva con
      outline var(--color-link). */

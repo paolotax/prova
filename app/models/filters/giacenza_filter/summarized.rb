@@ -4,7 +4,7 @@ module Filters
       extend ActiveSupport::Concern
 
       def summary
-        parts = [terms_summary, stato_summary, editori_summary].compact
+        parts = [terms_summary, stati_summary, anno_summary, editori_summary, categorie_summary].compact
         parts.any? ? parts.to_sentence : "Tutte le giacenze"
       end
 
@@ -16,13 +16,23 @@ module Filters
         end
       end
 
-      def stato_summary
-        STATI[stato] if stato.present?
+      def stati_summary
+        STATI.values_at(*stati).to_sentence if stati.any?
+      end
+
+      def anno_summary
+        "anno #{anno}" if anno != Date.current.year
       end
 
       def editori_summary
         if editori.any?
           editori.count == 1 ? editori.first : "#{editori.count} editori"
+        end
+      end
+
+      def categorie_summary
+        if categorie.any?
+          categorie.count == 1 ? categorie.first : "#{categorie.count} categorie"
         end
       end
     end

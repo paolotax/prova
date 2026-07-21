@@ -1,0 +1,8 @@
+<%# locals: (libro:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+  <%= dash_if_zero(libro[:venduti].to_i) %>
+  <% if libro[:venduti].to_i.positive? %>
+    <div class="txt-xx-small txt-subtle"><%= number_to_currency libro[:venduto_cents].to_i / 100.0, locale: :it %></div>
+  <% end %>
+</div>

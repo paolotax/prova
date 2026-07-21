@@ -8049,6 +8049,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260721081322'),
 ('20260717090000'),
 ('20260712080000'),
 ('20260712070000'),

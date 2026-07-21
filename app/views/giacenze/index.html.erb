@@ -11,25 +11,6 @@
 <% end %>
 
 <div class="ca-page">
-<div class="analytics-summary">
-  <% [
-       [:disponibile, "disponibili", "txt-positive"],
-       [:impegnato, "da consegnare", nil],
-       [:campionario, "campionario", nil],
-       [:fabbisogno, "fabbisogno", "txt-negative"],
-       [:venduto_copie, "vendute", nil]
-     ].each do |chiave, etichetta, value_class| %>
-    <div class="analytics-summary__card">
-      <p class="analytics-summary__value <%= value_class %>"><%= number_with_delimiter(@totali.fetch(chiave)) %></p>
-      <p class="analytics-summary__label"><%= etichetta %></p>
-    </div>
-  <% end %>
-  <div class="analytics-summary__card">
-    <p class="analytics-summary__value txt-positive"><%= number_to_currency @totali.fetch(:venduto_cents) / 100.0, locale: :it %></p>
-    <p class="analytics-summary__label">venduto</p>
-  </div>
-</div>
-
 <%= render "filters/settings",
       filter_url: giacenze_path,
       filter_type: "giacenza_filter",
@@ -37,8 +18,22 @@
       no_filtering_url: giacenze_path %>
 
 <%= turbo_frame_tag :search_results do %>
+  <%= render "shared/analytics_filter_cards",
+        url: giacenze_path,
+        param: :stati,
+        current: @filter.stati,
+        multi: true,
+        cards: [
+          { key: "adottati",      value: number_with_delimiter(@totali.fetch(:adottati)),      label: "adottati" },
+          { key: "campionario",   value: number_with_delimiter(@totali.fetch(:campionario)),   label: "campionario" },
+          { key: "scarico_saggi", value: number_with_delimiter(@totali.fetch(:scarico_saggi)), label: "scarico saggi" },
+          { key: "venduti",       value: number_with_delimiter(@totali.fetch(:venduti)),       label: "vendute", value_class: "txt-positive" },
+          { key: "impegnati",     value: number_with_delimiter(@totali.fetch(:da_consegnare)), label: "da consegnare" },
+          { key: nil,             value: number_to_currency(@totali.fetch(:venduto_cents) / 100.0, locale: :it), label: "venduto", value_class: "txt-positive" }
+        ] %>
+
   <p class="txt-small txt-subtle margin-block-end-half">
-    <%= @total_count %> <%= @total_count == 1 ? "titolo" : "titoli" %> · Il fabbisogno è dato da adozioni meno disponibilità libera.
+    <%= @total_count %> <%= @total_count == 1 ? "titolo" : "titoli" %>
   </p>
 
   <%= tag.div class: "data-table data-table--scroller", style: Giacenza::Columns.style(@columns) do %>

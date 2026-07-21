@@ -1,16 +1,8 @@
-<%# locals: (libro:, giacenza:) -%>
+<%# locals: (libro:) -%>
 
 <div class="data-row__cell data-row__cell--stacked">
   <%= link_to libro.titolo, libro_path(libro), class: "data-row__title txt-link", title: libro.titolo, data: { turbo_frame: "_top" } %>
   <% if libro.editore %>
     <span class="data-row__subtitle txt-x-small txt-subtle" title="<%= libro.editore.editore %>"><%= libro.editore.editore %></span>
   <% end %>
-
-  <div class="data-row__values">
-    <span class="data-row__value"><strong><%= giacenza.disponibile %></strong> disp.</span>
-    <% if giacenza.fabbisogno.positive? %>
-      <span class="data-row__value txt-negative"><strong><%= giacenza.fabbisogno %></strong> fabb.</span>
-    <% end %>
-    <span class="data-row__value"><strong><%= giacenza.venduto_copie %></strong> vendute</span>
-  </div>
 </div>

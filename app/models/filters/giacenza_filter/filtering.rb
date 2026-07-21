@@ -18,7 +18,7 @@ module Filters
     end
 
     def show_stato_giacenza?
-      filter.stato.present?
+      filter.stati.any?
     end
 
     def editori_disponibili
@@ -29,14 +29,34 @@ module Filters
       filter.editori.any?
     end
 
+    def categorie_disponibili
+      @categorie_disponibili ||= (filter.account || Current.account).libri
+        .joins(:categoria).distinct.pluck(:nome_categoria).compact.sort
+    end
+
+    def show_categorie?
+      filter.categorie.any?
+    end
+
+    def anni_disponibili
+      @anni_disponibili ||= (filter.account || Current.account).documenti
+        .distinct.pluck(Arel.sql("EXTRACT(YEAR FROM data_documento)::integer")).compact.sort.reverse
+    end
+
+    def show_anni?
+      filter.anno != Date.current.year
+    end
+
     def filters_active?
       filter.terms.present? ||
-      filter.stato.present? ||
-      filter.editori.present?
+      filter.stati.present? ||
+      filter.editori.present? ||
+      filter.categorie.present? ||
+      filter.anno != Date.current.year
     end
 
     def controls
-      %w[stato_giacenza editori]
+      %w[stato_giacenza anni editori categorie]
     end
 
     def cache_key
