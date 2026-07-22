@@ -8,12 +8,24 @@
               action: "keydown.esc->form#cancel:stop" } do |f| %>
 
   <div class="flex gap">
-    <div class="input--file flex-item-shrink" style="width: 100px;">
-      <%= image_tag libro.avatar_url,
-          style: "width: 100px; aspect-ratio: 3/4; object-fit: cover;",
-          data: { upload_preview_target: "image" } %>
-      <%= f.file_field :copertina, accept: "image/*",
+    <div class="input--file flex-item-shrink copertina-uploader" style="width: 100px;">
+      <%= copertina_tag libro, data: { upload_preview_target: "image" } %>
+      <%= f.file_field :copertina, accept: "image/*", id: dom_id(libro, :copertina_field),
           data: { upload_preview_target: "input", action: "upload-preview#previewImage" } %>
+
+      <% if libro.copertina_effettiva %>
+        <button type="submit" form="<%= dom_id(libro, :copertina_delete_form) %>"
+                class="copertina-uploader__action btn btn--negative btn--circle btn--small"
+                data-turbo-confirm="Rimuovere la copertina? Non si può annullare.">
+          <%= icon_tag "minus" %>
+          <span class="for-screen-reader">Rimuovi copertina</span>
+        </button>
+      <% else %>
+        <label for="<%= dom_id(libro, :copertina_field) %>" class="copertina-uploader__action btn btn--circle btn--small">
+          <%= icon_tag "add", size: "small" %>
+          <span class="for-screen-reader">Aggiungi copertina</span>
+        </label>
+      <% end %>
     </div>
 
     <div class="flex-item-grow form-field">
@@ -67,7 +79,7 @@
 
     <div class="form-field">
       <%= f.label :disciplina, class: "label txt-small" %>
-      <%= f.text_field :disciplina, class: "input",
+      <%= f.text_field :disciplina, class: "input txt-uppercase",
           data: { disciplina_select_target: "disciplina" } %>
     </div>
   </div>
@@ -89,3 +101,5 @@
     <%= f.text_area :note, rows: 3, class: "input" %>
   </div>
 <% end %>
+
+<%= form_with url: libro_copertina_path(libro), method: :delete, id: dom_id(libro, :copertina_delete_form) %>

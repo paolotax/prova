@@ -2,7 +2,7 @@ import { Controller } from "@hotwired/stimulus"
 
 // Switches disciplina field between free text and guided select
 // based on classe + categoria, using prezzi ministeriali data.
-// Only activates for "scolastico" categories (ministeriali, scolastico, etc.)
+// Only activates for the "scolastico" category
 //
 export default class extends Controller {
   static targets = ["classe", "disciplina", "categoria"]
@@ -37,7 +37,7 @@ export default class extends Controller {
 
     const select = this.categoriaTarget
     const text = select.options[select.selectedIndex]?.text?.toLowerCase() || ""
-    return /ministerial|scolastic/.test(text)
+    return /scolastic/.test(text)
   }
 
   #switchToSelect(disciplines) {
@@ -65,7 +65,7 @@ export default class extends Controller {
     input.type = "text"
     input.name = current.name
     input.id = current.id
-    input.className = "input"
+    input.className = "input txt-uppercase"
     input.value = current.value
     input.dataset.disciplinaSelectTarget = "disciplina"
 

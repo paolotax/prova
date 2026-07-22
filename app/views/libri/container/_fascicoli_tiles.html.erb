@@ -13,10 +13,10 @@
   <% libro.confezione_righe.includes(:fascicolo).order(:row_order).each do |pivot| %>
     <div class="fascicolo-tile">
       <%= link_to pivot.fascicolo, class: "flex flex-column align-center gap-quarter", style: "max-width: 100px; text-decoration: none;", data: { turbo_frame: "_top" } do %>
-        <%= image_tag pivot.fascicolo.avatar_url,
-            style: "width: 80px; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--border-radius); box-shadow: 0 1px 3px rgba(0,0,0,.2);",
-            alt: pivot.fascicolo.titolo %>
-        <span class="txt-xx-small txt-subtle overflow-ellipsis" style="max-width: 80px; text-align: center;"><%= pivot.fascicolo.disciplina %></span>
+        <%= copertina_tag pivot.fascicolo, class: "copertina--shadow", style: "--copertina-size: 80px;" %>
+        <span class="txt-xx-small txt-subtle overflow-ellipsis" style="max-width: 80px; text-align: center;">
+          <%= [pivot.fascicolo.classe.presence, pivot.fascicolo.disciplina.presence].compact.join(" · ") %>
+        </span>
         <span class="txt-xx-small font-weight-bold"><%= number_to_currency(pivot.fascicolo.prezzo) %></span>
       <% end %>
 

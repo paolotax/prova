@@ -321,6 +321,7 @@ Rails.application.routes.draw do
       scope module: :libri do
         resources :fascicoli, only: %i[index create destroy]
       end
+      resource :copertina, only: [:show, :destroy], module: :libri, controller: :copertine
       resource :movimenti, only: [:show], module: :libri
       resources :qrcodes
     end

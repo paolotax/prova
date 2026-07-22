@@ -1,7 +1,14 @@
 import { Controller } from "@hotwired/stimulus"
 
 export default class extends Controller {
-  static targets = [ "input", "fileName", "placeholder" ]
+  static targets = [ "image", "input", "fileName", "placeholder" ]
+
+  previewImage() {
+    if (this.#file) {
+      this.imageTarget.src = URL.createObjectURL(this.#file)
+      this.imageTarget.onload = () => URL.revokeObjectURL(this.imageTarget.src)
+    }
+  }
 
   previewFileName() {
     this.#file ? this.#showFileName() : this.#showPlaceholder()

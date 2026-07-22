@@ -2,7 +2,7 @@
 
     <%= tag.div class: "col-span-3 flex flex-col" do %>
         <div class="flex items-center gap-4">
-            <%= image_tag riga.libro.avatar_url, width: 60, height: 60, class: "rounded-md" %>
+            <%= copertina_tag riga.libro, style: "--copertina-size: 60px;" %>
             <div class="flex flex-col">
                 <div class="font-medium text-gray-900 hover:font-bold hover:text-indigo-400">
                     <%= link_to riga.libro.titolo, riga.libro %>

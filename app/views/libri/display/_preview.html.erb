@@ -13,9 +13,7 @@
   <div class="flex gap-half max-inline-size">
     <%# Copertina thumbnail %>
     <div class="flex-item-shrink">
-      <%= image_tag libro.avatar_url,
-          style: "width: 60px; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--border-radius);",
-          alt: libro.titolo %>
+      <%= copertina_tag libro, style: "--copertina-size: 60px;" %>
     </div>
 
     <div class="flex flex-column flex-item-grow">

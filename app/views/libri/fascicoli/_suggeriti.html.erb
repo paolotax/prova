@@ -5,9 +5,7 @@
     <% suggeriti.each do |s| %>
       <li class="list-style-none flex align-center gap-half full-width"
           style="border-block-end: 1px solid var(--color-ink-lighter); padding-block: 0.5rem;">
-        <%= image_tag s.avatar_url,
-            style: "width: 32px; aspect-ratio: 3/4; object-fit: cover; border-radius: var(--border-radius); flex-shrink: 0;",
-            alt: s.titolo %>
+        <%= copertina_tag s, style: "--copertina-size: 32px;" %>
 
         <div class="flex flex-column min-width" style="flex: 1; text-align: left;">
           <strong class="overflow-ellipsis txt-small"><%= s.titolo %></strong>

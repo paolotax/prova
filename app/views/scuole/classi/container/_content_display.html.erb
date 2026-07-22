@@ -33,9 +33,7 @@
       <div class="flex flex-column align-center gap-quarter">
         <% if adozione.libro %>
           <%= link_to adozione.libro, data: { turbo_frame: "_top", controller: "tooltip" }, title: adozione.titolo do %>
-            <%= image_tag adozione.libro.avatar_url,
-                style: "width: 80px; aspect-ratio: 3/4; object-fit: cover; border-radius: 4px; box-shadow: 0 1px 3px rgba(0,0,0,.2);",
-                alt: adozione.titolo %>
+            <%= copertina_tag adozione.libro, class: "copertina--shadow", style: "--copertina-size: 80px;" %>
           <% end %>
         <% end %>
         <div class="flex gap-quarter flex-wrap justify-center">

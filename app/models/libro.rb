@@ -47,6 +47,7 @@
 #
 class Libro < ApplicationRecord
   include AccountScoped
+  include Copertina
 
   include FriendlyId
   friendly_id :slug_candidates, use: :slugged
@@ -98,6 +99,8 @@ class Libro < ApplicationRecord
     return if Giacenza.ricalcolo_sospeso
     Giacenza.find_or_create_by!(account_id: account_id, libro_id: id).ricalcola!
   end
+
+  normalizes :disciplina, with: ->(d) { d.upcase }
 
   validates :titolo, presence: true
   #validates :editore, presence: true
@@ -260,61 +263,7 @@ class Libro < ApplicationRecord
     result
   end
 
-  has_one_attached :copertina,
-                   service: ->(_libro) { Rails.env.production? ? :amazon_public : Rails.configuration.active_storage.service }
-
-  # Callback: dopo il commit, sincronizza la copertina con EdizioneTitolo
-  after_commit :sync_copertina_to_edizione_titolo, on: [:create, :update]
-
-  # Flag per evitare loop infinito durante la sincronizzazione
-  attr_accessor :skip_copertina_sync
-
-  def avatar_url(variant: :thumb)
-    blob = if edizione_titolo&.copertina&.attached?
-             edizione_titolo.copertina
-           elsif copertina.attached?
-             copertina
-           end
-
-    if blob
-      case variant
-      when :thumb then blob.variant(resize_to_limit: [200, 267])
-      when :medium then blob.variant(resize_to_limit: [400, 533])
-      else blob
-      end
-    else
-      iniziali = titolo.split.map(&:first).join[0..1].upcase
-      InitialsAvatar.data_uri(iniziali, color: "FFFFFF", background: "6B7280")
-    end
-  end
-
   private
-
-  def sync_copertina_to_edizione_titolo
-    return if skip_copertina_sync
-    return if codice_isbn.blank?
-    return unless copertina.attached?
-
-    # Trova o crea EdizioneTitolo per questo ISBN
-    edizione = EdizioneTitolo.find_or_initialize_by(codice_isbn: codice_isbn)
-    edizione.titolo_originale ||= titolo
-
-    # Sostituisci la copertina condivisa con quella nuova
-    if edizione.copertina.attached?
-      edizione.copertina.purge
-    end
-
-    edizione.copertina.attach(copertina.blob)
-    edizione.save!
-
-    # Rimuovi la copertina dal libro dopo averla copiata su EdizioneTitolo
-    # Usa skip_copertina_sync per evitare loop infinito
-    self.skip_copertina_sync = true
-    copertina.purge
-    self.skip_copertina_sync = false
-  rescue => e
-    Rails.logger.error "Errore sync copertina per libro #{id}: #{e.message}"
-  end
 
   has_many :saggi, dependent: :restrict_with_error
 

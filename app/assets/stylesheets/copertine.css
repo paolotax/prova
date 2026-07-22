@@ -1,0 +1,34 @@
+@layer components {
+  .copertina {
+    --copertina-size: 100px;
+
+    aspect-ratio: 3 / 4;
+    border-radius: var(--border-radius);
+    display: block;
+    flex-shrink: 0;
+    inline-size: var(--copertina-size);
+    object-fit: cover;
+  }
+
+  .copertina--shadow {
+    box-shadow: 0 1px 3px rgb(0 0 0 / 0.2);
+  }
+
+  .copertina-uploader {
+    position: relative;
+
+    .copertina-uploader__action {
+      position: absolute;
+      inset-block-start: 0.25rem;
+      inset-inline-end: 0.25rem;
+      z-index: 1;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+    }
+
+    &:hover .copertina-uploader__action,
+    &:focus-within .copertina-uploader__action {
+      opacity: 1;
+    }
+  }
+}
