@@ -214,6 +214,28 @@ class Scuola < ApplicationRecord
     Miur::Adozione.where(codicescuola: codice_ministeriale, anno_scolastico: anno_target, tipogradoscuola: "EE").exists?
   end
 
+  # Attiva col codice sparito dall'anagrafe MIUR dell'anno e non ancora promossa.
+  # Gemello per-scuola di Classificazione#fuori_anagrafe e Scheda#fuori_anagrafe?
+  # — tenere allineate. Usato da banner show e sezione adozioni.
+  def fuori_anagrafe_miur?
+    anno = Miur.anno_corrente
+    stato == "attiva" && !gestione_manuale? && codice_ministeriale.present? &&
+      anno.present? &&
+      classi.attive.where(anno_scolastico: anno).none? &&
+      !Miur::Scuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno).exists?
+  end
+
+  # In anagrafe ma senza roster miur_adozioni EE e non promossa: in attesa che il
+  # MIUR pubblichi (o candidata alla promozione cieca, es. codice appena aggiornato).
+  def in_attesa_roster_miur?
+    anno = Miur.anno_corrente
+    stato == "attiva" && codice_ministeriale.present? && anno.present? &&
+      classi.attive.where(anno_scolastico: anno).none? &&
+      Miur::Scuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno).exists? &&
+      !Miur::Adozione.where(codicescuola: codice_ministeriale, anno_scolastico: anno,
+                            tipogradoscuola: "EE").exists?
+  end
+
   def geocoded?
     latitude.present? && longitude.present?
   end
@@ -449,6 +471,9 @@ class Scuola < ApplicationRecord
 
     righe = sorgenti.map do |ad|
       successivo = prosegui[ad.libro_id]&.prosegue_in
+      # Pluriennali (religione, alternativa): il volume copre più anni, in 2ª/3ª/5ª
+      # non si ricompra — da_acquistare No, come la normalizzazione MIUR.
+      pluriennale = ad.disciplina.to_s.match?(/RELIGIONE|ALTERNATIV/i)
       {
         account_id: account_id, classe_id: classe.id,
         libro_id: successivo&.id || ad.libro_id,
@@ -456,7 +481,9 @@ class Scuola < ApplicationRecord
         titolo: successivo&.titolo || ad.titolo,
         editore: ad.editore, autori: ad.autori, disciplina: ad.disciplina,
         prezzo_cents: successivo ? successivo.prezzo_in_cents.to_i : ad.prezzo_cents,
-        nuova_adozione: false, da_acquistare: ad.da_acquistare, consigliato: ad.consigliato,
+        nuova_adozione: false,
+        da_acquistare: pluriennale ? false : ad.da_acquistare,
+        consigliato: ad.consigliato,
         anno_scolastico: a, anno_corso: classe.anno_corso,
         codicescuola: codice_ministeriale, riportata: true,
         created_at: Time.current, updated_at: Time.current

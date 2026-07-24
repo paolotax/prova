@@ -178,6 +178,8 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     # 1A: una adozione col libro che prosegue, una senza libro (riporto identico)
     crea_adozione(@c1, libro: @libro1, isbn: @libro1.codice_isbn, titolo: @libro1.titolo, disciplina: "ITALIANO", prezzo: 1000)
     crea_adozione(@c1, libro: nil, isbn: "9790000000099", titolo: "Sussidiario Senza Prosegui", disciplina: "STORIA", prezzo: 800)
+    # 1A: religione pluriennale — riportata verso la 2ª deve diventare da_acquistare No
+    crea_adozione(@c1, libro: nil, isbn: "9790000000098", titolo: "Religione Vol 1-2-3", disciplina: "RELIGIONE", prezzo: 700)
     # 3A/4A/5A: una adozione ciascuna
     crea_adozione(@c3, libro: nil, isbn: "9790000000031", titolo: "Terza Libro", disciplina: "ITALIANO", prezzo: 1100)
     crea_adozione(@c4, libro: nil, isbn: "9790000000041", titolo: "Quarta Libro", disciplina: "ITALIANO", prezzo: 1100)
@@ -230,7 +232,7 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     assert nuova_2a
 
     adozioni_2a = nuova_2a.adozioni.where(anno_scolastico: "202627").to_a
-    assert_equal 2, adozioni_2a.size
+    assert_equal 3, adozioni_2a.size
     assert adozioni_2a.all?(&:riportata?), "tutte le adozioni riportate sono flaggate"
 
     # prosegui seguito: Banda Bus 1 -> Banda Bus 2 (isbn/titolo/libro_id del volume successivo)
@@ -245,6 +247,12 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     assert identica
     assert_equal "Sussidiario Senza Prosegui", identica.titolo
     assert_nil identica.libro_id
+    assert identica.da_acquistare?, "le non pluriennali mantengono da_acquistare"
+
+    # pluriennale (religione): il volume copre piu' anni, in 2ª non si ricompra
+    religione = adozioni_2a.find { |a| a.codice_isbn == "9790000000098" }
+    assert religione
+    assert_not religione.da_acquistare?, "religione riportata deve avere da_acquistare No"
   end
 
   test "promuovi_cieca! riporta le adozioni anche verso la nuova quinta (grado di scorrimento)" do

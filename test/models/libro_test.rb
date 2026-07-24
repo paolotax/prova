@@ -53,10 +53,38 @@ class LibroTest < ActiveSupport::TestCase
     assert_equal [match], fonte.candidati_prosegui
   end
 
-  test "titolo_base rimuove il numero di volume in coda" do
-    assert_equal "BANDA BUS",   crea_libro(titolo: "BANDA BUS 1", classe: 1).titolo_base
-    assert_equal "SUSSIDIARIO", crea_libro(titolo: "Sussidiario Vol. 2", classe: 2).titolo_base
-    assert_equal "GEO LAB",     crea_libro(titolo: "GEO LAB", classe: 3).titolo_base
+  test "titolo_base normalizza punteggiatura e rimuove i numeri di volume ovunque" do
+    assert_equal "BANDA BUS",       crea_libro(titolo: "BANDA BUS 1", classe: 1).titolo_base
+    assert_equal "SUSSIDIARIO VOL", crea_libro(titolo: "Sussidiario Vol. 2", classe: 2).titolo_base
+    assert_equal "GEO LAB",         crea_libro(titolo: "GEO LAB", classe: 3).titolo_base
+    # numero in mezzo al titolo (caso reale) e punteggiatura variabile
+    assert_equal "BANDA DEL BUS MATEMATICA",
+                 crea_libro(titolo: "BANDA DEL BUS 1 MATEMATICA", classe: 1).titolo_base
+    assert_equal "BANDA DEL BUS CL CONF PROP",
+                 crea_libro(titolo: "BANDA DEL BUS CL. 1  CONF. PROP.", classe: 1).titolo_base
+    # i numeri lunghi (annate) non sono volumi: restano
+    assert_equal "STORIA 2000", crea_libro(titolo: "STORIA 2000", classe: 3).titolo_base
+  end
+
+  test "candidati_prosegui aggancia anche col numero in mezzo al titolo" do
+    fonte = crea_libro(titolo: "BANDA DEL BUS 1 MATEMATICA", classe: 1, disciplina: "MATEMATICA")
+    match = crea_libro(titolo: "BANDA DEL BUS 2 MATEMATICA", classe: 2, disciplina: "MATEMATICA")
+
+    assert_equal [match], fonte.candidati_prosegui
+  end
+
+  test "opzioni_prosegui propone categoria+classe successiva coi titoli simili in testa, senza filtri duri" do
+    fonte   = crea_libro(titolo: "BANDA DEL BUS 1 LETTURE GRAMMATICA", classe: 1, disciplina: "LETTURE")
+    simile  = crea_libro(titolo: "BANDA DEL BUS 2 LETTURE GRAMMATICA", classe: 2, disciplina: "ITALIANO")
+    altro   = crea_libro(titolo: "ZAINETTO 2", classe: 2, disciplina: "ITALIANO")
+    crea_libro(titolo: "FUORI CLASSE 3", classe: 3, disciplina: "ITALIANO")
+
+    opzioni = fonte.opzioni_prosegui
+    # disciplina derivata (LETTURE -> ITALIANO): il simile c'e' comunque, e per primo
+    assert_equal simile, opzioni.first
+    assert_includes opzioni, altro
+    # solo classe+1, non tutto il catalogo
+    assert opzioni.all? { |l| l.classe == 2 }
   end
 
   private

@@ -86,12 +86,12 @@
 
   <div class="form-field">
     <%= f.label :prosegue_in_id, "Prosegue in", class: "label txt-small" %>
-    <% candidati = libro.candidati_prosegui.presence || Current.account.libri.where.not(id: libro.id).order(:titolo) %>
-    <% if libro.prosegue_in.present? && candidati.none? { |c| c.id == libro.prosegue_in_id } %>
-      <% candidati = [libro.prosegue_in] + candidati.to_a %>
+    <% opzioni = libro.opzioni_prosegui.presence || Current.account.libri.where.not(id: libro.id).order(:titolo) %>
+    <% if libro.prosegue_in.present? && opzioni.none? { |c| c.id == libro.prosegue_in_id } %>
+      <% opzioni = [libro.prosegue_in] + opzioni.to_a %>
     <% end %>
     <%= f.collection_select :prosegue_in_id,
-        candidati,
+        opzioni,
         :id, :titolo,
         { include_blank: "— nessun prosegui —", selected: libro.prosegue_in_id },
         { class: "input input--select" } %>

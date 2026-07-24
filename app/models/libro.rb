@@ -212,9 +212,11 @@ class Libro < ApplicationRecord
   end
 
   # Candidati volume successivo: stesso account e categoria, classe + 1, stesso
-  # titolo-base (senza numero di volume in coda) e stessa disciplina ministeriale.
-  # Eccezione primo biennio: IL LIBRO DELLA PRIMA CLASSE scorre nel
-  # SUSSIDIARIO (1° BIENNIO). La collana non è affidabile: non si usa.
+  # titolo-base e stessa disciplina ministeriale. Eccezione primo biennio:
+  # IL LIBRO DELLA PRIMA CLASSE scorre nel SUSSIDIARIO (1° BIENNIO).
+  # La collana non è affidabile: non si usa. Usato dall'auto-link
+  # (Libro::CollegaProsegui): deve restare STRETTO — i casi laschi passano
+  # dalla select (opzioni_prosegui).
   def candidati_prosegui
     return [] if classe.blank? || titolo.blank?
 
@@ -224,9 +226,25 @@ class Libro < ApplicationRecord
     scope.select { |l| l.titolo_base == base }
   end
 
-  # Titolo senza l'eventuale numero di volume in coda ("BANDA BUS 1" → "BANDA BUS").
+  # Opzioni per la select "prosegue in": tutti i libri di categoria + classe+1
+  # (decine, non l'intero catalogo), coi più simili per titolo in testa. La
+  # somiglianza è il prefisso comune dei titoli normalizzati: nei dati reali le
+  # discipline derivano (LETTURE → ITALIANO) e i suffissi cambiano (CONF. PROP.
+  # vs CONFEZIONE VENDITA), quindi qui niente filtri duri.
+  def opzioni_prosegui
+    return [] if classe.blank?
+
+    base = titolo_base
+    Libro.where(account_id: account_id, categoria_id: categoria_id, classe: classe + 1)
+         .sort_by { |l| [-prefisso_comune(base, l.titolo_base), l.titolo.to_s] }
+  end
+
+  # Titolo normalizzato senza numeri di volume: maiuscolo, punteggiatura via,
+  # numeri a 1-2 cifre rimossi OVUNQUE ("BANDA DEL BUS 1 MATEMATICA" →
+  # "BANDA DEL BUS MATEMATICA"); i numeri lunghi (annate tipo "STORIA 2000")
+  # restano perché non sono volumi.
   def titolo_base
-    titolo.to_s.upcase.sub(/\s*(?:VOL\.?\s*)?\d+\s*\z/, "").strip
+    titolo.to_s.upcase.gsub(/[^A-Z0-9 ]/, " ").gsub(/\b\d{1,2}\b/, " ").squeeze(" ").strip
   end
 
   def prezzo
@@ -295,6 +313,14 @@ class Libro < ApplicationRecord
     else
       [disciplina]
     end
+  end
+
+  # Lunghezza del prefisso comune fra due titoli normalizzati (per l'ordinamento
+  # delle opzioni prosegui).
+  def prefisso_comune(a, b)
+    n = 0
+    n += 1 while n < a.length && n < b.length && a[n] == b[n]
+    n
   end
 
   has_many :saggi, dependent: :restrict_with_error
