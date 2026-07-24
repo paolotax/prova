@@ -529,6 +529,7 @@
   .ca-step[data-filter="cambio"]    { --ca-sc: oklch(var(--lch-blue-dark)); }
   .ca-step[data-filter="nuove"]     { --ca-sc: oklch(var(--lch-aqua-dark)); }
   .ca-step[data-filter="anomalie"]  { --ca-sc: oklch(var(--lch-red-dark)); }
+  .ca-step[data-filter="fuori_anagrafe"] { --ca-sc: oklch(var(--lch-yellow-dark)); }
 
   .ca-step:hover {
     background: var(--color-ink-lightest);

@@ -8,7 +8,8 @@
 <% filtri << "promuovi"      if riga.promuovibile? %>
 <% filtri << "anomalie"      if riga.anomalie? %>
 <% filtri << "promosse"      if riga.promossa? %>
-<% filtri << "mancanti_miur" if riga.mancante_miur? %>
+<% filtri << "mancanti_miur"  if riga.mancante_miur? %>
+<% filtri << "fuori_anagrafe" if riga.fuori_anagrafe? %>
 <%= tag.article id: dom_id(scuola, :controllo),
       class: "ca-row",
       data: {
@@ -39,6 +40,13 @@
       <% end %>
       <%= s[:badge_label] %>
     </span>
+
+    <% if riga.fuori_anagrafe? %>
+      <span class="badge badge--yellow">
+        <span class="badge__dot"></span>
+        fuori anagrafe
+      </span>
+    <% end %>
 
     <span class="ca-row__action">
       <% if s[:azione] == :promuovi %>
