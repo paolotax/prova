@@ -181,7 +181,9 @@ module ControlloAdozioni
                       .order(*per_direzione_order)
                       .to_a
       by_id = scuole.index_by(&:id)
-      incluse = scuole.select { |s| con_adozioni?(s) }.to_set
+      # Le fuori anagrafe entrano anche senza adozioni (es. soppresse con 0 classi):
+      # lo step 5 le conta e il filtro deve poterle mostrare per lavorarle.
+      incluse = scuole.select { |s| con_adozioni?(s) || fuori_anagrafe_codici.include?(s.codice_ministeriale) }.to_set
 
       gruppi = {}
       ordine = []

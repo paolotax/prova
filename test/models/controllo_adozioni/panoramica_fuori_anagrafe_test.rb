@@ -55,6 +55,17 @@ module ControlloAdozioni
       assert_not_includes codici, "XXNEW0003"
     end
 
+    test "gruppi include le fuori anagrafe anche senza adozioni (soppresse a 0 classi)" do
+      soppressa = crea_scuola("XXEE0000S2", "Primaria Soppressa", adozioni: 0)
+      normale_vuota = crea_scuola("XXEE0000P2", "Primaria Vuota In Anagrafe", adozioni: 0)
+      in_miur("XXEE0000P2", "Primaria Vuota In Anagrafe")
+
+      righe = Panoramica.new(account: @account).gruppi.flat_map { |g| g[:scuole] }
+
+      assert_includes righe, soppressa, "la fuori anagrafe senza adozioni deve essere in lista (step 5)"
+      assert_not_includes righe, normale_vuota, "in anagrafe e senza adozioni resta esclusa come prima"
+    end
+
     private
 
     def crea_scuola(codice, denominazione, adozioni:)
