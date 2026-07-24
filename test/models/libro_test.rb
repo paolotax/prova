@@ -16,46 +16,57 @@ class LibroTest < ActiveSupport::TestCase
     Current.reset
   end
 
-  test "prosegue_in collega il volume successivo e candidati_prosegui li inferisce da collana+classe" do
-    l1 = crea_libro(titolo: "Banda Bus 1", collana: "Banda Bus", classe: 1)
-    l2 = crea_libro(titolo: "Banda Bus 2", collana: "Banda Bus", classe: 2)
+  test "candidati_prosegui infersce il volume successivo per titolo-base e categoria, con eccezione LIBRO DELLA PRIMA -> SUSSIDIARIO" do
+    l1 = crea_libro(titolo: "Banda Bus 1", classe: 1, disciplina: "IL LIBRO DELLA PRIMA CLASSE")
+    l2 = crea_libro(titolo: "Banda Bus 2", classe: 2, disciplina: "SUSSIDIARIO (1° BIENNIO)")
+    # stessa disciplina di destinazione ma titolo-base diverso: escluso
+    crea_libro(titolo: "Altro Libro 2", classe: 2, disciplina: "SUSSIDIARIO (1° BIENNIO)")
+    # stesso titolo-base ma categoria diversa: escluso
+    crea_libro(titolo: "Banda Bus 2", classe: 2, disciplina: "SUSSIDIARIO (1° BIENNIO)",
+               categoria: categorie(:parascolastico))
 
-    assert_includes l1.candidati_prosegui, l2
+    assert_equal [l2], l1.candidati_prosegui
 
     l1.update!(prosegue_in: l2)
     assert_equal l2, l1.reload.prosegue_in
     assert_equal l1, l2.reload.precedente
   end
 
-  test "candidati_prosegui usa la disciplina come tie-break quando i candidati sono piu' di uno" do
-    fonte = crea_libro(titolo: "Fonte 1", collana: "Serie", classe: 1, disciplina: "MATEMATICA")
-    match = crea_libro(titolo: "Match 2", collana: "Serie", classe: 2, disciplina: "MATEMATICA")
-    crea_libro(titolo: "Altro 2", collana: "Serie", classe: 2, disciplina: "ITALIANO")
+  test "candidati_prosegui segue la stessa disciplina quando non e' primo biennio" do
+    fonte = crea_libro(titolo: "Sussidiario Blu 2", classe: 2, disciplina: "SUSSIDIARIO (1° BIENNIO)")
+    match = crea_libro(titolo: "Sussidiario Blu 3", classe: 3, disciplina: "SUSSIDIARIO (1° BIENNIO)")
 
-    candidati = fonte.candidati_prosegui.to_a
-
-    assert_equal [match], candidati
+    assert_equal [match], fonte.candidati_prosegui
   end
 
-  test "candidati_prosegui torna tutti i candidati se la disciplina non matcha nessuno" do
-    fonte = crea_libro(titolo: "Fonte 1", collana: "Serie", classe: 1, disciplina: "STORIA")
-    a = crea_libro(titolo: "A 2", collana: "Serie", classe: 2, disciplina: "MATEMATICA")
-    b = crea_libro(titolo: "B 2", collana: "Serie", classe: 2, disciplina: "ITALIANO")
+  test "candidati_prosegui filtra per disciplina: stesso titolo-base ma disciplina diversa escluso" do
+    fonte = crea_libro(titolo: "Sussidiario Blu 2", classe: 2, disciplina: "SUSSIDIARIO (1° BIENNIO)")
+    crea_libro(titolo: "Sussidiario Blu 3", classe: 3, disciplina: "LINGUA INGLESE")
 
-    candidati = fonte.candidati_prosegui.to_a
+    assert_empty fonte.candidati_prosegui
+  end
 
-    assert_equal [a, b].sort_by(&:id), candidati.sort_by(&:id)
+  test "candidati_prosegui senza disciplina sulla fonte matcha su categoria+classe+titolo-base" do
+    fonte = crea_libro(titolo: "Geo Lab 2", classe: 2, disciplina: nil)
+    match = crea_libro(titolo: "Geo Lab 3", classe: 3, disciplina: "LINGUA INGLESE")
+
+    assert_equal [match], fonte.candidati_prosegui
+  end
+
+  test "titolo_base rimuove il numero di volume in coda" do
+    assert_equal "BANDA BUS",   crea_libro(titolo: "BANDA BUS 1", classe: 1).titolo_base
+    assert_equal "SUSSIDIARIO", crea_libro(titolo: "Sussidiario Vol. 2", classe: 2).titolo_base
+    assert_equal "GEO LAB",     crea_libro(titolo: "GEO LAB", classe: 3).titolo_base
   end
 
   private
 
-  def crea_libro(titolo:, collana: nil, classe: nil, disciplina: nil)
+  def crea_libro(titolo:, classe: nil, disciplina: nil, categoria: nil)
     Libro.create!(
       account: @account,
       user: @user,
-      categoria: categorie(:ministeriali),
+      categoria: categoria || categorie(:ministeriali),
       titolo: titolo,
-      collana: collana,
       classe: classe,
       disciplina: disciplina,
       codice_isbn: SecureRandom.hex(6),

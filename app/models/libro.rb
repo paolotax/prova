@@ -211,13 +211,22 @@ class Libro < ApplicationRecord
     self.titolo
   end
 
-  # Candidati volume successivo: stessa collana, classe + 1, stesso account.
-  # Disciplina come tie-break se piu' di uno.
+  # Candidati volume successivo: stesso account e categoria, classe + 1, stesso
+  # titolo-base (senza numero di volume in coda) e stessa disciplina ministeriale.
+  # Eccezione primo biennio: IL LIBRO DELLA PRIMA CLASSE scorre nel
+  # SUSSIDIARIO (1° BIENNIO). La collana non è affidabile: non si usa.
   def candidati_prosegui
-    return Libro.none if collana.blank? || classe.blank?
+    return [] if classe.blank? || titolo.blank?
 
-    scope = Libro.where(account_id: account_id, collana: collana, classe: classe + 1)
-    scope.count > 1 && disciplina.present? ? scope.where(disciplina: disciplina).presence || scope : scope
+    scope = Libro.where(account_id: account_id, categoria_id: categoria_id, classe: classe + 1)
+    scope = scope.where(disciplina: discipline_prosegui) if disciplina.present?
+    base = titolo_base
+    scope.select { |l| l.titolo_base == base }
+  end
+
+  # Titolo senza l'eventuale numero di volume in coda ("BANDA BUS 1" → "BANDA BUS").
+  def titolo_base
+    titolo.to_s.upcase.sub(/\s*(?:VOL\.?\s*)?\d+\s*\z/, "").strip
   end
 
   def prezzo
@@ -279,6 +288,14 @@ class Libro < ApplicationRecord
   end
 
   private
+
+  def discipline_prosegui
+    if disciplina.to_s.match?(/LIBRO DELLA PRIMA/i)
+      [disciplina, "SUSSIDIARIO (1° BIENNIO)"]
+    else
+      [disciplina]
+    end
+  end
 
   has_many :saggi, dependent: :restrict_with_error
 
