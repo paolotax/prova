@@ -13,6 +13,7 @@
 #  email               :string
 #  email_dominio       :string
 #  email_pattern       :string
+#  gestione_manuale    :boolean          default(FALSE), not null
 #  grado               :string
 #  indirizzo           :string
 #  latitude            :float

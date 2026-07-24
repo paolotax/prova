@@ -249,7 +249,8 @@ CREATE TABLE public.adozioni (
     disdetta boolean DEFAULT false NOT NULL,
     anno_scolastico character varying,
     codicescuola character varying,
-    anno_corso character varying
+    anno_corso character varying,
+    riportata boolean DEFAULT false NOT NULL
 );
 
 
@@ -1543,7 +1544,8 @@ CREATE TABLE public.libri (
     categoria_id bigint NOT NULL,
     prezzo_suggerito_cents integer DEFAULT 0,
     cm character varying,
-    account_id uuid NOT NULL
+    account_id uuid NOT NULL,
+    prosegue_in_id bigint
 );
 
 
@@ -3120,7 +3122,8 @@ CREATE TABLE public.scuole (
     adozioni_count integer DEFAULT 0 NOT NULL,
     mie_adozioni_count integer DEFAULT 0 NOT NULL,
     email_pattern character varying,
-    email_dominio character varying
+    email_dominio character varying,
+    gestione_manuale boolean DEFAULT false NOT NULL
 );
 
 
@@ -6105,6 +6108,13 @@ CREATE INDEX index_libri_on_editore_id ON public.libri USING btree (editore_id);
 
 
 --
+-- Name: index_libri_on_prosegue_in_id; Type: INDEX; Schema: public; Owner: -
+--
+
+CREATE INDEX index_libri_on_prosegue_in_id ON public.libri USING btree (prosegue_in_id);
+
+
+--
 -- Name: index_libri_on_slug; Type: INDEX; Schema: public; Owner: -
 --
 
@@ -8049,6 +8059,9 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260724074842'),
+('20260724074841'),
+('20260724074840'),
 ('20260721081322'),
 ('20260717090000'),
 ('20260712080000'),
