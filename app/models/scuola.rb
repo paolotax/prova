@@ -225,12 +225,12 @@ class Scuola < ApplicationRecord
       !Miur::Scuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno).exists?
   end
 
-  # In anagrafe ma senza roster miur_adozioni EE e non promossa: in attesa che il
-  # MIUR pubblichi (o candidata alla promozione cieca, es. codice appena aggiornato).
+  # In anagrafe ma senza roster miur_adozioni EE: il MIUR non ha ancora pubblicato
+  # l'elenco. Vale ANCHE per le promosse (ciecamente): le adozioni restano
+  # provvisorie/riportate finché l'elenco non arriva, e il segnale deve restare.
   def in_attesa_roster_miur?
     anno = Miur.anno_corrente
     stato == "attiva" && codice_ministeriale.present? && anno.present? &&
-      classi.attive.where(anno_scolastico: anno).none? &&
       Miur::Scuola.where(codice_scuola: codice_ministeriale, anno_scolastico: anno).exists? &&
       !Miur::Adozione.where(codicescuola: codice_ministeriale, anno_scolastico: anno,
                             tipogradoscuola: "EE").exists?
