@@ -1,0 +1,7 @@
+<%= tag.div class: "flex flex-column gap-0" do %>
+  <%= tag.div adozione.titolo, class: "txt-small", style: "line-height: 1.2;" %>
+  <%= tag.div class: "flex justify-space-between gap txt-xx-small txt-muted", style: "line-height: 1;" do %>
+    <%= tag.span adozione.editore %>
+    <%= tag.span number_to_currency(adozione.prezzo_cents.to_i / 100.0, locale: :it) %>
+  <% end %>
+<% end %>

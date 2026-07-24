@@ -108,6 +108,11 @@ class Adozione < ApplicationRecord
     "#{classe&.classe_e_sezione} #{disciplina&.downcase}"
   end
 
+  # Etichetta del chip combobox (inserimento multiplo adozioni da catalogo).
+  def to_combobox_display
+    titolo
+  end
+
   # Crea da una riga ministeriale (Miur::Adozione, partizione 202526)
   def self.create_from_import(import_adozione, classe:, account: Current.account)
     libro = account.libri.find_by(codice_isbn: import_adozione.codiceisbn)

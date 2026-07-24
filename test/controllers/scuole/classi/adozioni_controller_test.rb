@@ -1,137 +1,211 @@
 require "test_helper"
 
 class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
-  fixtures :accounts, :users, :memberships, :scuole, :classi, :adozioni, :libri, :editori
+  fixtures :accounts, :users, :memberships, :scuole, :classi, :adozioni, :libri, :editori, :categorie
 
   setup do
     @account = accounts(:fizzy)
     @user = users(:one)
-    @scuola = scuole(:scuola_fizzy)
-    @classe = classi(:prima_a_fizzy)
-    @libro = libri(:libro_fizzy)
+    @scuola = scuole(:primaria_attiva)
+    @classe = classi(:pa_1a) # classe del path (placeholder del bottone)
 
     sign_in_as(@user, @account)
+
+    # Due esemplari nel catalogo adozioni dell'account (anno di corso 1, 202526).
+    # Fanno da SORGENTE dello snapshot: titolo/editore/isbn vengono da qui, MAI da Libro.
+    @es1 = Adozione.create!(
+      account: @account, classe: classi(:pa_1a),
+      codice_isbn: "9788899000001", titolo: "Sussidiario Catalogo", editore: "CatalogoEd",
+      autori: "Cat Autore", disciplina: "Sussidiario", prezzo_cents: 2000,
+      anno_corso: "1", anno_scolastico: "202526", da_acquistare: true
+    )
+    @es2 = Adozione.create!(
+      account: @account, classe: classi(:pa_1a),
+      codice_isbn: "9788899000002", titolo: "Religione Catalogo", editore: "CatalogoEd2",
+      autori: "Cat Autore2", disciplina: "Religione", prezzo_cents: 1000,
+      anno_corso: "1", anno_scolastico: "202526", da_acquistare: true
+    )
+
+    # Un Libro dell'account con lo STESSO isbn dell'esemplare ma titolo DIVERSO:
+    # serve a dimostrare che lo snapshot prende il titolo dall'esemplare (adozione)
+    # e non dal catalogo Libro, pur agganciando libro_id per isbn.
+    @libro_omonimo = Libro.create!(
+      account: @account, user: @user, editore: editori(:mondadori), categoria: categorie(:ministeriali),
+      titolo: "TITOLO LIBRO DIVERSO", codice_isbn: "9788899000001", prezzo_in_cents: 9999
+    )
   end
 
   test "should get new" do
     get new_scuola_classe_adozione_path(@scuola, @classe, account_id: @account.id)
 
     assert_response :success
-    assert_match(/Aggiungi adozione/i, response.body)
+    assert_match(/Aggiungi adozioni/i, response.body)
   end
 
-  test "create builds adozione from libro snapshot and recalcs counters" do
-    assert_difference("Adozione.count", 1) do
+  test "bulk crea il prodotto cartesiano classi x esemplari con snapshot dall'adozione" do
+    classe_a = classi(:pa_2a)
+    classe_b = classi(:pa_3a)
+
+    assert_difference("Adozione.count", 4) do
       post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-        classe_id: @classe.id,
-        libro_id: @libro.id,
-        nuova_adozione: "1",
-        da_acquistare: "1",
-        consigliato: "0"
+        classe_ids: "#{classe_a.id},#{classe_b.id}",
+        adozione_ids: "#{@es1.id},#{@es2.id}",
+        da_acquistare: "1"
       }
     end
 
-    # Ricalcolo SINCRONO (perform_now): i contatori scuola riflettono subito la
-    # riga (stessa definizione di Adozione::Ricalcolo#update_counters).
-    attese = @scuola.adozioni.joins(:classe)
-                    .where(classi: { stato: "attiva" }, da_acquistare: true)
-                    .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
-                    .count
-    assert_equal attese, @scuola.reload.adozioni_count
-
-    adozione = @classe.adozioni.order(:created_at).last
-    assert_equal @libro.codice_isbn, adozione.codice_isbn
-    assert_equal @libro.titolo, adozione.titolo
-    assert_equal @libro.editore.editore, adozione.editore
-    assert_equal @libro.prezzo_in_cents, adozione.prezzo_cents
-    assert_equal @libro.id, adozione.libro_id
-    assert_equal @scuola.codice_ministeriale, adozione.codicescuola
-    assert adozione.nuova_adozione?, "nuova_adozione dovrebbe essere true"
-    assert adozione.da_acquistare?, "da_acquistare dovrebbe essere true"
-    assert_not adozione.consigliato?, "consigliato dovrebbe essere false"
-    assert_not adozione.riportata?, "riportata dovrebbe essere false per righe manuali"
+    riga = classe_a.adozioni.find_by(codice_isbn: @es1.codice_isbn)
+    assert_not_nil riga
+    # Snapshot dall'ESEMPLARE, non dal Libro omonimo.
+    assert_equal "Sussidiario Catalogo", riga.titolo
+    refute_equal @libro_omonimo.titolo, riga.titolo
+    assert_equal "CatalogoEd", riga.editore
+    assert_equal "Cat Autore", riga.autori
+    assert_equal "Sussidiario", riga.disciplina
+    assert_equal 2000, riga.prezzo_cents
+    # libro_id agganciato per isbn (concorrenza -> nil), qui esiste il libro omonimo.
+    assert_equal @libro_omonimo.id, riga.libro_id
+    # anno_scolastico/anno_corso dalla classe TARGET, non dall'esemplare.
+    assert_equal classe_a.anno_scolastico, riga.anno_scolastico
+    assert_equal classe_a.anno_corso, riga.anno_corso
+    assert_equal @scuola.codice_ministeriale, riga.codicescuola
+    assert_not riga.riportata?
+    assert riga.da_acquistare?
   end
 
-  test "create in turbo_stream risponde con flash, chiusura modal e reload del frame adozioni" do
-    # La form reale posta in turbo_stream: questo ramo usa helpers.turbo_frame_tag
-    # dal controller (turbo_frame_tag nudo non esiste lì → NoMethodError in prod).
-    assert_difference("Adozione.count", 1) do
+  test "esemplare senza libro omonimo lascia libro_id nil (concorrenza)" do
+    classe_a = classi(:pa_2a)
+
+    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+      classe_ids: classe_a.id.to_s,
+      adozione_ids: @es2.id.to_s,
+      da_acquistare: "1"
+    }
+
+    riga = classe_a.adozioni.find_by(codice_isbn: @es2.codice_isbn)
+    assert_not_nil riga
+    assert_nil riga.libro_id
+  end
+
+  test "i duplicati (stessa classe+isbn+anno) sono saltati e contati" do
+    classe_a = classi(:pa_2a)
+
+    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+      classe_ids: classe_a.id.to_s,
+      adozione_ids: "#{@es1.id},#{@es2.id}",
+      da_acquistare: "1"
+    }
+
+    assert_no_difference("Adozione.count") do
       post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id),
         as: :turbo_stream,
         params: {
-          classe_id: @classe.id,
-          libro_id: @libro.id,
+          classe_ids: classe_a.id.to_s,
+          adozione_ids: "#{@es1.id},#{@es2.id}",
           da_acquistare: "1"
         }
     end
 
     assert_response :success
+    assert_match(/gi\S* presenti/i, response.body)
+  end
+
+  test "flag checkbox: da_acquistare non spuntato salva false" do
+    classe_a = classi(:pa_2a)
+
+    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+      classe_ids: classe_a.id.to_s,
+      adozione_ids: @es1.id.to_s
+    }
+
+    riga = classe_a.adozioni.find_by(codice_isbn: @es1.codice_isbn)
+    assert_not riga.da_acquistare?
+  end
+
+  test "create in turbo_stream: flash, chiusura modal e reload del frame con le nuove righe" do
+    classe_a = classi(:pa_2a)
+
+    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id),
+      as: :turbo_stream,
+      params: {
+        classe_ids: classe_a.id.to_s,
+        adozione_ids: @es1.id.to_s,
+        da_acquistare: "1"
+      }
+
+    assert_response :success
     assert_match "scuola_adozioni", response.body
     assert_match "turbo-stream", response.body
     # Il frame arriva già renderizzato (scope tutte): la riga aggiunta è nel body.
-    assert_match @libro.titolo, response.body
+    assert_match "Sussidiario Catalogo", response.body
   end
 
-  test "create with da_acquistare unchecked stores false" do
+  test "ricalcolo sincrono dei contatori scuola" do
+    classe_a = classi(:pa_2a)
+
     post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-      classe_id: @classe.id,
-      libro_id: @libro.id
+      classe_ids: classe_a.id.to_s,
+      adozione_ids: "#{@es1.id},#{@es2.id}",
+      da_acquistare: "1"
     }
 
-    adozione = @classe.adozioni.order(:created_at).last
-    assert_not adozione.da_acquistare?
+    attese = @scuola.adozioni.joins(:classe)
+                    .where(classi: { stato: "attiva" }, da_acquistare: true)
+                    .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+                    .count
+    assert_equal attese, @scuola.reload.adozioni_count
   end
 
-  test "duplicate isbn on same classe does not create and re-renders with error" do
-    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-      classe_id: @classe.id, libro_id: @libro.id, da_acquistare: "1"
-    }
+  test "classe di un'altra scuola nel body: esclusa" do
+    estranea = classi(:prima_a_fizzy) # altra scuola (scuola_fizzy), stesso account
+    valida = classi(:pa_2a)
 
-    assert_no_difference("Adozione.count") do
+    assert_difference("Adozione.count", 1) do
       post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-        classe_id: @classe.id, libro_id: @libro.id, da_acquistare: "1"
-      }
-    end
-
-    assert_response :unprocessable_entity
-    assert_match(/gi\S* presente in questa classe/i, response.body)
-  end
-
-  test "create coi parametri annidati della form reale: il classe_id nel body vince sul path" do
-    altra_classe = classi(:seconda_a_fizzy)
-
-    # Il path punta alla prima classe (placeholder del bottone), la select posta l'altra.
-    assert_difference("altra_classe.adozioni.count", 1) do
-      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-        adozione: { classe_id: altra_classe.id, libro_id: @libro.id },
+        classe_ids: "#{valida.id},#{estranea.id}",
+        adozione_ids: @es1.id.to_s,
         da_acquistare: "1"
       }
     end
 
-    adozione = altra_classe.adozioni.order(:created_at).last
-    assert_equal @libro.codice_isbn, adozione.codice_isbn
-    assert_equal altra_classe.anno_corso, adozione.anno_corso
+    assert_nil estranea.adozioni.find_by(codice_isbn: @es1.codice_isbn)
+    assert_not_nil valida.adozioni.find_by(codice_isbn: @es1.codice_isbn)
   end
 
-  test "classe_id nel body di un'altra scuola: 404, non si aggancia" do
-    estranea = classi(:prima_a_acme)
+  test "esemplare di un altro account: ignorato, niente righe, 422" do
+    estranea = adozioni(:adozione_fisica_acme)
+    classe_a = classi(:pa_2a)
 
     assert_no_difference("Adozione.count") do
       post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-        adozione: { classe_id: estranea.id, libro_id: @libro.id }
+        classe_ids: classe_a.id.to_s,
+        adozione_ids: estranea.id.to_s,
+        da_acquistare: "1"
       }
     end
 
-    assert_response :not_found
+    assert_response :unprocessable_entity
   end
 
-  test "cannot create on classe from another account" do
+  test "selezioni vuote: 422" do
+    assert_no_difference("Adozione.count") do
+      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+        classe_ids: "",
+        adozione_ids: ""
+      }
+    end
+
+    assert_response :unprocessable_entity
+  end
+
+  test "non si crea su scuola di un altro account" do
     other_scuola = scuole(:scuola_acme)
     other_classe = classi(:prima_a_acme)
 
     assert_no_difference("Adozione.count") do
       post scuola_classe_adozioni_path(other_scuola, other_classe, account_id: @account.id), params: {
-        classe_id: other_classe.id, libro_id: @libro.id
+        classe_ids: other_classe.id.to_s,
+        adozione_ids: @es1.id.to_s
       }
     end
 

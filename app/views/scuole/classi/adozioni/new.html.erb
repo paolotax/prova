@@ -1,65 +1,60 @@
 <%= turbo_frame_tag :modal do %>
-  <div data-controller="dialog classe-form"
+  <div data-controller="dialog bulk-adozioni"
        data-dialog-modal-value="true"
-       data-dialog-auto-open-value="true">
+       data-dialog-auto-open-value="true"
+       data-bulk-adozioni-classi-anni-value="<%= @classi.to_h { |c| [c.id, c.anno_corso] }.to_json %>"
+       data-action="hw-combobox:selection->bulk-adozioni#syncAnni hw-combobox:removal->bulk-adozioni#syncAnni">
     <dialog class="dialog panel" style="--panel-size: 44ch;"
             data-dialog-target="dialog"
             data-action="keydown.esc->dialog#close:stop">
-      <h3 class="txt-large txt-bold">Aggiungi adozione</h3>
+      <h3 class="txt-large txt-bold">Aggiungi adozioni</h3>
       <p class="txt-small txt-subtle margin-block-end"><%= @scuola.denominazione %></p>
 
-      <% if @adozione.errors[:codice_isbn].present? %>
-        <p class="txt-small txt-negative margin-block-end" role="alert">
-          Questo libro è già presente in questa classe.
-        </p>
+      <% if @errore.present? %>
+        <p class="txt-small txt-negative margin-block-end" role="alert"><%= @errore %></p>
       <% end %>
 
-      <%= form_with model: @adozione,
-          url: scuola_classe_adozioni_path(@scuola, @classe),
+      <%= form_with url: scuola_classe_adozioni_path(@scuola, @classe),
           method: :post,
-          class: "flex flex-column gap",
-          data: { classe_form_target: "form" } do |f| %>
+          class: "flex flex-column gap" do %>
 
-        <div class="flex flex-column gap-quarter">
-          <label class="txt-small txt-bold" for="adozione_classe_id">Classe</label>
-          <%# name annidato sotto :adozione: nel body "classe_id" nudo sarebbe
-              oscurato dal path param e la classe scelta verrebbe ignorata senza JS. %>
-          <select name="adozione[classe_id]" id="adozione_classe_id" class="input input--select"
-                  data-classe-form-target="select"
-                  data-action="change->classe-form#updateAction">
-            <% @classi.each do |classe| %>
-              <option value="<%= classe.id %>"
-                      data-url="<%= scuola_classe_adozioni_path(@scuola, classe) %>"
-                      <%= "selected" if classe.id == @classe.id %>>
-                <%= classe.nome_breve %>
-              </option>
-            <% end %>
-          </select>
+        <div class="flex flex-column gap-quarter cb-tax-fancy" style="min-inline-size: 0; inline-size: 100%;">
+          <label class="txt-small txt-bold">Classi</label>
+          <%= combobox_tag "classe_ids",
+                @classi,
+                value: [@classe.id],
+                multiselect_chip_src: classe_chips_path,
+                placeholder: "Seleziona classi...",
+                mobile_at: "0px" %>
         </div>
 
-        <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
-          <label class="txt-small txt-bold" for="libro_id">Libro</label>
-          <%= f.combobox :libro_id, libri_path, placeholder: "Cerca libro..." %>
+        <div class="flex flex-column gap-quarter cb-tax-fancy" style="min-inline-size: 0; inline-size: 100%;">
+          <label class="txt-small txt-bold">Libri</label>
+          <%= combobox_tag "adozione_ids",
+                adozioni_catalogo_index_path(anno_corso: @classe.anno_corso),
+                multiselect_chip_src: adozione_chips_path,
+                placeholder: "Cerca titolo o ISBN...",
+                mobile_at: "0px" %>
         </div>
 
         <div class="flex flex-column gap-half margin-block-start">
           <label class="flex align-center gap-half txt-small">
-            <%= check_box_tag :da_acquistare, "1", @adozione.da_acquistare %>
+            <%= check_box_tag :da_acquistare, "1", true %>
             Da acquistare
           </label>
           <label class="flex align-center gap-half txt-small">
-            <%= check_box_tag :nuova_adozione, "1", @adozione.nuova_adozione %>
+            <%= check_box_tag :nuova_adozione, "1", false %>
             Nuova adozione
           </label>
           <label class="flex align-center gap-half txt-small">
-            <%= check_box_tag :consigliato, "1", @adozione.consigliato %>
+            <%= check_box_tag :consigliato, "1", false %>
             Consigliato
           </label>
         </div>
 
         <div class="flex gap-half justify-end margin-block-start">
           <button type="button" class="btn" data-action="dialog#close">Annulla</button>
-          <%= f.submit "Aggiungi", class: "btn btn--link" %>
+          <%= submit_tag "Aggiungi", class: "btn btn--link" %>
         </div>
       <% end %>
 
