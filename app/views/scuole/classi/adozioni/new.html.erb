@@ -21,8 +21,10 @@
           data: { classe_form_target: "form" } do |f| %>
 
         <div class="flex flex-column gap-quarter">
-          <label class="txt-small txt-bold" for="classe_id">Classe</label>
-          <select name="classe_id" id="classe_id" class="input input--select"
+          <label class="txt-small txt-bold" for="adozione_classe_id">Classe</label>
+          <%# name annidato sotto :adozione: nel body "classe_id" nudo sarebbe
+              oscurato dal path param e la classe scelta verrebbe ignorata senza JS. %>
+          <select name="adozione[classe_id]" id="adozione_classe_id" class="input input--select"
                   data-classe-form-target="select"
                   data-action="change->classe-form#updateAction">
             <% @classi.each do |classe| %>

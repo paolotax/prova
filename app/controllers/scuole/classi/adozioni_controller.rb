@@ -15,7 +15,7 @@ module Scuole
       end
 
       def create
-        libro = Current.account.libri.find(params[:libro_id])
+        libro = Current.account.libri.find(param_form(:libro_id))
 
         @adozione = @classe.adozioni.new(
           account: Current.account,
@@ -63,8 +63,17 @@ module Scuole
         @scuola = Current.account.scuole.find(params[:scuola_id])
       end
 
+      # Il classe_id nel body (select della form) vince sul path param, che è solo
+      # il placeholder del bottone "prima classe attiva": la classe scelta resta
+      # giusta anche senza il retarget JS dell'action. Scope su @scuola → 404 fuori.
       def set_classe
-        @classe = @scuola.classi.find(params[:classe_id])
+        @classe = @scuola.classi.find(param_form(:classe_id))
+      end
+
+      # La form annida i campi sotto :adozione (form_with model); path param e
+      # chiamate dirette restano top-level.
+      def param_form(key)
+        params.dig(:adozione, key).presence || params[key]
       end
     end
   end

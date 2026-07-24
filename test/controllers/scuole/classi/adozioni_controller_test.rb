@@ -71,6 +71,34 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_match(/gi\S* presente in questa classe/i, response.body)
   end
 
+  test "create coi parametri annidati della form reale: il classe_id nel body vince sul path" do
+    altra_classe = classi(:seconda_a_fizzy)
+
+    # Il path punta alla prima classe (placeholder del bottone), la select posta l'altra.
+    assert_difference("altra_classe.adozioni.count", 1) do
+      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+        adozione: { classe_id: altra_classe.id, libro_id: @libro.id },
+        da_acquistare: "1"
+      }
+    end
+
+    adozione = altra_classe.adozioni.order(:created_at).last
+    assert_equal @libro.codice_isbn, adozione.codice_isbn
+    assert_equal altra_classe.anno_corso, adozione.anno_corso
+  end
+
+  test "classe_id nel body di un'altra scuola: 404, non si aggancia" do
+    estranea = classi(:prima_a_acme)
+
+    assert_no_difference("Adozione.count") do
+      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+        adozione: { classe_id: estranea.id, libro_id: @libro.id }
+      }
+    end
+
+    assert_response :not_found
+  end
+
   test "cannot create on classe from another account" do
     other_scuola = scuole(:scuola_acme)
     other_classe = classi(:prima_a_acme)
