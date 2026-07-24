@@ -175,6 +175,6 @@ class LibriController < ApplicationController
     end
 
     def libro_params
-      params.require(:libro).permit(:user_id, :editore_id, :categoria_id, :titolo, :codice_isbn, :cm, :prezzo_in_cents, :prezzo, :prezzo_suggerito, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina)
+      params.require(:libro).permit(:user_id, :editore_id, :categoria_id, :titolo, :codice_isbn, :cm, :prezzo_in_cents, :prezzo, :prezzo_suggerito, :classe, :disciplina, :note, :categoria, :autore, :anno, :copertina, :prosegue_in_id)
     end
 end
