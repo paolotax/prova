@@ -59,11 +59,12 @@
                 <% end %>
               </td>
               <td style="width: 2rem;">
+                <%# Niente tooltip qui: dentro .overflow-x lo span mostrato in hover
+                    allarga lo scroller (scrollbar fantasma). %>
                 <%= button_to scuola_classe_adozione_path(scuola, classe, adozione),
                       method: :delete,
                       class: "adozione-row__remove btn btn--negative btn--remove txt-x-small",
-                      data: { controller: "tooltip", tooltip_content_value: "Elimina adozione",
-                              turbo_confirm: "Eliminare #{adozione.titolo}?" } do %>
+                      data: { turbo_confirm: "Eliminare #{adozione.titolo}?" } do %>
                   <%= icon_tag "close" %>
                   <span class="for-screen-reader">Elimina</span>
                 <% end %>
