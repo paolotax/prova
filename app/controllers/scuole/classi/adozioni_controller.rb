@@ -25,9 +25,10 @@ module Scuole
         inserite = Adozione.insert_all(righe, unique_by: :index_adozioni_on_classe_isbn_anno).count
         gia_presenti = righe.size - inserite
 
-        # Sincrono (non perform_later): flag mia e contatori coerenti PRIMA di ricaricare
-        # il frame, o le righe appena aggiunte non comparirebbero fino al giro del job.
-        UpdateScuolaMieAdozioniJob.perform_now(Current.account, scuola_id: @scuola.id)
+        # Async: il frame ricarica in scope "tutte", che non dipende dal flag mia —
+        # il ricalcolo contatori può girare in background (perform_now bloccava il
+        # submit per l'intera direzione+plessi).
+        UpdateScuolaMieAdozioniJob.set(queue: :default).perform_later(Current.account, scuola_id: @scuola.id)
 
         messaggio = messaggio_esito(inserite, gia_presenti)
 
@@ -51,7 +52,7 @@ module Scuole
       def destroy
         adozione = @classe.adozioni.find(params[:id])
         adozione.destroy!
-        UpdateScuolaMieAdozioniJob.perform_now(Current.account, scuola_id: @scuola.id)
+        UpdateScuolaMieAdozioniJob.set(queue: :default).perform_later(Current.account, scuola_id: @scuola.id)
 
         respond_to do |format|
           # Stream esplicito: rimuove il tile copertina e rirenderizza la sezione

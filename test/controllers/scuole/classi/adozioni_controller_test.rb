@@ -140,20 +140,16 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_match "Sussidiario Catalogo", response.body
   end
 
-  test "ricalcolo sincrono dei contatori scuola" do
+  test "ricalcolo contatori accodato in background (il submit non blocca)" do
     classe_a = classi(:pa_2a)
 
-    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-      classe_ids: classe_a.id.to_s,
-      adozione_ids: "#{@es1.id},#{@es2.id}",
-      da_acquistare: "1"
-    }
-
-    attese = @scuola.adozioni.joins(:classe)
-                    .where(classi: { stato: "attiva" }, da_acquistare: true)
-                    .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
-                    .count
-    assert_equal attese, @scuola.reload.adozioni_count
+    assert_enqueued_with(job: UpdateScuolaMieAdozioniJob) do
+      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+        classe_ids: classe_a.id.to_s,
+        adozione_ids: "#{@es1.id},#{@es2.id}",
+        da_acquistare: "1"
+      }
+    end
   end
 
   test "classe di un'altra scuola nel body: esclusa" do
@@ -198,19 +194,15 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
-  test "destroy elimina l'adozione della classe e ricalcola i contatori" do
+  test "destroy elimina l'adozione della classe e accoda il ricalcolo" do
     assert_difference("Adozione.count", -1) do
-      delete scuola_classe_adozione_path(@scuola, classi(:pa_1a), @es1, account_id: @account.id)
+      assert_enqueued_with(job: UpdateScuolaMieAdozioniJob) do
+        delete scuola_classe_adozione_path(@scuola, classi(:pa_1a), @es1, account_id: @account.id)
+      end
     end
 
     assert_redirected_to scuola_classe_path(@scuola, classi(:pa_1a))
     assert_nil Adozione.find_by(id: @es1.id)
-
-    attese = @scuola.adozioni.joins(:classe)
-                    .where(classi: { stato: "attiva" }, da_acquistare: true)
-                    .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
-                    .count
-    assert_equal attese, @scuola.reload.adozioni_count
   end
 
   test "destroy in turbo_stream rimuove tile e rirenderizza la sezione adozioni" do
