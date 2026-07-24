@@ -538,7 +538,7 @@ Rails.application.routes.draw do
             resource :closed_entries, only: [:show]
             resources :consegne_saggio, only: %i[create destroy]
             resources :persone, only: %i[new create destroy]
-            resources :adozioni, only: %i[new create]
+            resources :adozioni, only: %i[new create destroy]
           end
         end
       end

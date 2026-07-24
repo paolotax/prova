@@ -48,6 +48,14 @@ module Scuole
         end
       end
 
+      def destroy
+        adozione = @classe.adozioni.find(params[:id])
+        adozione.destroy!
+        UpdateScuolaMieAdozioniJob.perform_now(Current.account, scuola_id: @scuola.id)
+        redirect_to scuola_classe_path(@scuola, @classe),
+                    notice: "Adozione eliminata: #{adozione.titolo}."
+      end
+
       private
 
       def set_scuola

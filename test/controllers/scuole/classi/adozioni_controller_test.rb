@@ -198,6 +198,29 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "destroy elimina l'adozione della classe e ricalcola i contatori" do
+    assert_difference("Adozione.count", -1) do
+      delete scuola_classe_adozione_path(@scuola, classi(:pa_1a), @es1, account_id: @account.id)
+    end
+
+    assert_redirected_to scuola_classe_path(@scuola, classi(:pa_1a))
+    assert_nil Adozione.find_by(id: @es1.id)
+
+    attese = @scuola.adozioni.joins(:classe)
+                    .where(classi: { stato: "attiva" }, da_acquistare: true)
+                    .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+                    .count
+    assert_equal attese, @scuola.reload.adozioni_count
+  end
+
+  test "destroy di un'adozione di un'altra classe: 404" do
+    assert_no_difference("Adozione.count") do
+      delete scuola_classe_adozione_path(@scuola, classi(:pa_2a), @es1, account_id: @account.id)
+    end
+
+    assert_response :not_found
+  end
+
   test "non si crea su scuola di un altro account" do
     other_scuola = scuole(:scuola_acme)
     other_classe = classi(:prima_a_acme)

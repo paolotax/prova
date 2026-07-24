@@ -1,4 +1,10 @@
 <%# locals: (classe:, scuola:, adozioni:) -%>
+<style>
+  /* Elimina a comparsa in hover, come i fascicoli nella show libro. */
+  .adozione-row .adozione-row__remove { opacity: 0; transition: opacity .15s ease; }
+  .adozione-row:hover .adozione-row__remove,
+  .adozione-row:focus-within .adozione-row__remove { opacity: 1; }
+</style>
 
 <section class="group">
   <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Adozioni</h3>
@@ -14,6 +20,7 @@
             <th class="txt-left">Titolo</th>
             <th class="txt-left">Disciplina</th>
             <th class="txt-right">Prezzo</th>
+            <th></th>
           </tr>
         </thead>
         <tbody>
@@ -29,7 +36,7 @@
                 ""
               end
             %>
-            <tr style="<%= row_style %>"<%= ' class="disdetta"'.html_safe if adozione.disdetta? %>>
+            <tr style="<%= row_style %>" class="adozione-row<%= ' disdetta' if adozione.disdetta? %>">
               <td>
                 <div class="txt-small font-weight-bold">
                   <% if !adozione.da_acquistare? %>
@@ -51,6 +58,16 @@
                   <%= number_to_currency(adozione.prezzo, unit: "\u20AC", format: "%n %u") %>
                 <% end %>
               </td>
+              <td style="width: 2rem;">
+                <%= button_to scuola_classe_adozione_path(scuola, classe, adozione),
+                      method: :delete,
+                      class: "adozione-row__remove btn btn--negative btn--remove txt-x-small",
+                      data: { controller: "tooltip", tooltip_content_value: "Elimina adozione",
+                              turbo_confirm: "Eliminare #{adozione.titolo}?" } do %>
+                  <%= icon_tag "close" %>
+                  <span class="for-screen-reader">Elimina</span>
+                <% end %>
+              </td>
             </tr>
           <% end %>
         </tbody>
@@ -60,6 +77,7 @@
             <td class="txt-small txt-right font-weight-black">
               <%= number_to_currency(totale_cents / 100.0, unit: "\u20AC", format: "%n %u") %>
             </td>
+            <td></td>
           </tr>
         </tfoot>
       </table>
