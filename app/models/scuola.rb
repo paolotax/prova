@@ -365,6 +365,19 @@ class Scuola < ApplicationRecord
     Turbo::StreamsChannel.broadcast_refresh_to(account, "scuole")
   end
 
+  # Scuola soppressa (sparita dall'anagrafe MIUR senza successore): archivia scuola
+  # e classi attive come tombstone storico. I ricalcoli async sgonfiano i contatori
+  # (scuola via Adozione::Ricalcolo, libri.adozioni_count via UpdateMieAdozioniJob).
+  def archivia_soppressa!
+    transaction do
+      classi.attive.update_all(stato: "archiviata", updated_at: Time.current)
+      update!(stato: "archiviata")
+    end
+    UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
+    UpdateMieAdozioniJob.perform_later(account)
+    Turbo::StreamsChannel.broadcast_refresh_to(account, "scuole")
+  end
+
   private
 
   # Roster MIUR (miur_adozioni, anno corrente) della scuola come { [annocorso, sezione] => combinazione },

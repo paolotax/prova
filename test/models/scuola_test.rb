@@ -173,6 +173,32 @@ class ScuolaPromuovibileTest < ActiveSupport::TestCase
   end
 end
 
+class ScuolaArchiviaSoppressaTest < ActiveSupport::TestCase
+  include ActiveJob::TestHelper
+
+  fixtures :accounts, :scuole, :classi
+
+  setup do
+    Current.account = accounts(:fizzy)
+  end
+
+  teardown do
+    Current.account = nil
+  end
+
+  test "archivia_soppressa! archivia scuola e classi e accoda i ricalcoli" do
+    scuola = scuole(:primaria_attiva)
+    assert scuola.classi.attive.exists?
+
+    assert_enqueued_jobs 2, only: [UpdateScuolaMieAdozioniJob, UpdateMieAdozioniJob] do
+      scuola.archivia_soppressa!
+    end
+
+    assert_equal "archiviata", scuola.reload.stato
+    assert_not scuola.classi.attive.exists?
+  end
+end
+
 class ScuolaEmailPatternTest < ActiveSupport::TestCase
   fixtures :accounts, :scuole
 
