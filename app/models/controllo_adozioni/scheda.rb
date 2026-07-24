@@ -31,7 +31,9 @@ module ControlloAdozioni
         scuola.classi.attive.where(anno_scolastico: anno_corrente).exists?
     end
 
-    # Attiva ma con codice sparito dall'anagrafe MIUR dell'anno.
+    # Attiva ma con codice sparito dall'anagrafe MIUR dell'anno. Stessa definizione
+    # in scuole/_fuori_anagrafe_banner.html.erb e Classificazione#fuori_anagrafe —
+    # tenere allineate.
     def fuori_anagrafe?
       scuola&.stato == "attiva" && !scuola.gestione_manuale? && anno_corrente.present? &&
         !Miur::Scuola.where(codice_scuola: codicescuola, anno_scolastico: anno_corrente).exists?
