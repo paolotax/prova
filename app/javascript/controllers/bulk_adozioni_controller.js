@@ -11,6 +11,30 @@ export default class extends Controller {
 
   static ASYNC_ATTR = "data-hw-combobox-async-src-value"
 
+  // L'autofocus di showModal() arriva PRIMA che il controller hw-combobox sia
+  // connesso (import async): l'input resta focused ma il gem non ha visto
+  // l'evento focus e non apre/filtra. Blur+refocus rigenera l'evento quando
+  // il controller c'è; retry breve finché il modulo non è connesso.
+  connect() {
+    this.#riarmaFocus(10)
+  }
+
+  #riarmaFocus(tentativi) {
+    if (tentativi <= 0) return
+
+    requestAnimationFrame(() => {
+      const input = this.element.querySelector("input.hw-combobox__input")
+      const connesso = input && this.application.getControllerForElementAndIdentifier(
+        input.closest(".hw-combobox"), "hw-combobox"
+      )
+
+      if (!connesso) return setTimeout(() => this.#riarmaFocus(tentativi - 1), 100)
+
+      if (document.activeElement === input) input.blur()
+      input.focus()
+    })
+  }
+
   syncAnni() {
     const hidden = this.element.querySelector('input[name="classe_ids"]')
     const fieldset = this.element.querySelector(`[${this.constructor.ASYNC_ATTR}]`)
