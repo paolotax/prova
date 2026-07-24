@@ -20,6 +20,25 @@
       <% end %>
     </div>
 
+    <%# Stato MIUR sotto il divider, centrato: qui si capisce perché l'elenco
+        mostrato è quello riportato/provvisorio. %>
+    <% if @scuola.fuori_anagrafe_miur? %>
+      <p class="flex align-center justify-center gap-half txt-small margin-block-end">
+        <span class="badge badge--yellow"><span class="badge__dot"></span> fuori anagrafe MIUR</span>
+        <%= link_to "Gestisci nel controllo adozioni", controllo_adozioni_path(codicescuola: @scuola.codice_ministeriale), class: "btn btn--small", data: { turbo_frame: "_top" } %>
+      </p>
+    <% elsif @scuola.in_attesa_roster_miur? %>
+      <p class="flex align-center justify-center gap-half txt-small margin-block-end">
+        <span class="badge">in attesa adozioni MIUR <%= anno_scolastico_label(Miur.anno_corrente) %></span>
+        <%= link_to "Apri nel controllo adozioni", controllo_adozioni_path(codicescuola: @scuola.codice_ministeriale), class: "btn btn--small", data: { turbo_frame: "_top" } %>
+      </p>
+    <% elsif @scuola.gestione_manuale? %>
+      <p class="flex align-center justify-center gap-half txt-small margin-block-end">
+        <span class="badge badge--grey">gestione manuale</span>
+        <%= link_to "Apri nel controllo adozioni", controllo_adozioni_path(codicescuola: @scuola.codice_ministeriale), class: "btn btn--small", data: { turbo_frame: "_top" } %>
+      </p>
+    <% end %>
+
     <% if @adozioni.any? %>
       <% grouped = @adozioni.group_by(&:disciplina) %>
 

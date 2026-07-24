@@ -1,24 +1,7 @@
 <%# locals: (scuola:) -%>
 
-<%# Stato MIUR accanto alle adozioni: qui si vede subito se quelle elencate sono
-    dell'anno vecchio e perché (fuori anagrafe / in attesa roster / manuale). %>
-<% if scuola.fuori_anagrafe_miur? %>
-  <p class="txt-small margin-block-end flex align-center gap-half">
-    <span class="badge badge--yellow"><span class="badge__dot"></span> fuori anagrafe MIUR</span>
-    <%= link_to "Gestisci nel controllo adozioni", controllo_adozioni_path(codicescuola: scuola.codice_ministeriale), class: "btn btn--small" %>
-  </p>
-<% elsif scuola.in_attesa_roster_miur? %>
-  <p class="txt-small margin-block-end flex align-center gap-half">
-    <span class="badge">in attesa adozioni MIUR <%= anno_scolastico_label(Miur.anno_corrente) %></span>
-    <%= link_to "Apri nel controllo adozioni", controllo_adozioni_path(codicescuola: scuola.codice_ministeriale), class: "btn btn--small" %>
-  </p>
-<% elsif scuola.gestione_manuale? %>
-  <p class="txt-small margin-block-end flex align-center gap-half">
-    <span class="badge badge--grey">gestione manuale</span>
-    <%= link_to "Apri nel controllo adozioni", controllo_adozioni_path(codicescuola: scuola.codice_ministeriale), class: "btn btn--small" %>
-  </p>
-<% end %>
-
+<%# Lo stato MIUR (fuori anagrafe / in attesa roster / manuale) è dentro il
+    frame, sotto il divider "Mie adozioni | Tutte" (scuole/adozioni/show). %>
 <%= turbo_frame_tag "scuola_adozioni", src: scuola_adozioni_path(scuola, scope: "mie"), loading: :lazy, style: "display: block; min-height: 4rem;" do %>
   <section class="group">
     <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Adozioni</h3>
