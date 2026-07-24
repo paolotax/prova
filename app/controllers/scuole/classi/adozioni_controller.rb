@@ -52,7 +52,8 @@ module Scuole
         adozione = @classe.adozioni.find(params[:id])
         adozione.destroy!
         UpdateScuolaMieAdozioniJob.perform_now(Current.account, scuola_id: @scuola.id)
-        redirect_to scuola_classe_path(@scuola, @classe),
+        # 303: dopo una DELETE Turbo non segue il 302 (la riga resterebbe a video).
+        redirect_to scuola_classe_path(@scuola, @classe), status: :see_other,
                     notice: "Adozione eliminata: #{adozione.titolo}."
       end
 
