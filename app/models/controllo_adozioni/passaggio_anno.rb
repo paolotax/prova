@@ -48,7 +48,12 @@ module ControlloAdozioni
         Step.new(numero: 4, key: :anomalie, job: nil,
                  titolo: "Anomalie",
                  descrizione: "Anomalie nei dati MIUR da controllare e correggere.",
-                 count: anomalie_count)
+                 count: anomalie_count),
+        Step.new(numero: 5, key: :fuori_anagrafe, job: nil,
+                 titolo: "Fuori anagrafe",
+                 descrizione: "Scuole attive con codice sparito dall'anagrafe MIUR: " \
+                              "cambio codice, soppressione o gestione manuale — decidi tu scuola per scuola.",
+                 count: fuori_anagrafe_count)
       ]
     end
 
@@ -71,6 +76,10 @@ module ControlloAdozioni
 
     def anomalie_count
       @anomalie_count ||= classificazione.conta(scuole_scope, :con_anomalie)
+    end
+
+    def fuori_anagrafe_count
+      @fuori_anagrafe_count ||= classificazione.conta(scuole_scope, :fuori_anagrafe)
     end
 
     private

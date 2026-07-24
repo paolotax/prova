@@ -108,7 +108,7 @@ module ControlloAdozioni
                         comune: "COMUNE NUOVO", isbn: "9880000000037")
 
       steps = passaggio.steps
-      assert_equal %i[promuovibili cambi_codice scuole_nuove anomalie], steps.map(&:key)
+      assert_equal %i[promuovibili cambi_codice scuole_nuove anomalie fuori_anagrafe], steps.map(&:key)
 
       cambi = steps.find { |s| s.key == :cambi_codice }
       nuove = steps.find { |s| s.key == :scuole_nuove }
@@ -119,6 +119,24 @@ module ControlloAdozioni
       assert_equal 0, nuove.verifica
       assert nuove.azionabile?
       refute steps.find { |s| s.key == :anomalie }.azionabile?, "step 4 non ha job"
+    end
+
+    test "lo step fuori anagrafe conta le scuole sparite dall'anagrafe MIUR" do
+      # Snapshot MIUR dell'anno (stabilisce anno_corrente) con un codice estraneo.
+      crea_nuovo_codice(codice: "XXEE0000N9", denominazione: "PRIMARIA INEDITA",
+                        comune: "COMUNE NUOVO", isbn: "9880000000037")
+      # Orfana attiva: codice non in miur_scuole dell'anno → fuori anagrafe.
+      orfana = crea_orfana(codice: "XXEE0000F1", denominazione: "Sparita")
+
+      step = passaggio(provincia: "XX").steps.find { |s| s.key == :fuori_anagrafe }
+      assert_equal 5, step.numero
+      assert_nil step.job
+      refute step.azionabile?, "step fuori anagrafe non ha job"
+      assert_equal 1, step.count
+
+      # Passandola a gestione manuale esce dal conteggio.
+      orfana.update!(gestione_manuale: true)
+      assert_equal 0, passaggio(provincia: "XX").steps.find { |s| s.key == :fuori_anagrafe }.count
     end
 
     test "lo step codici nuovi somma nuova e suggerimento, con split bulk/verifica" do
