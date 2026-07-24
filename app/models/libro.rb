@@ -81,6 +81,7 @@ class Libro < ApplicationRecord
   belongs_to :categoria
 
   belongs_to :prosegue_in, class_name: "Libro", optional: true
+  # FK non univoca: se piu' volumi convergono sullo stesso successore, has_one ne sceglie uno.
   has_one :precedente, class_name: "Libro", foreign_key: :prosegue_in_id, inverse_of: :prosegue_in
   
   has_one :giacenza, dependent: :destroy

@@ -207,4 +207,11 @@ namespace :libri do
       puts "Prezzo suggerito aggiornato con successo per tutti gli utenti con sconto #{sconto}%!"
     end
   end
+
+  desc "Collega prosegue_in per i libri con match univoco collana+classe (per account)"
+  task :collega_prosegui, [:account_id] => :environment do |_t, args|
+    account = Account.find(args.fetch(:account_id))
+    n = Libro::CollegaProsegui.new(account: account).call
+    puts "Collegati #{n} prosegui per #{account.id}"
+  end
 end

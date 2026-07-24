@@ -27,6 +27,26 @@ class LibroTest < ActiveSupport::TestCase
     assert_equal l1, l2.reload.precedente
   end
 
+  test "candidati_prosegui usa la disciplina come tie-break quando i candidati sono piu' di uno" do
+    fonte = crea_libro(titolo: "Fonte 1", collana: "Serie", classe: 1, disciplina: "MATEMATICA")
+    match = crea_libro(titolo: "Match 2", collana: "Serie", classe: 2, disciplina: "MATEMATICA")
+    crea_libro(titolo: "Altro 2", collana: "Serie", classe: 2, disciplina: "ITALIANO")
+
+    candidati = fonte.candidati_prosegui.to_a
+
+    assert_equal [match], candidati
+  end
+
+  test "candidati_prosegui torna tutti i candidati se la disciplina non matcha nessuno" do
+    fonte = crea_libro(titolo: "Fonte 1", collana: "Serie", classe: 1, disciplina: "STORIA")
+    a = crea_libro(titolo: "A 2", collana: "Serie", classe: 2, disciplina: "MATEMATICA")
+    b = crea_libro(titolo: "B 2", collana: "Serie", classe: 2, disciplina: "ITALIANO")
+
+    candidati = fonte.candidati_prosegui.to_a
+
+    assert_equal [a, b].sort_by(&:id), candidati.sort_by(&:id)
+  end
+
   private
 
   def crea_libro(titolo:, collana: nil, classe: nil, disciplina: nil)
