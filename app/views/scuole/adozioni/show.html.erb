@@ -1,15 +1,24 @@
 <%= turbo_frame_tag "scuola_adozioni" do %>
+  <% prima_classe = @scuola.classi.attive.order(:anno_corso, :sezione).first %>
   <section class="group">
-    <h3 class="divider divider--fade txt-medium font-weight-black margin-block-end">
-      <%= link_to "Mie adozioni", scuola_adozioni_path(@scuola, scope: "mie"),
-          class: "txt-undecorated #{'font-weight-black' if @scope == 'mie'}",
-          style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'mie'}",
-          data: { turbo_frame: "scuola_adozioni" } %>
-      <%= link_to "Tutte", scuola_adozioni_path(@scuola, scope: "tutte"),
-          class: "txt-undecorated #{'font-weight-black' if @scope == 'tutte'}",
-          style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'tutte'}",
-          data: { turbo_frame: "scuola_adozioni" } %>
-    </h3>
+    <div class="flex align-center justify-between gap margin-block-end">
+      <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
+        <%= link_to "Mie adozioni", scuola_adozioni_path(@scuola, scope: "mie"),
+            class: "txt-undecorated #{'font-weight-black' if @scope == 'mie'}",
+            style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'mie'}",
+            data: { turbo_frame: "scuola_adozioni" } %>
+        <%= link_to "Tutte", scuola_adozioni_path(@scuola, scope: "tutte"),
+            class: "txt-undecorated #{'font-weight-black' if @scope == 'tutte'}",
+            style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'tutte'}",
+            data: { turbo_frame: "scuola_adozioni" } %>
+      </h3>
+      <% if prima_classe %>
+        <%= link_to "Aggiungi adozione",
+            new_scuola_classe_adozione_path(@scuola, prima_classe),
+            class: "btn btn--small",
+            data: { turbo_frame: :modal } %>
+      <% end %>
+    </div>
 
     <% if @adozioni.any? %>
       <% grouped = @adozioni.group_by(&:disciplina) %>
