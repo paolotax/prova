@@ -18,17 +18,18 @@
           method: :post,
           class: "flex flex-column gap" do %>
 
-        <div class="flex flex-column gap-quarter cb-tax-fancy" style="min-inline-size: 0; inline-size: 100%;">
+        <%# cb-tax (NON cb-tax-fancy: classe fantasma senza CSS). Nessuna classe
+            preselezionata: quella del path è solo il segnaposto del bottone. %>
+        <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
           <label class="txt-small txt-bold">Classi</label>
           <%= combobox_tag "classe_ids",
                 @classi,
-                value: [@classe.id],
-                multiselect_chip_src: classe_chips_path,
+                multiselect_chip_src: classi_chips_path,
                 placeholder: "Seleziona classi...",
                 mobile_at: "0px" %>
         </div>
 
-        <div class="flex flex-column gap-quarter cb-tax-fancy" style="min-inline-size: 0; inline-size: 100%;">
+        <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
           <label class="txt-small txt-bold">Libri</label>
           <%= combobox_tag "adozione_ids",
                 adozioni_catalogo_index_path(anno_corso: @classe.anno_corso),

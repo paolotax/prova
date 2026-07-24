@@ -298,6 +298,8 @@ Rails.application.routes.draw do
     resources :libro_chips,  only: :create, param: :combobox_value
     resources :giro_chips, only: :create, param: :combobox_value
     resources :adozione_chips, only: :create, param: :combobox_value
+    # Chips per le Classe VERE (classe_chips risolve Views::Classe: id diversi).
+    resources :classi_chips, only: :create, param: :combobox_value
 
     # Catalogo adozioni: sorgente combobox per l'inserimento multiplo (titoli reali
     # dalle adozioni dell'account, non dal catalogo Libro), filtrabile per anno di corso.
