@@ -121,6 +121,14 @@ module ControlloAdozioni
       refute scheda("ZZZZ999999").fuori_anagrafe?
     end
 
+    test "fuori_anagrafe? false se promossa (cieca col codice sparito): gia' gestita" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.classi.create!(account: @account, anno_corso: "2", sezione: "Z",
+        anno_scolastico: @anno, stato: "attiva", tipo_scuola: "EE")
+
+      refute scheda(scuola.codice_ministeriale).fuori_anagrafe?
+    end
+
     test "promozione_cieca_possibile? true senza roster miur_adozioni: anche in anagrafe (codice appena aggiornato)" do
       scuola = scuole(:scuola_fizzy)
       scuola.classi.create!(account: @account, anno_corso: "1", sezione: "Z",

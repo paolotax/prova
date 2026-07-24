@@ -1,8 +1,10 @@
 <%# locals: (scuola:) -%>
-<%# Banner: scuola attiva col codice sparito dall'anagrafe MIUR corrente. Stessa
+<%# Banner: scuola attiva col codice sparito dall'anagrafe MIUR corrente e non
+    ancora promossa (promossa ciecamente = gia' gestita, niente allarme). Stessa
     definizione di ControlloAdozioni::Scheda#fuori_anagrafe? — tenere allineate. %>
 <% if scuola.stato == "attiva" && !scuola.gestione_manuale? && Miur.anno_corrente.present? &&
       scuola.codice_ministeriale.present? &&
+      scuola.classi.attive.where(anno_scolastico: Miur.anno_corrente).none? &&
       !Miur::Scuola.where(codice_scuola: scuola.codice_ministeriale, anno_scolastico: Miur.anno_corrente).exists? %>
   <p class="notice notice--warning flex align-center gap-half justify-between">
     <span>
