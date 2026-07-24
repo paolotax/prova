@@ -390,6 +390,12 @@ Rails.application.routes.draw do
                path: "controllo_adozioni/cambi_codice", as: :controllo_adozioni_cambi_codice
       resource :scuole_nuove, only: :create, controller: "scuole_nuove",
                path: "controllo_adozioni/scuole_nuove", as: :controllo_adozioni_scuole_nuove
+      resource :archiviazione, only: :create, controller: "archiviazioni",
+               path: "controllo_adozioni/:codicescuola/archiviazione", as: :controllo_adozioni_archiviazione
+      resource :gestione_manuale, only: %i[create destroy], controller: "gestioni_manuali",
+               path: "controllo_adozioni/:codicescuola/gestione_manuale", as: :controllo_adozioni_gestione_manuale
+      resource :promozione_cieca, only: %i[new create], controller: "promozioni_cieche",
+               path: "controllo_adozioni/:codicescuola/promozione_cieca", as: :controllo_adozioni_promozione_cieca
     end
 
     get  "adozioni_comunicate", to: "adozioni/comunicate#index", as: :adozioni_comunicate

@@ -1,0 +1,52 @@
+<%# Placeholder funzionale — Task E1 ridisegnerà layout e stile della modal. %>
+<%= turbo_frame_tag :modal do %>
+  <div data-controller="dialog"
+       data-dialog-modal-value="true"
+       data-dialog-auto-open-value="true">
+    <dialog class="dialog panel" style="--panel-size: 60ch;"
+            data-dialog-target="dialog"
+            data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
+      <h3 class="txt-large txt-bold">Promozione cieca — <%= @scuola.denominazione %></h3>
+      <p class="txt-small txt-subtle">
+        Scorrimento d'anno senza roster MIUR: da <%= @da %> a <%= @anno_target %>.
+      </p>
+
+      <% labels = { archiviata: "Archiviata (5ª uscente)", scorre: "Scorre",
+                    scorre_vuota: "Scorre (nuova adozione)" } %>
+      <table class="table">
+        <thead>
+          <tr>
+            <th>Classe</th>
+            <th>Esito</th>
+            <th>Anno target</th>
+            <th>Adozioni</th>
+            <th>di cui prosegui</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% @anteprima.righe.each do |riga| %>
+            <tr>
+              <td><%= riga.classe.nome_breve %></td>
+              <td><%= labels[riga.esito] || riga.esito %></td>
+              <td><%= riga.anno_corso_target || "—" %></td>
+              <td><%= riga.n_adozioni || "—" %></td>
+              <td><%= riga.n_prosegui || "—" %></td>
+            </tr>
+          <% end %>
+        </tbody>
+      </table>
+
+      <% if @anteprima.nuove_prime.any? %>
+        <p class="txt-small">
+          Nuove 1ª (vuote): <%= @anteprima.nuove_prime.sort.join(", ") %>
+        </p>
+      <% end %>
+
+      <%= form_with url: controllo_adozioni_promozione_cieca_path(@scuola.codice_ministeriale),
+          method: :post, class: "flex gap-half justify-end margin-block-start" do |f| %>
+        <button type="button" class="btn" data-action="dialog#close">Annulla</button>
+        <%= f.submit "Avvia promozione cieca", class: "btn btn--link" %>
+      <% end %>
+    </dialog>
+  </div>
+<% end %>

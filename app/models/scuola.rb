@@ -387,6 +387,7 @@ class Scuola < ApplicationRecord
   # - nuove 1ª create con le sezioni delle 1ª uscenti, vuote.
   # Idempotente sul target `a` (stessa guardia di promuovi_primaria!).
   def promuovi_cieca!(da:, a:)
+    # EE-only: anno_corso numerico 1–5; gradi non numerici (licei) fuori scope come in promuovi_primaria!.
     transaction do
       unless classi.attive.per_anno(a).exists?
         # anno_corso DESC: la 5ª si archivia PRIMA che la 4ª avanzi a 5ª, così non
