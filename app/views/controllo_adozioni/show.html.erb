@@ -20,8 +20,7 @@
           class: "btn", data: { turbo_frame: :modal } %>
     <% end %>
 
-    <% if (@scheda.fuori_anagrafe? || @scheda.scuola&.gestione_manuale?) &&
-          @scheda.scuola && !@scheda.promossa? && @scheda.scuola.classi.attive.exists? %>
+    <% if @scheda.promozione_cieca_possibile? %>
       <%= link_to "Promozione cieca",
           new_controllo_adozioni_promozione_cieca_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
           class: "btn", data: { turbo_frame: :modal } %>

@@ -121,6 +121,41 @@ module ControlloAdozioni
       refute scheda("ZZZZ999999").fuori_anagrafe?
     end
 
+    test "promozione_cieca_possibile? true senza roster miur_adozioni: anche in anagrafe (codice appena aggiornato)" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.classi.create!(account: @account, anno_corso: "1", sezione: "Z",
+        anno_scolastico: AnnoScolastico.new(@anno).precedente.to_s, stato: "attiva", tipo_scuola: "EE")
+      # In anagrafe (non fuori_anagrafe), ma senza righe miur_adozioni: caso Marco Polo.
+      Miur::Scuola.create!(anno_scolastico: @anno, codice_scuola: scuola.codice_ministeriale,
+        denominazione: scuola.denominazione, comune: scuola.comune, provincia: scuola.provincia)
+
+      s = scheda(scuola.codice_ministeriale)
+      refute s.fuori_anagrafe?
+      assert s.promozione_cieca_possibile?
+    end
+
+    test "promozione_cieca_possibile? false col roster miur_adozioni presente" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.classi.create!(account: @account, anno_corso: "1", sezione: "Z",
+        anno_scolastico: AnnoScolastico.new(@anno).precedente.to_s, stato: "attiva", tipo_scuola: "EE")
+      Miur::Adozione.create!(anno_scolastico: @anno, codicescuola: scuola.codice_ministeriale,
+        tipogradoscuola: "EE", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "9880000000028", disciplina: "ITALIANO", titolo: "Libro")
+
+      refute scheda(scuola.codice_ministeriale).promozione_cieca_possibile?
+    end
+
+    test "promozione_cieca_possibile? false se promossa o senza classi attive" do
+      # Scuola vergine: la fixture scuola_fizzy ha gia' classi attive di suo.
+      scuola = @account.scuole.create!(denominazione: "Primaria Vergine",
+        codice_ministeriale: "MIEE0000V1", provincia: "MI", comune: "Milano", grado: "E")
+      refute scheda(scuola.codice_ministeriale).promozione_cieca_possibile?, "senza classi attive"
+
+      scuola.classi.create!(account: @account, anno_corso: "1", sezione: "Z",
+        anno_scolastico: @anno, stato: "attiva", tipo_scuola: "EE")
+      refute scheda(scuola.codice_ministeriale).promozione_cieca_possibile?, "gia' promossa"
+    end
+
     test "anni_con_elenco: set degli anni con righe miur_adozioni" do
       s = scheda("MIIC123456")
       anno_precedente = AnnoScolastico.new(@anno).precedente.to_s

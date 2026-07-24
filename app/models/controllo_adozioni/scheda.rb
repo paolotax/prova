@@ -37,6 +37,17 @@ module ControlloAdozioni
         !Miur::Scuola.where(codice_scuola: codicescuola, anno_scolastico: anno_corrente).exists?
     end
 
+    # La promozione cieca è l'unica strada quando manca il roster miur_adozioni EE
+    # dell'anno: fuori anagrafe, gestione manuale, ma anche codice APPENA aggiornato
+    # con adozioni non ancora pubblicate dal MIUR (caso Marco Polo). Col roster
+    # presente si usa il passaggio anno normale.
+    def promozione_cieca_possibile?
+      scuola.present? && !promossa? && anno_corrente.present? &&
+        scuola.classi.attive.exists? &&
+        !Miur::Adozione.where(codicescuola: codicescuola, anno_scolastico: anno_corrente,
+                              tipogradoscuola: "EE").exists?
+    end
+
     # Candidati successore (delegati a Panoramica, stessa regola della riga).
     def successori
       @successori ||= fuori_anagrafe? ? Panoramica.new(account: account).successori(scuola) : []
