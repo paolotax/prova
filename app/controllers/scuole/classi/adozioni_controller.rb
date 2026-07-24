@@ -42,7 +42,7 @@ module Scuole
                 turbo_stream_flash(notice: "Adozione aggiunta: #{@adozione.titolo} in #{@classe.nome_breve}."),
                 turbo_stream.update("modal", ""),
                 turbo_stream.replace("scuola_adozioni",
-                  turbo_frame_tag("scuola_adozioni",
+                  helpers.turbo_frame_tag("scuola_adozioni",
                     src: scuola_adozioni_path(@scuola, scope: "mie"),
                     loading: :eager,
                     style: "display: block; min-height: 4rem;"))

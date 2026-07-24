@@ -46,6 +46,24 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_not adozione.riportata?, "riportata dovrebbe essere false per righe manuali"
   end
 
+  test "create in turbo_stream risponde con flash, chiusura modal e reload del frame adozioni" do
+    # La form reale posta in turbo_stream: questo ramo usa helpers.turbo_frame_tag
+    # dal controller (turbo_frame_tag nudo non esiste lì → NoMethodError in prod).
+    assert_difference("Adozione.count", 1) do
+      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id),
+        as: :turbo_stream,
+        params: {
+          classe_id: @classe.id,
+          libro_id: @libro.id,
+          da_acquistare: "1"
+        }
+    end
+
+    assert_response :success
+    assert_match "scuola_adozioni", response.body
+    assert_match "turbo-stream", response.body
+  end
+
   test "create with da_acquistare unchecked stores false" do
     post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
       classe_id: @classe.id,
