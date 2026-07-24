@@ -213,6 +213,19 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_equal attese, @scuola.reload.adozioni_count
   end
 
+  test "destroy in turbo_stream rimuove tile e rirenderizza la sezione adozioni" do
+    delete scuola_classe_adozione_path(@scuola, classi(:pa_1a), @es1, account_id: @account.id),
+           as: :turbo_stream
+
+    assert_response :success
+    assert_match "turbo-stream", response.body
+    assert_match ActionView::RecordIdentifier.dom_id(classi(:pa_1a), :adozioni), response.body
+    # La sezione rirenderizzata non contiene più il titolo eliminato.
+    sezione_replace = response.body[/action="replace".*\z/m].to_s
+    assert_no_match(/#{Regexp.escape(@es1.titolo)}/, sezione_replace)
+    assert_nil Adozione.find_by(id: @es1.id)
+  end
+
   test "destroy di un'adozione di un'altra classe: 404" do
     assert_no_difference("Adozione.count") do
       delete scuola_classe_adozione_path(@scuola, classi(:pa_2a), @es1, account_id: @account.id)

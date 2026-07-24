@@ -52,9 +52,28 @@ module Scuole
         adozione = @classe.adozioni.find(params[:id])
         adozione.destroy!
         UpdateScuolaMieAdozioniJob.perform_now(Current.account, scuola_id: @scuola.id)
-        # 303: dopo una DELETE Turbo non segue il 302 (la riga resterebbe a video).
-        redirect_to scuola_classe_path(@scuola, @classe), status: :see_other,
-                    notice: "Adozione eliminata: #{adozione.titolo}."
+
+        respond_to do |format|
+          # Stream esplicito: rimuove il tile copertina e rirenderizza la sezione
+          # tabella (totale incluso) — niente dipendenza da redirect/morph.
+          format.turbo_stream do
+            adozioni = @classe.adozioni.correnti
+                              .includes(:saggi, :kit_consegne, :seguiti, :libro)
+                              .order(:disciplina, :titolo)
+            render turbo_stream: [
+              turbo_stream_flash(notice: "Adozione eliminata: #{adozione.titolo}."),
+              turbo_stream.remove(helpers.dom_id(adozione, :tile)),
+              turbo_stream.replace(helpers.dom_id(@classe, :adozioni),
+                render_to_string(partial: "scuole/classi/container/adozioni",
+                                 locals: { classe: @classe, scuola: @scuola, adozioni: adozioni }))
+            ]
+          end
+          # 303: dopo una DELETE Turbo non segue il 302.
+          format.html do
+            redirect_to scuola_classe_path(@scuola, @classe), status: :see_other,
+                        notice: "Adozione eliminata: #{adozione.titolo}."
+          end
+        end
       end
 
       private

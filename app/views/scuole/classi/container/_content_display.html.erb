@@ -28,13 +28,32 @@
                          .order(:titolo)
 %>
 <% if mie_adozioni.any? %>
+  <style>
+    /* Elimina a comparsa in hover sull'avatar, come i fascicoli nella show libro. */
+    .adozione-tile { position: relative; }
+    .adozione-tile__remove {
+      position: absolute; top: -6px; right: -6px;
+      opacity: 0; transition: opacity .15s ease;
+    }
+    .adozione-tile:hover .adozione-tile__remove,
+    .adozione-tile:focus-within .adozione-tile__remove { opacity: 1; }
+  </style>
   <div class="flex gap-half flex-wrap margin-block-start">
     <% mie_adozioni.each do |adozione| %>
-      <div class="flex flex-column align-center gap-quarter">
+      <div class="flex flex-column align-center gap-quarter adozione-tile" id="<%= dom_id(adozione, :tile) %>">
         <% if adozione.libro %>
           <%= link_to adozione.libro, data: { turbo_frame: "_top", controller: "tooltip" }, title: adozione.titolo do %>
             <%= copertina_tag adozione.libro, class: "copertina--shadow", style: "--copertina-size: 80px;" %>
           <% end %>
+        <% end %>
+        <%= button_to scuola_classe_adozione_path(scuola, classe, adozione),
+              method: :delete,
+              class: "adozione-tile__remove btn btn--negative btn--remove txt-x-small",
+              form: { data: { turbo_frame: "_top" } },
+              data: { controller: "tooltip", tooltip_content_value: "Elimina adozione",
+                      turbo_confirm: "Eliminare #{adozione.titolo}?" } do %>
+          <%= icon_tag "close" %>
+          <span class="for-screen-reader">Elimina</span>
         <% end %>
         <div class="flex gap-quarter flex-wrap justify-center">
           <% adozione.saggi.each do |cs| %>

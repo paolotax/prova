@@ -6,7 +6,7 @@
   .adozione-row:focus-within .adozione-row__remove { opacity: 1; }
 </style>
 
-<section class="group">
+<section class="group" id="<%= dom_id(classe, :adozioni) %>">
   <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Adozioni</h3>
 
   <% if adozioni.any? %>
