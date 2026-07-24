@@ -10,12 +10,14 @@ module ControlloAdozioni
     TG = { "E" => %w[EE], "M" => %w[MM], "N" => %w[NT NO] }.freeze
 
     Riga = Struct.new(:scuola, :correnti_classi, :correnti_adozioni, :new_classi, :new_adozioni,
-                      :promuovibile, :promossa, :nel_miur, :anomalie_count, :anomalie_tipi, keyword_init: true) do
+                      :promuovibile, :promossa, :nel_miur, :anomalie_count, :anomalie_tipi,
+                      :fuori_anagrafe, keyword_init: true) do
       def disallineata?  = correnti_classi != new_classi || correnti_adozioni != new_adozioni
       def promuovibile?  = promuovibile
       def promossa?      = promossa
       def mancante_miur? = !nel_miur
       def anomalie?      = anomalie_count.to_i.positive?
+      def fuori_anagrafe? = fuori_anagrafe
     end
 
     # tipo: :match (predecessore certo) | :suggerimento (candidati da scegliere) | :nuova
@@ -54,7 +56,21 @@ module ControlloAdozioni
                promuovibile: promuovibili_codici.include?(scuola.codice_ministeriale),
                promossa: promossa?(scuola),
                nel_miur: new_counts.key?(scuola.codice_ministeriale),
-               anomalie_count: a&.n_anomalie.to_i, anomalie_tipi: a&.tipi.to_s)
+               anomalie_count: a&.n_anomalie.to_i, anomalie_tipi: a&.tipi.to_s,
+               fuori_anagrafe: fuori_anagrafe_codici.include?(scuola.codice_ministeriale))
+    end
+
+    # Candidati successore per una scuola fuori anagrafe: SOLO miur_scuole (niente
+    # vincolo miur_adozioni: potrebbero non arrivare mai), stesso comune, stessa
+    # natura, denominazione simile, codice non già nell'account.
+    def successori(scuola)
+      return [] if anno.blank?
+
+      account_codici = account.scuole.pluck(:codice_ministeriale).to_set
+      Miur::Scuola.where(anno_scolastico: anno, provincia: scuola.provincia, comune: scuola.comune)
+                  .reject { |ns| account_codici.include?(ns.codice_scuola) }
+                  .select { |ns| paritaria?(ns.tipo_scuola) == paritaria?(scuola.tipo_scuola) }
+                  .select { |ns| denom_simili?(ns.denominazione, scuola.denominazione) }
     end
 
     def cambi_codice
@@ -134,6 +150,22 @@ module ControlloAdozioni
           ns = Miur::Scuola.where(codice_scuola: codici, anno_scolastico: a).pluck(:codice_scuola).to_set
           na = Miur::Adozione.where(codicescuola: codici, tipogradoscuola: "EE", anno_scolastico: a).distinct.pluck(:codicescuola).to_set
           codici.select { |c| ns.include?(c) && na.include?(c) && max_anno_attive[c].to_s < a }.to_set
+        end
+      end
+    end
+
+    # Codici account attivi spariti da miur_scuole dell'anno (gemello Ruby del
+    # predicato SQL Classificazione#fuori_anagrafe).
+    def fuori_anagrafe_codici
+      @fuori_anagrafe_codici ||= begin
+        if anno.blank?
+          Set.new
+        else
+          codici = scuole_scope.where(stato: "attiva", gestione_manuale: false)
+                               .where.not(codice_ministeriale: [nil, ""]).pluck(:codice_ministeriale)
+          in_anagrafe = Miur::Scuola.where(codice_scuola: codici, anno_scolastico: anno)
+                                    .pluck(:codice_scuola).to_set
+          codici.reject { |c| in_anagrafe.include?(c) || max_anno_attive[c].to_s >= anno }.to_set
         end
       end
     end
