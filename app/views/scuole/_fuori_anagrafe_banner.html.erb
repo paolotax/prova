@@ -1,0 +1,16 @@
+<%# locals: (scuola:) -%>
+<%# Banner: scuola attiva col codice sparito dall'anagrafe MIUR corrente. Stessa
+    definizione di ControlloAdozioni::Scheda#fuori_anagrafe? — tenere allineate. %>
+<% if scuola.stato == "attiva" && !scuola.gestione_manuale? && Miur.anno_corrente.present? &&
+      scuola.codice_ministeriale.present? &&
+      !Miur::Scuola.where(codice_scuola: scuola.codice_ministeriale, anno_scolastico: Miur.anno_corrente).exists? %>
+  <p class="notice notice--warning flex align-center gap-half justify-between">
+    <span>
+      Il codice <%= scuola.codice_ministeriale %> non è più nell'anagrafe MIUR
+      <%= anno_scolastico_label(Miur.anno_corrente) %> — cambio codice o soppressione.
+    </span>
+    <%= link_to "Gestisci nel controllo adozioni",
+        controllo_adozioni_path(codicescuola: scuola.codice_ministeriale),
+        class: "btn btn--small" %>
+  </p>
+<% end %>

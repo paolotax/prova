@@ -17,6 +17,13 @@
 
 <% if Current.scuole.where(id: @scuola.id).exists? %>
   <div class="full-width pad group">
+    <%= render "scuole/fuori_anagrafe_banner", scuola: @scuola %>
+    <% if @scuola.gestione_manuale? %>
+      <p class="txt-small txt-subtle flex align-center gap-half">
+        <span class="badge badge--grey">gestione manuale</span>
+        <span><%= @scuola.codice_ministeriale %></span>
+      </p>
+    <% end %>
     <%= render "scuole/container", scuola: @scuola %>
   </div>
 
