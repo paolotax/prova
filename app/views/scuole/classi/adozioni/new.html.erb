@@ -3,7 +3,7 @@
        data-dialog-modal-value="true"
        data-dialog-auto-open-value="true"
        data-bulk-adozioni-classi-anni-value="<%= @classi.to_h { |c| [c.id, c.anno_corso] }.to_json %>"
-       data-action="hw-combobox:selection->bulk-adozioni#syncAnni hw-combobox:removal->bulk-adozioni#syncAnni dialog:show->bulk-adozioni#focusClassi">
+       data-action="hw-combobox:selection->bulk-adozioni#syncAnni hw-combobox:removal->bulk-adozioni#syncAnni">
     <dialog class="dialog panel" style="--panel-size: 44ch;"
             data-dialog-target="dialog"
             data-action="keydown.esc->dialog#close:stop">
@@ -23,11 +23,14 @@
         <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
           <label class="txt-small txt-bold">Classi</label>
           <%# Niente mobile_at "0px": dentro <dialog> il listbox mobile finisce
-              sotto il top-layer e la lista non si apre digitando. %>
+              sotto il top-layer e la lista non si apre digitando.
+              autofocus: showModal() focalizza nativamente l'elemento [autofocus]
+              (senza, il focus finisce sul focus-trap nascosto del gem). %>
           <%= combobox_tag "classe_ids",
                 @classi,
                 multiselect_chip_src: classi_chips_path,
-                placeholder: "Seleziona classi..." %>
+                placeholder: "Seleziona classi...",
+                autofocus: true %>
         </div>
 
         <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
