@@ -1,7 +1,10 @@
 require "test_helper"
 
 class AdozioniCatalogoControllerTest < ActionDispatch::IntegrationTest
-  fixtures :accounts, :users, :memberships, :scuole, :classi, :adozioni
+  # miur/scuole fissa Miur.anno_corrente = "202627": il catalogo filtra agli
+  # ultimi due anni scolastici (202627 + 202526) e il test deve essere
+  # deterministico rispetto a quel filtro.
+  fixtures :accounts, :users, :memberships, :scuole, :classi, :adozioni, "miur/scuole"
 
   setup do
     @account = accounts(:fizzy)
@@ -64,6 +67,19 @@ class AdozioniCatalogoControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "Religione Uno", response.body
     assert_no_match(/Grammatica Due/, response.body)
+  end
+
+  test "esclude gli anni scolastici vecchi (solo ultimi due)" do
+    Adozione.create!(
+      account: @account, classe: classi(:pa_1a),
+      codice_isbn: "9788899000009", titolo: "Sussidiario Preistorico", editore: "Ed",
+      disciplina: "Sussidiario", anno_corso: "1", anno_scolastico: "202324"
+    )
+
+    get adozioni_catalogo_index_path(anno_corso: "1", q: "Preistorico", account_id: @account.id), as: :turbo_stream
+
+    assert_response :success
+    assert_no_match(/Sussidiario Preistorico/, response.body)
   end
 
   test "scoping per account: non mostra esemplari di altri account" do

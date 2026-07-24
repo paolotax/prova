@@ -7,6 +7,14 @@ class AdozioniCatalogoController < ApplicationController
   def index
     esemplari = Current.account.adozioni
 
+    # Solo gli ultimi due anni scolastici: titoli freschi e query nel perimetro
+    # dell'indice (account_id, anno_scolastico) — l'account piu grande ha ~1M
+    # adozioni storiche, senza questo filtro il DISTINCT ON le scandirebbe
+    # tutte a ogni battuta.
+    if (corrente = AnnoScolastico.corrente)
+      esemplari = esemplari.where(anno_scolastico: [corrente.to_s, corrente.precedente.to_s])
+    end
+
     if (anni = anni_corso).present?
       esemplari = esemplari.where(anno_corso: anni)
     end

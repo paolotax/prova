@@ -97,7 +97,7 @@ module Scuole
 
       def messaggio_esito(inserite, gia_presenti)
         parti = ["#{inserite} #{'adozione'.pluralize(inserite)} aggiunt#{inserite == 1 ? 'a' : 'e'}"]
-        parti << "#{gia_presenti} gia presenti" if gia_presenti.positive?
+        parti << "#{gia_presenti} già presenti" if gia_presenti.positive?
         parti.join(" - ")
       end
     end
