@@ -10,8 +10,10 @@ module Miur
   # pareggio o zero candidati => non risolto (omesso dalla mappa).
   class VolumeSuccessivo
     # Riga esemplare del volume vincente: solo i campi che servono a costruire la
-    # nuova Adozione. prezzo_euro mirror di Miur::Adozione#prezzo_euro.
-    Esemplare = Struct.new(:codiceisbn, :titolo, :prezzo, keyword_init: true) do
+    # nuova Adozione (disciplina inclusa: la riga risolta porta quella del volume
+    # nuovo, es. SUSSIDIARIO (1° BIENNIO) e non piu' IL LIBRO DELLA PRIMA CLASSE).
+    # prezzo_euro mirror di Miur::Adozione#prezzo_euro.
+    Esemplare = Struct.new(:codiceisbn, :titolo, :prezzo, :disciplina, keyword_init: true) do
       def prezzo_euro
         normalizzato = prezzo.to_s.tr(",", ".")
         return unless normalizzato.match?(/\A[0-9]+(\.[0-9]+)?\z/)
@@ -36,21 +38,29 @@ module Miur
         candidati = Miur::Adozione.where(
           anno_scolastico: @anno, tipogradoscuola: "EE", annocorso: verso.to_s,
           editore: editore, disciplina: discipline_compatibili(disciplina)
-        ).group(:codiceisbn, :titolo, :prezzo).count
+        ).group(:codiceisbn, :titolo, :prezzo, :disciplina).count
+
+        # Salto di biennio: i qualificatori di metodo del libro della prima
+        # (STAMPATO, 4 CARATTERI) spariscono nel sussidiario → il titolo-base non
+        # coincide mai; si confronta la serie (Libro.stessa_serie?), col match
+        # stretto come fallback. Vedi Libro#candidati_prosegui, tenere allineati.
+        salto_biennio = disciplina.to_s.match?(/LIBRO DELLA PRIMA/i)
 
         gruppo.each do |ad|
           base = Libro.titolo_base(ad.titolo)
           per_isbn  = Hash.new(0)
           esemplari = {}
 
-          candidati.each do |(isbn, titolo, prezzo), n|
+          candidati.each do |(isbn, titolo, prezzo, disc), n|
             next if isbn.blank?
-            next unless Libro.titolo_base(titolo) == base
+            compatibile = Libro.titolo_base(titolo) == base ||
+                          (salto_biennio && Libro.stessa_serie?(ad.titolo, titolo))
+            next unless compatibile
             per_isbn[isbn] += n
             # Esemplare = la (titolo, prezzo) piu' frequente per quell'ISBN.
             corrente = esemplari[isbn]
             if corrente.nil? || n > corrente[:n]
-              esemplari[isbn] = { n: n, riga: Esemplare.new(codiceisbn: isbn, titolo: titolo, prezzo: prezzo) }
+              esemplari[isbn] = { n: n, riga: Esemplare.new(codiceisbn: isbn, titolo: titolo, prezzo: prezzo, disciplina: disc) }
             end
           end
 

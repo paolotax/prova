@@ -223,8 +223,24 @@ class Libro < ApplicationRecord
     scope = Libro.where(account_id: account_id, categoria_id: categoria_id, classe: classe + 1)
     scope = scope.where(disciplina: discipline_prosegui) if disciplina.present?
     base = titolo_base
-    scope.select { |l| l.titolo_base == base }
+    # Salto di biennio (LIBRO DELLA PRIMA → SUSSIDIARIO): i qualificatori di metodo
+    # (STAMPATO, 4 CARATTERI) esistono solo in prima e spariscono nel sussidiario,
+    # il titolo-base non coincide mai → confronto per serie (con fallback stretto).
+    if salto_biennio?
+      scope.select { |l| Libro.stessa_serie?(titolo, l.titolo) || l.titolo_base == base }
+    else
+      scope.select { |l| l.titolo_base == base }
+    end
   end
+
+  # Stessa serie editoriale: token-serie identici e non vuoti (vedi serie_tokens).
+  def self.stessa_serie?(a, b)
+    ta = serie_tokens(a)
+    ta.any? && ta == serie_tokens(b)
+  end
+
+  # Il libro della prima scorre nel sussidiario del 1° biennio (regola MIUR).
+  def salto_biennio? = disciplina.to_s.match?(/LIBRO DELLA PRIMA/i)
 
   # Opzioni per la select "prosegue in": tutti i libri di categoria + classe+1
   # (decine, non l'intero catalogo), coi più simili per titolo in testa. La

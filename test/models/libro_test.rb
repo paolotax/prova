@@ -1,5 +1,54 @@
 # frozen_string_literal: true
 
+# == Schema Information
+#
+# Table name: libri
+#
+#  id                     :bigint           not null, primary key
+#  adozioni_count         :integer          default(0), not null
+#  classe                 :integer
+#  cm                     :string
+#  codice_isbn            :string
+#  collana                :string
+#  confezioni_count       :integer          default(0), not null
+#  disciplina             :string
+#  fascicoli_count        :integer          default(0), not null
+#  note                   :text
+#  numero_fascicoli       :integer
+#  prezzo_in_cents        :integer
+#  prezzo_suggerito_cents :integer          default(0)
+#  slug                   :string
+#  titolo                 :string
+#  created_at             :datetime         not null
+#  updated_at             :datetime         not null
+#  account_id             :uuid             not null
+#  categoria_id           :bigint           not null
+#  editore_id             :bigint
+#  prosegue_in_id         :bigint
+#  user_id                :bigint           not null
+#
+# Indexes
+#
+#  index_libri_on_account_id                 (account_id)
+#  index_libri_on_account_id_and_created_at  (account_id,created_at)
+#  index_libri_on_categoria_id               (categoria_id)
+#  index_libri_on_classe_and_disciplina      (classe,disciplina)
+#  index_libri_on_cm                         (cm)
+#  index_libri_on_editore_id                 (editore_id)
+#  index_libri_on_prosegue_in_id             (prosegue_in_id)
+#  index_libri_on_slug                       (slug) UNIQUE
+#  index_libri_on_user_id                    (user_id)
+#  index_libri_on_user_id_and_codice_isbn    (user_id,codice_isbn)
+#  index_libri_on_user_id_and_collana        (user_id,collana)
+#  index_libri_on_user_id_and_editore_id     (user_id,editore_id)
+#  index_libri_on_user_id_and_titolo         (user_id,titolo)
+#
+# Foreign Keys
+#
+#  fk_rails_...  (categoria_id => categorie.id)
+#  fk_rails_...  (editore_id => editori.id)
+#  fk_rails_...  (user_id => users.id)
+#
 require "test_helper"
 
 class LibroTest < ActiveSupport::TestCase
@@ -64,6 +113,18 @@ class LibroTest < ActiveSupport::TestCase
                  crea_libro(titolo: "BANDA DEL BUS CL. 1  CONF. PROP.", classe: 1).titolo_base
     # i numeri lunghi (annate) non sono volumi: restano
     assert_equal "STORIA 2000", crea_libro(titolo: "STORIA 2000", classe: 3).titolo_base
+  end
+
+  test "candidati_prosegui sul salto biennio matcha per serie (qualificatori di metodo)" do
+    # Il libro della prima ha il qualificatore (STAMPATO), il sussidiario no:
+    # titolo-base diverso ma stessa serie → deve agganciare comunque.
+    l1 = crea_libro(titolo: "BANDA DEL BUS CL. 1 STAMPATO", classe: 1,
+                    disciplina: "IL LIBRO DELLA PRIMA CLASSE")
+    l2 = crea_libro(titolo: "BANDA DEL BUS CL. 2 CONFEZIONE VENDITA", classe: 2,
+                    disciplina: "SUSSIDIARIO (1° BIENNIO)")
+    crea_libro(titolo: "BOSCO ALLEGRO CL. 2", classe: 2, disciplina: "SUSSIDIARIO (1° BIENNIO)")
+
+    assert_equal [l2], l1.candidati_prosegui
   end
 
   test "candidati_prosegui aggancia anche col numero in mezzo al titolo" do

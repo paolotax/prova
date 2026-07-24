@@ -71,6 +71,37 @@ class Miur::VolumeSuccessivoTest < ActiveSupport::TestCase
     assert_equal "9791111111111", esito[7].codiceisbn
   end
 
+  test "salto biennio con qualificatore di metodo: match per serie e disciplina del volume nuovo" do
+    # Caso reale Marco Polo: "BANDA DEL BUS CL. 1 STAMPATO" → "BANDA DEL BUS CL. 2".
+    # Il qualificatore (STAMPATO) esiste solo in prima: titolo-base diverso, ma
+    # stessa serie (Libro.serie_tokens). L'esemplare porta la disciplina nuova.
+    seed(codicescuola: "AAEE000001", isbn: "9791111111111", titolo: "BANDA DEL BUS CL. 2",
+         disciplina: "SUSSIDIARIO (1° BIENNIO)")
+    seed(codicescuola: "AAEE000002", isbn: "9791111111111", titolo: "BANDA DEL BUS CL. 2",
+         disciplina: "SUSSIDIARIO (1° BIENNIO)")
+
+    sorgente = Sorgente.new(id: 9, editore: "Editore X",
+                            disciplina: "IL LIBRO DELLA PRIMA CLASSE",
+                            titolo: "BANDA DEL BUS CL. 1 STAMPATO")
+    esito = resolver.risolvi([sorgente], verso: "2")
+
+    assert esito[9]
+    assert_equal "9791111111111", esito[9].codiceisbn
+    assert_equal "SUSSIDIARIO (1° BIENNIO)", esito[9].disciplina
+  end
+
+  test "il match per serie NON si applica fuori dal salto biennio" do
+    # Stessa serie ma titolo-base diverso e disciplina normale: resta il match stretto.
+    seed(codicescuola: "AAEE000001", isbn: "9791111111111", titolo: "BANDA DEL BUS 2 LETTURE")
+    seed(codicescuola: "AAEE000002", isbn: "9791111111111", titolo: "BANDA DEL BUS 2 LETTURE")
+
+    sorgente = Sorgente.new(id: 1, editore: "Editore X", disciplina: "ITALIANO",
+                            titolo: "BANDA DEL BUS 1 SCRITTURA")
+    esito = resolver.risolvi([sorgente], verso: "2")
+
+    assert_nil esito[1]
+  end
+
   test "titolo-base diverso escluso dal conteggio" do
     # Stesso editore/disciplina/annocorso ma titolo-base diverso: non deve contare.
     seed(codicescuola: "AAEE000001", isbn: "9791111111111", titolo: "Altro Libro 2")

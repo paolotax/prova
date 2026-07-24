@@ -510,7 +510,10 @@ class Scuola < ApplicationRecord
         libro_id: libro_id,
         codice_isbn: isbn,
         titolo: successivo&.titolo || esemplare&.titolo || ad.titolo,
-        editore: ad.editore, autori: ad.autori, disciplina: ad.disciplina,
+        editore: ad.editore, autori: ad.autori,
+        # La riga risolta porta la disciplina del volume NUOVO (es. il salto di
+        # biennio diventa SUSSIDIARIO (1° BIENNIO), non resta LIBRO DELLA PRIMA).
+        disciplina: successivo&.disciplina.presence || esemplare&.disciplina.presence || ad.disciplina,
         prezzo_cents: prezzo_cents,
         nuova_adozione: false,
         da_acquistare: pluriennale ? false : ad.da_acquistare,
