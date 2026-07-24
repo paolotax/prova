@@ -66,7 +66,11 @@ module Scuole
               turbo_stream.remove(helpers.dom_id(adozione, :tile)),
               turbo_stream.replace(helpers.dom_id(@classe, :adozioni),
                 render_to_string(partial: "scuole/classi/container/adozioni",
-                                 locals: { classe: @classe, scuola: @scuola, adozioni: adozioni }))
+                                 locals: { classe: @classe, scuola: @scuola, adozioni: adozioni })),
+              # Anche il perma coi conteggi (N adozioni, da acquistare, lista libri).
+              turbo_stream.replace(helpers.dom_id(@classe, :meta),
+                render_to_string(partial: "scuole/classi/display/perma/meta",
+                                 locals: { classe: @classe, adozioni: adozioni }))
             ]
           end
           # 303: dopo una DELETE Turbo non segue il 302.
