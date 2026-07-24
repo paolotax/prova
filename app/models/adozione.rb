@@ -74,6 +74,12 @@ class Adozione < ApplicationRecord
   scope :per_scuole, ->(scuola_ids) { joins(:classe).where(classi: { scuola_id: scuola_ids }) }
   # Solo le adozioni dello snapshot dell'anno corrente della loro classe (esclude gli anni passati).
   scope :correnti, -> { joins(:classe).where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico") }
+  # Adozioni del frame scuola (scuole/adozioni#show e reload post-aggiunta manuale).
+  scope :per_frame_scuola, ->(scuola) {
+    correnti.where(classe_id: scuola.classi.attive.select(:id))
+            .includes(:classe)
+            .order(:disciplina, "classi.anno_corso", "classi.sezione", :titolo)
+  }
   scope :adozioni_144, -> {
     joins(:classe).where(
       classi: { anno_corso: Stats::Calcolo144::CLASSI_144 },

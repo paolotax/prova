@@ -34,18 +34,22 @@ module Scuole
         )
 
         if @adozione.save
-          UpdateScuolaMieAdozioniJob.set(queue: :default).perform_later(Current.account, scuola_id: @scuola.id)
+          # Sincrono (non perform_later): il flag mia e i contatori devono essere
+          # coerenti PRIMA di ricaricare il frame, o la riga appena aggiunta non
+          # comparirebbe sotto "Mie adozioni" fino al giro del job.
+          UpdateScuolaMieAdozioniJob.perform_now(Current.account, scuola_id: @scuola.id)
 
           respond_to do |format|
             format.turbo_stream do
+              # Frame ricaricato in scope "tutte": la riga aggiunta si vede sempre,
+              # anche se il libro non è "mio" (nessun mandato).
+              @scope = "tutte"
+              @adozioni = Adozione.per_frame_scuola(@scuola)
               render turbo_stream: [
                 turbo_stream_flash(notice: "Adozione aggiunta: #{@adozione.titolo} in #{@classe.nome_breve}."),
                 turbo_stream.update("modal", ""),
                 turbo_stream.replace("scuola_adozioni",
-                  helpers.turbo_frame_tag("scuola_adozioni",
-                    src: scuola_adozioni_path(@scuola, scope: "mie"),
-                    loading: :eager,
-                    style: "display: block; min-height: 4rem;"))
+                  render_to_string(template: "scuole/adozioni/show", layout: false))
               ]
             end
             format.html { redirect_to scuola_path(@scuola), notice: "Adozione aggiunta." }

@@ -20,18 +20,24 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_match(/Aggiungi adozione/i, response.body)
   end
 
-  test "create builds adozione from libro snapshot and enqueues job" do
+  test "create builds adozione from libro snapshot and recalcs counters" do
     assert_difference("Adozione.count", 1) do
-      assert_enqueued_with(job: UpdateScuolaMieAdozioniJob) do
-        post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
-          classe_id: @classe.id,
-          libro_id: @libro.id,
-          nuova_adozione: "1",
-          da_acquistare: "1",
-          consigliato: "0"
-        }
-      end
+      post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id), params: {
+        classe_id: @classe.id,
+        libro_id: @libro.id,
+        nuova_adozione: "1",
+        da_acquistare: "1",
+        consigliato: "0"
+      }
     end
+
+    # Ricalcolo SINCRONO (perform_now): i contatori scuola riflettono subito la
+    # riga (stessa definizione di Adozione::Ricalcolo#update_counters).
+    attese = @scuola.adozioni.joins(:classe)
+                    .where(classi: { stato: "attiva" }, da_acquistare: true)
+                    .where("adozioni.anno_scolastico IS NOT DISTINCT FROM classi.anno_scolastico")
+                    .count
+    assert_equal attese, @scuola.reload.adozioni_count
 
     adozione = @classe.adozioni.order(:created_at).last
     assert_equal @libro.codice_isbn, adozione.codice_isbn
@@ -62,6 +68,8 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :success
     assert_match "scuola_adozioni", response.body
     assert_match "turbo-stream", response.body
+    # Il frame arriva già renderizzato (scope tutte): la riga aggiunta è nel body.
+    assert_match @libro.titolo, response.body
   end
 
   test "create with da_acquistare unchecked stores false" do
