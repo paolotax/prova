@@ -31,6 +31,21 @@ module ControlloAdozioni
       SQL
     end
 
+    # Attiva, non in gestione manuale, con codice NON più in anagrafe miur_scuole
+    # dell'anno e non ancora promossa: cambio codice non rilevato o soppressa.
+    def fuori_anagrafe(sc = "sc")
+      return "FALSE" if anno.blank?
+
+      <<~SQL.strip
+        #{sc}.stato = 'attiva'
+        AND #{sc}.gestione_manuale = FALSE
+        AND COALESCE(#{sc}.codice_ministeriale, '') <> ''
+        AND NOT EXISTS (SELECT 1 FROM miur_scuole ns WHERE ns.codice_scuola = #{sc}.codice_ministeriale
+                        AND ns.anno_scolastico = :anno)
+        AND NOT (#{promossa(sc)})
+      SQL
+    end
+
     # Presente nello snapshot adozioni MIUR dell'anno corrente.
     def nel_miur(sc = "sc")
       "EXISTS (SELECT 1 FROM miur_adozioni na WHERE na.codicescuola = #{sc}.codice_ministeriale " \

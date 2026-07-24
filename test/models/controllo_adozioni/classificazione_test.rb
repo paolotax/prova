@@ -70,6 +70,33 @@ module ControlloAdozioni
       assert_equal 0, cl.conta(@account.scuole, :promossa)
     end
 
+    test "fuori_anagrafe: attiva senza codice in miur_scuole, esclusa se promossa/manuale/archiviata" do
+      cl = Classificazione.new(anno: @anno)
+      # Attiva, codice presente ma NON in miur_scuole dell'anno, senza classi attive.
+      scuola = crea_scuola("XXEE0000S1", "Primaria Fuori Anagrafe", adozioni: 2)
+
+      assert_equal 1, cl.conta(Scuola.where(id: scuola.id), :fuori_anagrafe)
+
+      # In gestione manuale → esclusa.
+      scuola.update!(gestione_manuale: true)
+      assert_equal 0, cl.conta(Scuola.where(id: scuola.id), :fuori_anagrafe)
+
+      # Archiviata → esclusa.
+      scuola.update!(gestione_manuale: false, stato: "archiviata")
+      assert_equal 0, cl.conta(Scuola.where(id: scuola.id), :fuori_anagrafe)
+
+      # Ripristino attiva: con una classe attiva dell'anno è promossa → esclusa.
+      scuola.update!(stato: "attiva")
+      @account.classi.create!(scuola: scuola, anno_scolastico: @anno, anno_corso: "1",
+        sezione: "A", stato: "attiva", codice_ministeriale_origine: "XXEE0000S1",
+        classe_origine: "1", sezione_origine: "A")
+      assert_equal 0, cl.conta(Scuola.where(id: scuola.id), :fuori_anagrafe)
+
+      # Controllo opposto: una scuola il cui codice È in miur_scuole dell'anno → esclusa.
+      in_anagrafe = @account.scuole.find_by(codice_ministeriale: "XXEE0000P1")
+      assert_equal 0, cl.conta(Scuola.where(id: in_anagrafe.id), :fuori_anagrafe)
+    end
+
     # INVARIANTE: la normalizzazione Ruby (Classificazione.denom_norm) e quella
     # SQL (NORM, usata dai conteggi cambi-codice) DEVONO coincidere input per
     # input. Se divergono, i conteggi (SQL) e la UI (Ruby) si disallineano.
