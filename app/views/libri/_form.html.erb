@@ -92,19 +92,6 @@
           <%= f.text_field :disciplina, class: "input", placeholder: "es. ITALIANO, MATEMATICA..." %>
         </div>
       </div>
-
-      <div class="form-field">
-        <%= f.label :prosegue_in_id, "Prosegue in", class: "form-label" %>
-        <% candidati = libro.candidati_prosegui.presence || Current.account.libri.where.not(id: libro.id).order(:titolo) %>
-        <% if libro.prosegue_in.present? && candidati.none? { |c| c.id == libro.prosegue_in_id } %>
-          <% candidati = [libro.prosegue_in] + candidati.to_a %>
-        <% end %>
-        <%= f.collection_select :prosegue_in_id,
-            candidati,
-            :id, :titolo,
-            { include_blank: "— nessun prosegui —", selected: libro.prosegue_in_id },
-            class: "input input--select" %>
-      </div>
     </div>
 
     <!-- Note e copertina -->
