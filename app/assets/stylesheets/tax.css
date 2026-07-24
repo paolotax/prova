@@ -32,8 +32,13 @@
 .cb-tax {
   .hw-combobox {
     --hw-combobox-width: 100%;
+    /* Multiselect: il gem usa la variante --multiple (default 30rem) che
+       sfonda i contenitori stretti (dialog 44ch). */
+    --hw-combobox-width--multiple: 100%;
     display: flex;
     width: 100%;
+    max-width: 100%;
+    min-width: 0;
     text-align: left;
   }
 
