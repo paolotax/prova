@@ -2,28 +2,95 @@
 
 <% content_for :header do %>
   <div class="header__actions header__actions--start">
-    <%= back_link_to "", :back %>
+    <% info = referrer_back_info || { label: "Controllo", path: controllo_adozioni_index_path(account_id: params[:account_id]) } %>
+    <%= back_link_to info[:label], info[:path] %>
   </div>
-  
+
   <h1 class="header__title divider divider--fade full-width">
     <span class="overflow-ellipsis"><%= @scheda.denominazione.presence || @scheda.codicescuola %></span>
+    <% if @scheda.scuola&.gestione_manuale? %>
+      <span class="badge badge--grey">gestione manuale</span>
+    <% end %>
   </h1>
+
+  <div class="header__actions header__actions--end">
+    <% unless @scheda.promossa? %>
+      <%= link_to "Passaggio anno",
+          new_controllo_adozioni_promozione_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
+          class: "btn", data: { turbo_frame: :modal } %>
+    <% end %>
+
+    <% if (@scheda.fuori_anagrafe? || @scheda.scuola&.gestione_manuale?) &&
+          @scheda.scuola && !@scheda.promossa? && @scheda.scuola.classi.attive.exists? %>
+      <%= link_to "Promozione cieca",
+          new_controllo_adozioni_promozione_cieca_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
+          class: "btn", data: { turbo_frame: :modal } %>
+    <% end %>
+  </div>
 <% end %>
 
 <div class="ca-page">
-  <p class="txt-subtle flex align-center gap-half justify-between">
-    <%= link_to "Passaggio anno",
-        new_controllo_adozioni_promozione_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
-        class: "btn btn--small", data: { turbo_frame: :modal } %>
-  </p>
+  <p class="txt-subtle txt-small"><%= @scheda.codicescuola %></p>
 
-  <p class="flex gap-half">
+  <% if @scheda.scuola&.gestione_manuale? %>
+    <p class="flex align-center gap-half txt-subtle txt-small">
+      <span>Scuola tenuta fuori dai controlli automatici sull'anagrafe MIUR.</span>
+      <%= button_to "Rimuovi gestione manuale",
+          controllo_adozioni_gestione_manuale_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
+          method: :delete, class: "btn btn--small" %>
+    </p>
+  <% end %>
+
+  <div class="flex gap-half margin-block-end">
     <% @scheda.anni_anteprima.each do |anno| %>
-      <%= link_to "Anteprima #{anno_scolastico_label(anno)}",
-            controllo_adozioni_anteprima_path(@scheda.codicescuola, anno: anno, account_id: params[:account_id]),
-            class: "btn btn--small" %>
+      <% con_elenco = @scheda.anni_con_elenco.include?(anno) %>
+      <span class="flex flex-column gap-quarter">
+        <%= link_to "Anteprima #{anno_scolastico_label(anno)}",
+              controllo_adozioni_anteprima_path(@scheda.codicescuola, anno: anno, account_id: params[:account_id]),
+              class: "btn#{' btn--subtle' unless con_elenco}" %>
+        <% unless con_elenco %>
+          <span class="txt-x-small txt-subtle">(elenco non disponibile)</span>
+        <% end %>
+      </span>
     <% end %>
-  </p>
+  </div>
+
+  <% if @scheda.fuori_anagrafe? %>
+    <div class="notice notice--warning flex flex-column gap">
+      <p>
+        Il codice <strong><%= @scheda.codicescuola %></strong> non è più nell'anagrafe MIUR
+        <%= anno_scolastico_label(@scheda.anno_corrente) %> — cambio codice o soppressione.
+      </p>
+
+      <% if @scheda.successori.any? %>
+        <div class="flex flex-column gap-half">
+          <h3 class="txt-small txt-bold">Possibili successori</h3>
+          <% @scheda.successori.each do |candidato| %>
+            <div class="flex align-center gap-half justify-between">
+              <span class="txt-small">
+                <strong><%= candidato.denominazione %></strong>
+                — <%= candidato.comune %> (<%= candidato.codice_scuola %>)
+              </span>
+              <%= link_to "Aggiorna codice → #{candidato.codice_scuola}",
+                  new_controllo_adozioni_promozione_path(codicescuola: @scheda.codicescuola,
+                    codice_nuovo: candidato.codice_scuola, account_id: params[:account_id]),
+                  class: "btn btn--small", data: { turbo_frame: :modal } %>
+            </div>
+          <% end %>
+        </div>
+      <% end %>
+
+      <div class="flex gap-half">
+        <%= button_to "Archivia (soppressa)",
+            controllo_adozioni_archiviazione_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
+            method: :post, class: "btn btn--negative",
+            data: { turbo_confirm: "Archiviare la scuola e tutte le classi attive? Le adozioni escono dai conteggi." } %>
+        <%= button_to "Gestione manuale",
+            controllo_adozioni_gestione_manuale_path(codicescuola: @scheda.codicescuola, account_id: params[:account_id]),
+            method: :post, class: "btn" %>
+      </div>
+    </div>
+  <% end %>
 
   <% if @scheda.scuola_mancante? %>
     <p class="notice notice--warning">

@@ -1,4 +1,3 @@
-<%# Placeholder funzionale — Task E1 ridisegnerà layout e stile della modal. %>
 <%= turbo_frame_tag :modal do %>
   <div data-controller="dialog"
        data-dialog-modal-value="true"
@@ -8,44 +7,47 @@
             data-action="turbo:submit-end->dialog#close keydown.esc->dialog#close:stop">
       <h3 class="txt-large txt-bold">Promozione cieca — <%= @scuola.denominazione %></h3>
       <p class="txt-small txt-subtle">
-        Scorrimento d'anno senza roster MIUR: da <%= @da %> a <%= @anno_target %>.
+        Scorrimento d'anno senza elenco MIUR: da <%= anno_scolastico_label(@da) %>
+        a <%= anno_scolastico_label(@anno_target) %>. Le 5ª uscenti vengono archiviate,
+        le altre classi scorrono al grado successivo mantenendo le adozioni.
       </p>
 
       <% labels = { archiviata: "Archiviata (5ª uscente)", scorre: "Scorre",
                     scorre_vuota: "Scorre (nuova adozione)" } %>
-      <table class="table">
+      <table class="table margin-block-start">
         <thead>
           <tr>
             <th>Classe</th>
             <th>Esito</th>
-            <th>Anno target</th>
-            <th>Adozioni</th>
-            <th>di cui prosegui</th>
+            <th class="txt-align-end">Anno target</th>
+            <th class="txt-align-end">Adozioni</th>
+            <th class="txt-align-end">di cui prosegui</th>
           </tr>
         </thead>
         <tbody>
           <% @anteprima.righe.each do |riga| %>
-            <tr>
+            <% archiviata = riga.esito == :archiviata %>
+            <tr class="<%= "txt-subtle" if archiviata %>">
               <td><%= riga.classe.nome_breve %></td>
               <td><%= labels[riga.esito] || riga.esito %></td>
-              <td><%= riga.anno_corso_target || "—" %></td>
-              <td><%= riga.n_adozioni || "—" %></td>
-              <td><%= riga.n_prosegui || "—" %></td>
+              <td class="txt-align-end"><%= archiviata ? "—" : (riga.anno_corso_target || "—") %></td>
+              <td class="txt-align-end"><%= archiviata ? "—" : (riga.n_adozioni || "—") %></td>
+              <td class="txt-align-end"><%= archiviata ? "—" : (riga.n_prosegui || "—") %></td>
             </tr>
           <% end %>
         </tbody>
       </table>
 
       <% if @anteprima.nuove_prime.any? %>
-        <p class="txt-small">
-          Nuove 1ª (vuote): <%= @anteprima.nuove_prime.sort.join(", ") %>
+        <p class="txt-small margin-block-start">
+          Nuove 1ª (vuote): <strong><%= @anteprima.nuove_prime.sort.join(", ") %></strong>
         </p>
       <% end %>
 
-      <%= form_with url: controllo_adozioni_promozione_cieca_path(@scuola.codice_ministeriale),
+      <%= form_with url: controllo_adozioni_promozione_cieca_path(@scuola.codice_ministeriale, account_id: params[:account_id]),
           method: :post, class: "flex gap-half justify-end margin-block-start" do |f| %>
         <button type="button" class="btn" data-action="dialog#close">Annulla</button>
-        <%= f.submit "Avvia promozione cieca", class: "btn btn--link" %>
+        <%= f.submit "Conferma promozione cieca", class: "btn btn--link" %>
       <% end %>
     </dialog>
   </div>

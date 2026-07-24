@@ -69,5 +69,67 @@ module ControlloAdozioni
       libri = scheda("MIIC123456").libri_per_classe
       assert_equal [["1", "A", "TN"]], libri.keys
     end
+
+    test "promossa? true con classe attiva all'anno corrente MIUR" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.classi.create!(account: @account, anno_corso: "1", sezione: "Z",
+        anno_scolastico: @anno, stato: "attiva", tipo_scuola: "EE")
+
+      assert scheda(scuola.codice_ministeriale).promossa?
+    end
+
+    test "promossa? false senza classe attiva all'anno corrente" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.classi.create!(account: @account, anno_corso: "1", sezione: "Z",
+        anno_scolastico: AnnoScolastico.new(@anno).precedente.to_s, stato: "attiva", tipo_scuola: "EE")
+
+      refute scheda(scuola.codice_ministeriale).promossa?
+    end
+
+    test "promossa? false quando la scuola non e' in anagrafe account" do
+      refute scheda("ZZZZ999999").promossa?
+    end
+
+    test "fuori_anagrafe? true: attiva, non gestione manuale, codice sparito dal MIUR" do
+      # scuola_fizzy (MIIC123456) non esiste in miur/scuole 202627 (solo codici BOEE).
+      assert scheda(scuole(:scuola_fizzy).codice_ministeriale).fuori_anagrafe?
+    end
+
+    test "fuori_anagrafe? false se in gestione manuale" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.update!(gestione_manuale: true)
+
+      refute scheda(scuola.codice_ministeriale).fuori_anagrafe?
+    end
+
+    test "fuori_anagrafe? false se archiviata" do
+      scuola = scuole(:scuola_fizzy)
+      scuola.update!(stato: "archiviata")
+
+      refute scheda(scuola.codice_ministeriale).fuori_anagrafe?
+    end
+
+    test "fuori_anagrafe? false se il codice e' nell'anagrafe MIUR dell'anno" do
+      scuola = scuole(:scuola_fizzy)
+      Miur::Scuola.create!(anno_scolastico: @anno, codice_scuola: scuola.codice_ministeriale,
+        denominazione: scuola.denominazione, comune: scuola.comune, provincia: scuola.provincia)
+
+      refute scheda(scuola.codice_ministeriale).fuori_anagrafe?
+    end
+
+    test "fuori_anagrafe? false quando la scuola non e' in anagrafe account" do
+      refute scheda("ZZZZ999999").fuori_anagrafe?
+    end
+
+    test "anni_con_elenco: set degli anni con righe miur_adozioni" do
+      s = scheda("MIIC123456")
+      anno_precedente = AnnoScolastico.new(@anno).precedente.to_s
+      Miur::Adozione.create!(anno_scolastico: @anno, codicescuola: "MIIC123456",
+        tipogradoscuola: "EE", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "9880000000011", disciplina: "ITALIANO", titolo: "Libro")
+
+      assert_equal Set[@anno], s.anni_con_elenco
+      refute_includes s.anni_con_elenco, anno_precedente
+    end
   end
 end

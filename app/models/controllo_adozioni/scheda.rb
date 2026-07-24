@@ -22,6 +22,32 @@ module ControlloAdozioni
 
     def scuola_mancante? = anomalie.per_tipo("scuola_mancante").exists?
 
+    # Anno campagna corrente MIUR (max anagrafe scuole). nil se miur_scuole vuota.
+    def anno_corrente = @anno_corrente ||= Miur.anno_corrente
+
+    # Gia' promossa: classi attive della scuola account all'anno corrente MIUR.
+    def promossa?
+      scuola.present? && anno_corrente.present? &&
+        scuola.classi.attive.where(anno_scolastico: anno_corrente).exists?
+    end
+
+    # Attiva ma con codice sparito dall'anagrafe MIUR dell'anno.
+    def fuori_anagrafe?
+      scuola&.stato == "attiva" && !scuola.gestione_manuale? && anno_corrente.present? &&
+        !Miur::Scuola.where(codice_scuola: codicescuola, anno_scolastico: anno_corrente).exists?
+    end
+
+    # Candidati successore (delegati a Panoramica, stessa regola della riga).
+    def successori
+      @successori ||= fuori_anagrafe? ? Panoramica.new(account: account).successori(scuola) : []
+    end
+
+    # Anni anteprima per cui esiste l'elenco adozioni MIUR (per segnalare i vuoti).
+    def anni_con_elenco
+      @anni_con_elenco ||= Miur::Adozione.where(codicescuola: codicescuola, anno_scolastico: anni_anteprima)
+                                         .distinct.pluck(:anno_scolastico).to_set
+    end
+
     def denominazione
       @denominazione ||= anomalie.where.not(denominazione: nil).first&.denominazione ||
                          scuola&.denominazione
