@@ -173,11 +173,19 @@ class ControlloAdozioniControllerTest < ActionDispatch::IntegrationTest
 
   private
 
-  # Snapshot MIUR minimo: rende disponibile la sequenza passaggio anno.
+  # Snapshot MIUR minimo: rende disponibile la sequenza passaggio anno. Registra
+  # anche TUTTE le scuole fixture dell'account in anagrafe, altrimenti
+  # conterebbero nello step 5 "fuori anagrafe" e falserebbero i conteggi
+  # .ca-step di questi test (lo step 5 non è il loro soggetto).
   def crea_snapshot_miur
     Miur::Scuola.create!(codice_scuola: "MIEE99999X", anno_scolastico: "202627",
       provincia: "MI", comune: "Milano", denominazione: "PRIMARIA TEST",
       tipo_scuola: "SCUOLA PRIMARIA")
+    Scuola.where(account: @account).where.not(codice_ministeriale: [nil, ""]).find_each do |s|
+      Miur::Scuola.create!(codice_scuola: s.codice_ministeriale, anno_scolastico: "202627",
+        provincia: s.provincia, comune: s.comune.presence || "Milano",
+        denominazione: s.denominazione, tipo_scuola: "SCUOLA PRIMARIA")
+    end
   end
 
   def sign_in_as(user, account)
