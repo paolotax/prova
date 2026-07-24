@@ -147,6 +147,149 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
   end
 end
 
+class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
+  # Scorrimento CIECO: la scuola NON ha roster MIUR (nessuna riga miur_adozioni per
+  # il suo codice). Tutta la scena è costruita a mano: classi 1A/3A/4A/5A "202526"
+  # con adozioni, una 1A legata a un libro col prosegui (Banda Bus 1 -> Banda Bus 2)
+  # e una 1A senza libro. Nessuna fixture MIUR: è il punto del metodo cieco.
+  fixtures :accounts, :users, :categorie, :editori
+
+  setup do
+    Current.account = accounts(:fizzy)
+    @account = accounts(:fizzy)
+
+    @scuola = Scuola.create!(
+      account: @account, denominazione: "Scuola Cieca Fuori Anagrafe",
+      codice_ministeriale: "BOEE888888", comune: "Bologna", provincia: "BO",
+      tipo_scuola: "EE", grado: "E", stato: "attiva"
+    )
+
+    @libro1 = Libro.create!(account: @account, user: users(:one), categoria: categorie(:ministeriali),
+      titolo: "Banda Bus 1", codice_isbn: "9790000000001", prezzo_in_cents: 1000)
+    @libro2 = Libro.create!(account: @account, user: users(:one), categoria: categorie(:ministeriali),
+      titolo: "Banda Bus 2", codice_isbn: "9790000000002", prezzo_in_cents: 1200)
+    @libro1.update!(prosegue_in: @libro2)
+
+    @c1 = crea_classe("1")
+    @c3 = crea_classe("3")
+    @c4 = crea_classe("4")
+    @c5 = crea_classe("5")
+
+    # 1A: una adozione col libro che prosegue, una senza libro (riporto identico)
+    crea_adozione(@c1, libro: @libro1, isbn: @libro1.codice_isbn, titolo: @libro1.titolo, disciplina: "ITALIANO", prezzo: 1000)
+    crea_adozione(@c1, libro: nil, isbn: "9790000000099", titolo: "Sussidiario Senza Prosegui", disciplina: "STORIA", prezzo: 800)
+    # 3A/4A/5A: una adozione ciascuna
+    crea_adozione(@c3, libro: nil, isbn: "9790000000031", titolo: "Terza Libro", disciplina: "ITALIANO", prezzo: 1100)
+    crea_adozione(@c4, libro: nil, isbn: "9790000000041", titolo: "Quarta Libro", disciplina: "ITALIANO", prezzo: 1100)
+    crea_adozione(@c5, libro: nil, isbn: "9790000000051", titolo: "Quinta Libro", disciplina: "ITALIANO", prezzo: 1100)
+  end
+
+  teardown do
+    Current.account = nil
+  end
+
+  def crea_classe(anno_corso)
+    @scuola.classi.create!(
+      account: @account, anno_corso: anno_corso, sezione: "A", combinazione: "MQ",
+      tipo_scuola: "EE", stato: "attiva", anno_scolastico: "202526",
+      codice_ministeriale_origine: @scuola.codice_ministeriale,
+      classe_origine: anno_corso, sezione_origine: "A", combinazione_origine: "MQ"
+    )
+  end
+
+  def crea_adozione(classe, libro:, isbn:, titolo:, disciplina:, prezzo:)
+    Adozione.create!(
+      account: @account, classe: classe, libro: libro,
+      codice_isbn: isbn, titolo: titolo, editore: "Editore X", autori: "Autore Y",
+      disciplina: disciplina, prezzo_cents: prezzo, nuova_adozione: false,
+      da_acquistare: true, consigliato: false,
+      anno_scolastico: "202526", anno_corso: classe.anno_corso, codicescuola: @scuola.codice_ministeriale
+    )
+  end
+
+  test "promuovi_cieca! avanza le classi sugli stessi record e archivia la quinta" do
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    @scuola.reload
+
+    # 5A archiviata come tombstone: anno_corso resta 5, anno_scolastico resta 202526
+    @c5.reload
+    assert_equal "archiviata", @c5.stato
+    assert_equal "5", @c5.anno_corso
+    assert_equal "202526", @c5.anno_scolastico
+
+    # 1A->2A, 3A->4A, 4A->5A sugli stessi record, anno_scolastico 202627
+    @c1.reload; @c3.reload; @c4.reload
+    assert_equal ["2", "202627"], [@c1.anno_corso, @c1.anno_scolastico]
+    assert_equal ["4", "202627"], [@c3.anno_corso, @c3.anno_scolastico]
+    assert_equal ["5", "202627"], [@c4.anno_corso, @c4.anno_scolastico]
+  end
+
+  test "promuovi_cieca! riporta le adozioni verso 2 seguendo il prosegui e con flag riportata" do
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    nuova_2a = @scuola.classi.attive.find_by(anno_corso: "2", sezione: "A", anno_scolastico: "202627")
+    assert nuova_2a
+
+    adozioni_2a = nuova_2a.adozioni.where(anno_scolastico: "202627").to_a
+    assert_equal 2, adozioni_2a.size
+    assert adozioni_2a.all?(&:riportata?), "tutte le adozioni riportate sono flaggate"
+
+    # prosegui seguito: Banda Bus 1 -> Banda Bus 2 (isbn/titolo/libro_id del volume successivo)
+    con_prosegui = adozioni_2a.find { |a| a.libro_id == @libro2.id }
+    assert con_prosegui
+    assert_equal @libro2.codice_isbn, con_prosegui.codice_isbn
+    assert_equal @libro2.titolo, con_prosegui.titolo
+    assert_equal @libro2.prezzo_in_cents, con_prosegui.prezzo_cents
+
+    # riporto identico: adozione senza libro copiata invariata
+    identica = adozioni_2a.find { |a| a.codice_isbn == "9790000000099" }
+    assert identica
+    assert_equal "Sussidiario Senza Prosegui", identica.titolo
+    assert_nil identica.libro_id
+  end
+
+  test "promuovi_cieca! riporta le adozioni anche verso la nuova quinta (grado di scorrimento)" do
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    nuova_5a = @scuola.classi.attive.find_by(anno_corso: "5", sezione: "A", anno_scolastico: "202627")
+    assert nuova_5a
+    adozioni = nuova_5a.adozioni.where(anno_scolastico: "202627")
+    assert adozioni.exists?
+    assert adozioni.all?(&:riportata?)
+  end
+
+  test "promuovi_cieca! non riporta adozioni verso la nuova quarta (anno di nuova adozione)" do
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    nuova_4a = @scuola.classi.attive.find_by(anno_corso: "4", sezione: "A", anno_scolastico: "202627")
+    assert nuova_4a
+    assert_equal 0, nuova_4a.adozioni.where(anno_scolastico: "202627").count
+  end
+
+  test "promuovi_cieca! crea una nuova prima vuota con la sezione della prima uscente" do
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    nuova_1a = @scuola.classi.attive.find_by(anno_corso: "1", sezione: "A", anno_scolastico: "202627")
+    assert nuova_1a
+    assert_equal "attiva", nuova_1a.stato
+    assert_equal 0, nuova_1a.adozioni.count
+  end
+
+  test "promuovi_cieca! è idempotente sul target" do
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    attive = @scuola.classi.attive.count
+    adozioni = @scuola.adozioni.where(anno_scolastico: "202627").count
+
+    assert_nothing_raised { @scuola.promuovi_cieca!(da: "202526", a: "202627") }
+    @scuola.reload
+    assert_equal attive, @scuola.classi.attive.count
+    assert_equal adozioni, @scuola.adozioni.where(anno_scolastico: "202627").count
+  end
+
+  test "promuovi_cieca! lascia intatte le vecchie adozioni 202526" do
+    prima = @scuola.adozioni.where(anno_scolastico: "202526").order(:codice_isbn).pluck(:codice_isbn)
+    @scuola.promuovi_cieca!(da: "202526", a: "202627")
+    dopo = @scuola.reload.adozioni.where(anno_scolastico: "202526").order(:codice_isbn).pluck(:codice_isbn)
+    assert_equal prima, dopo
+  end
+end
+
 class ScuolaPromuovibileTest < ActiveSupport::TestCase
   fixtures :accounts, :scuole, :classi, "miur/scuole", "miur/adozioni"
 

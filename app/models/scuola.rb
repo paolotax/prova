@@ -378,7 +378,92 @@ class Scuola < ApplicationRecord
     Turbo::StreamsChannel.broadcast_refresh_to(account, "scuole")
   end
 
+  # Scorrimento d'anno SENZA roster MIUR (scuola fuori anagrafe con codice appena
+  # aggiornato, o gestione manuale). Gemello cieco di promuovi_primaria!:
+  # - 5ª archiviata, le altre avanzano di un anno (stesso record);
+  # - adozioni: scorrono col prosegui (Libro#prosegue_in) verso 2ª/3ª/5ª, fallback
+  #   riporto identico; sempre flag riportata (provvisorie, non confermate MIUR);
+  # - 4ª e nuove 1ª senza adozioni (anni di nuova adozione);
+  # - nuove 1ª create con le sezioni delle 1ª uscenti, vuote.
+  # Idempotente sul target `a` (stessa guardia di promuovi_primaria!).
+  def promuovi_cieca!(da:, a:)
+    transaction do
+      unless classi.attive.per_anno(a).exists?
+        # anno_corso DESC: la 5ª si archivia PRIMA che la 4ª avanzi a 5ª, così non
+        # collidono sull'indice unico (scuola, anno_corso, sezione, combinazione).
+        sorgenti = classi.attive.per_anno(da).to_a.sort_by { |c| -c.anno_corso.to_i }
+        sezioni_prime = sorgenti.select { |c| c.anno_corso.to_i == 1 }.map(&:sezione)
+
+        sorgenti.each do |classe|
+          if classe.anno_corso.to_i >= 5
+            classe.update!(stato: "archiviata") # la 5ª si diploma, resta tombstone storico
+            next
+          end
+
+          nuovo = (classe.anno_corso.to_i + 1).to_s
+          # Solo i gradi che arrivano a 2ª/3ª/5ª ricevono le adozioni "che scorrono";
+          # 4ª (e nuove 1ª) sono anni di nuova adozione → nessuna adozione riportata.
+          # Leggiamo le sorgenti PRIMA dell'update! (dopo cambia anno_scolastico).
+          adozioni_da_scorrere =
+            %w[2 3 5].include?(nuovo) ? classe.adozioni.where(anno_scolastico: da).to_a : []
+
+          classe.update!(anno_corso: nuovo, classe_origine: nuovo,
+                         anno_scolastico: a, codice_ministeriale_origine: codice_ministeriale)
+
+          riporta_adozioni!(classe, adozioni_da_scorrere, a: a)
+        end
+
+        # Nuove 1ª (vuote) con le sezioni delle 1ª uscenti: create DOPO il loop, quando
+        # quelle identità (1ª, sezione) sono libere perché le vecchie 1ª sono ormai 2ª.
+        sezioni_prime.each do |sezione|
+          classi.find_or_create_by!(anno_corso: "1", sezione: sezione,
+                                    anno_scolastico: a, stato: "attiva") do |c|
+            c.account_id = account_id
+            c.tipo_scuola = "EE"
+            c.classe_origine = "1"
+            c.sezione_origine = sezione
+            c.codice_ministeriale_origine = codice_ministeriale
+          end
+        end
+      end
+    end
+
+    UpdateScuolaMieAdozioniJob.perform_later(account, scuola_id: id)
+    Turbo::StreamsChannel.broadcast_refresh_to(account, "scuole")
+  end
+
   private
+
+  # Nuove righe adozione per l'anno target: volume successivo se il libro ha il
+  # prosegui, altrimenti riporto identico. Sempre riportata: true. Colonne allineate
+  # a Classe#costruisci_adozioni! (più riportata). NB: se due sorgenti convergono sullo
+  # stesso codice_isbn dopo il prosegui, insert_all con unique_by dedup silenziosamente
+  # (accettabile: una sola riga per volume nella nuova classe).
+  def riporta_adozioni!(classe, sorgenti, a:)
+    return if sorgenti.empty?
+
+    prosegui = Libro.where(id: sorgenti.map(&:libro_id).compact)
+                    .where.not(prosegue_in_id: nil)
+                    .includes(:prosegue_in).index_by(&:id)
+
+    righe = sorgenti.map do |ad|
+      successivo = prosegui[ad.libro_id]&.prosegue_in
+      {
+        account_id: account_id, classe_id: classe.id,
+        libro_id: successivo&.id || ad.libro_id,
+        codice_isbn: successivo&.codice_isbn || ad.codice_isbn,
+        titolo: successivo&.titolo || ad.titolo,
+        editore: ad.editore, autori: ad.autori, disciplina: ad.disciplina,
+        prezzo_cents: successivo ? successivo.prezzo_in_cents.to_i : ad.prezzo_cents,
+        nuova_adozione: false, da_acquistare: ad.da_acquistare, consigliato: ad.consigliato,
+        anno_scolastico: a, anno_corso: classe.anno_corso,
+        codicescuola: codice_ministeriale, riportata: true,
+        created_at: Time.current, updated_at: Time.current
+      }
+    end
+
+    Adozione.insert_all(righe, unique_by: :index_adozioni_on_classe_isbn_anno)
+  end
 
   # Roster MIUR (miur_adozioni, anno corrente) della scuola come { [annocorso, sezione] => combinazione },
   # indipendente dall'anno target. La chiave è (annocorso, sezione): la combinazione è un
