@@ -242,9 +242,14 @@ class Libro < ApplicationRecord
   # Titolo normalizzato senza numeri di volume: maiuscolo, punteggiatura via,
   # numeri a 1-2 cifre rimossi OVUNQUE ("BANDA DEL BUS 1 MATEMATICA" →
   # "BANDA DEL BUS MATEMATICA"); i numeri lunghi (annate tipo "STORIA 2000")
-  # restano perché non sono volumi.
+  # restano perché non sono volumi. Class method condiviso: usato anche da
+  # Miur::VolumeSuccessivo per confrontare i titoli dei roster MIUR.
+  def self.titolo_base(str)
+    str.to_s.upcase.gsub(/[^A-Z0-9 ]/, " ").gsub(/\b\d{1,2}\b/, " ").squeeze(" ").strip
+  end
+
   def titolo_base
-    titolo.to_s.upcase.gsub(/[^A-Z0-9 ]/, " ").gsub(/\b\d{1,2}\b/, " ").squeeze(" ").strip
+    self.class.titolo_base(titolo)
   end
 
   def prezzo

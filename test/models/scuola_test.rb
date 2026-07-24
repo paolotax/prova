@@ -13,6 +13,7 @@
 #  email               :string
 #  email_dominio       :string
 #  email_pattern       :string
+#  gestione_manuale    :boolean          default(FALSE), not null
 #  grado               :string
 #  indirizzo           :string
 #  latitude            :float
@@ -148,15 +149,20 @@ class ScuolaPromuoviPrimariaTest < ActiveSupport::TestCase
 end
 
 class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
-  # Scorrimento CIECO: la scuola NON ha roster MIUR (nessuna riga miur_adozioni per
-  # il suo codice). Tutta la scena è costruita a mano: classi 1A/3A/4A/5A "202526"
-  # con adozioni, una 1A legata a un libro col prosegui (Banda Bus 1 -> Banda Bus 2)
-  # e una 1A senza libro. Nessuna fixture MIUR: è il punto del metodo cieco.
+  # Scorrimento CIECO: la scuola NON ha roster MIUR proprio (nessuna riga
+  # miur_adozioni per il SUO codice) — è il punto del metodo cieco. Le classi
+  # 1A/3A/4A/5A "202526" con adozioni sono costruite a mano: una 1A legata a un
+  # libro col prosegui (Banda Bus 1 -> Banda Bus 2), una 1A senza libro, e una 1A
+  # concorrenza (libro_id nil) il cui volume successivo NON è nel catalogo proprio
+  # ma nei roster MIUR nazionali dell'anno target di ALTRE scuole (seed sotto):
+  # verifica la risoluzione via Miur::VolumeSuccessivo. Il roster della scuola
+  # stessa resta vuoto (guardia cieca onesta).
   fixtures :accounts, :users, :categorie, :editori
 
   setup do
     Current.account = accounts(:fizzy)
     @account = accounts(:fizzy)
+    Miur::Adozione.delete_all
 
     @scuola = Scuola.create!(
       account: @account, denominazione: "Scuola Cieca Fuori Anagrafe",
@@ -180,14 +186,35 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     crea_adozione(@c1, libro: nil, isbn: "9790000000099", titolo: "Sussidiario Senza Prosegui", disciplina: "STORIA", prezzo: 800)
     # 1A: religione pluriennale — riportata verso la 2ª deve diventare da_acquistare No
     crea_adozione(@c1, libro: nil, isbn: "9790000000098", titolo: "Religione Vol 1-2-3", disciplina: "RELIGIONE", prezzo: 700)
+    # 1A: concorrenza (libro_id nil) il cui volume successivo vive nei roster MIUR
+    # nazionali dell'anno target (ISBN dominante 9799999999992 su 2 altre scuole)
+    crea_adozione(@c1, libro: nil, isbn: "9799999999991", titolo: "Concorrente Uno 1",
+      disciplina: "GEOGRAFIA", editore: "Editore Concorrente", prezzo: 900)
     # 3A/4A/5A: una adozione ciascuna
     crea_adozione(@c3, libro: nil, isbn: "9790000000031", titolo: "Terza Libro", disciplina: "ITALIANO", prezzo: 1100)
     crea_adozione(@c4, libro: nil, isbn: "9790000000041", titolo: "Quarta Libro", disciplina: "ITALIANO", prezzo: 1100)
     crea_adozione(@c5, libro: nil, isbn: "9790000000051", titolo: "Quinta Libro", disciplina: "ITALIANO", prezzo: 1100)
+
+    # Roster MIUR nazionale "202627" di ALTRE scuole: il volume successivo del
+    # concorrente (annocorso 2, stesso editore/titolo-base/disciplina). ISBN
+    # 9799999999992 dominante (2 scuole vs 0) → risolve.
+    seed_miur(codicescuola: "RMEE000001", isbn: "9799999999992", titolo: "Concorrente Uno 2")
+    seed_miur(codicescuola: "RMEE000002", isbn: "9799999999992", titolo: "Concorrente Uno 2")
   end
 
   teardown do
     Current.account = nil
+    Miur::Adozione.delete_all
+  end
+
+  def seed_miur(codicescuola:, isbn:, titolo:, disciplina: "GEOGRAFIA", editore: "Editore Concorrente",
+                annocorso: "2", sezione: "A", combinazione: "MQ", prezzo: "14,50")
+    Miur::Adozione.create!(
+      anno_scolastico: "202627", codicescuola: codicescuola, annocorso: annocorso,
+      sezioneanno: sezione, combinazione: combinazione, tipogradoscuola: "EE",
+      disciplina: disciplina, codiceisbn: isbn, titolo: titolo, editore: editore,
+      prezzo: prezzo, autori: "Autore", nuovaadoz: "No", daacquist: "Si", consigliato: "No"
+    )
   end
 
   def crea_classe(anno_corso)
@@ -199,10 +226,10 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     )
   end
 
-  def crea_adozione(classe, libro:, isbn:, titolo:, disciplina:, prezzo:)
+  def crea_adozione(classe, libro:, isbn:, titolo:, disciplina:, prezzo:, editore: "Editore X")
     Adozione.create!(
       account: @account, classe: classe, libro: libro,
-      codice_isbn: isbn, titolo: titolo, editore: "Editore X", autori: "Autore Y",
+      codice_isbn: isbn, titolo: titolo, editore: editore, autori: "Autore Y",
       disciplina: disciplina, prezzo_cents: prezzo, nuova_adozione: false,
       da_acquistare: true, consigliato: false,
       anno_scolastico: "202526", anno_corso: classe.anno_corso, codicescuola: @scuola.codice_ministeriale
@@ -232,7 +259,7 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     assert nuova_2a
 
     adozioni_2a = nuova_2a.adozioni.where(anno_scolastico: "202627").to_a
-    assert_equal 3, adozioni_2a.size
+    assert_equal 4, adozioni_2a.size
     assert adozioni_2a.all?(&:riportata?), "tutte le adozioni riportate sono flaggate"
 
     # prosegui seguito: Banda Bus 1 -> Banda Bus 2 (isbn/titolo/libro_id del volume successivo)
@@ -248,6 +275,15 @@ class ScuolaPromuoviCiecaTest < ActiveSupport::TestCase
     assert_equal "Sussidiario Senza Prosegui", identica.titolo
     assert_nil identica.libro_id
     assert identica.da_acquistare?, "le non pluriennali mantengono da_acquistare"
+
+    # concorrenza risolta dai roster MIUR nazionali: NON la copia identica col
+    # vecchio ISBN, ma il volume successivo (9799999999992, prezzo 14,50 -> 1450 cents).
+    concorrente = adozioni_2a.find { |a| a.disciplina == "GEOGRAFIA" }
+    assert concorrente
+    assert_equal "9799999999992", concorrente.codice_isbn
+    assert_equal "Concorrente Uno 2", concorrente.titolo
+    assert_equal 1450, concorrente.prezzo_cents
+    assert_nil concorrente.libro_id, "il volume concorrenza non è nel catalogo proprio"
 
     # pluriennale (religione): il volume copre piu' anni, in 2ª non si ricompra
     religione = adozioni_2a.find { |a| a.codice_isbn == "9790000000098" }

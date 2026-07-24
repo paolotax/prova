@@ -457,11 +457,15 @@ class Scuola < ApplicationRecord
 
   private
 
-  # Nuove righe adozione per l'anno target: volume successivo se il libro ha il
-  # prosegui, altrimenti riporto identico. Sempre riportata: true. Colonne allineate
-  # a Classe#costruisci_adozioni! (più riportata). NB: se due sorgenti convergono sullo
-  # stesso codice_isbn dopo il prosegui, insert_all con unique_by dedup silenziosamente
-  # (accettabile: una sola riga per volume nella nuova classe).
+  # Nuove righe adozione per l'anno target. Volume successivo con priorità:
+  #   1) Libro#prosegue_in (prosegui esplicito del catalogo proprio, vince sempre);
+  #   2) Miur::VolumeSuccessivo (roster MIUR nazionali dell'anno target: copre la
+  #      concorrenza, libro_id nil, che non ha prosegui nel catalogo proprio);
+  #   3) riporto identico (nessun successore risolvibile).
+  # Sempre riportata: true. Colonne allineate a Classe#costruisci_adozioni! (più
+  # riportata). NB: se due sorgenti convergono sullo stesso codice_isbn dopo il
+  # prosegui, insert_all con unique_by dedup silenziosamente (accettabile: una
+  # sola riga per volume nella nuova classe).
   def riporta_adozioni!(classe, sorgenti, a:)
     return if sorgenti.empty?
 
@@ -469,18 +473,45 @@ class Scuola < ApplicationRecord
                     .where.not(prosegue_in_id: nil)
                     .includes(:prosegue_in).index_by(&:id)
 
+    # Le sorgenti senza prosegui esplicito (tipicamente concorrenza): cerca il
+    # volume successivo nei roster MIUR nazionali dell'anno target (annocorso già
+    # aggiornato su classe.anno_corso prima di questa chiamata).
+    senza_prosegui = sorgenti.reject { |ad| prosegui.key?(ad.libro_id) }
+    da_miur = Miur::VolumeSuccessivo.new(anno: a).risolvi(senza_prosegui, verso: classe.anno_corso)
+
     righe = sorgenti.map do |ad|
       successivo = prosegui[ad.libro_id]&.prosegue_in
+      esemplare  = successivo ? nil : da_miur[ad.id]
       # Pluriennali (religione, alternativa): il volume copre più anni, in 2ª/3ª/5ª
       # non si ricompra — da_acquistare No, come la normalizzazione MIUR.
       pluriennale = ad.disciplina.to_s.match?(/RELIGIONE|ALTERNATIV/i)
+
+      isbn = successivo&.codice_isbn || esemplare&.codiceisbn || ad.codice_isbn
+      libro_id =
+        if successivo
+          successivo.id
+        elsif esemplare
+          # Di norma nil: il volume concorrenza non è nel catalogo proprio.
+          Libro.where(account_id: account_id, codice_isbn: esemplare.codiceisbn).pick(:id)
+        else
+          ad.libro_id
+        end
+      prezzo_cents =
+        if successivo
+          successivo.prezzo_in_cents.to_i
+        elsif esemplare
+          ((esemplare.prezzo_euro || 0) * 100).round
+        else
+          ad.prezzo_cents
+        end
+
       {
         account_id: account_id, classe_id: classe.id,
-        libro_id: successivo&.id || ad.libro_id,
-        codice_isbn: successivo&.codice_isbn || ad.codice_isbn,
-        titolo: successivo&.titolo || ad.titolo,
+        libro_id: libro_id,
+        codice_isbn: isbn,
+        titolo: successivo&.titolo || esemplare&.titolo || ad.titolo,
         editore: ad.editore, autori: ad.autori, disciplina: ad.disciplina,
-        prezzo_cents: successivo ? successivo.prezzo_in_cents.to_i : ad.prezzo_cents,
+        prezzo_cents: prezzo_cents,
         nuova_adozione: false,
         da_acquistare: pluriennale ? false : ad.da_acquistare,
         consigliato: ad.consigliato,
