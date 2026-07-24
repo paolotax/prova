@@ -7,7 +7,9 @@
     <dialog class="dialog panel" style="--panel-size: 44ch;"
             data-dialog-target="dialog"
             data-action="keydown.esc->dialog#close:stop">
-      <h3 class="txt-large txt-bold">Aggiungi adozioni</h3>
+      <h3 class="txt-large txt-bold">
+        Aggiungi adozioni<%= " in #{@classe.nome_breve}" if @classe_fissa %>
+      </h3>
       <p class="txt-small txt-subtle margin-block-end"><%= @scuola.denominazione %></p>
 
       <% if @errore.present? %>
@@ -18,27 +20,34 @@
           method: :post,
           class: "flex flex-column gap" do %>
 
-        <%# cb-tax (NON cb-tax-fancy: classe fantasma senza CSS). Nessuna classe
-            preselezionata: quella del path è solo il segnaposto del bottone. %>
-        <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
-          <label class="txt-small txt-bold">Classi</label>
-          <%# Niente mobile_at "0px": dentro <dialog> il listbox mobile finisce
-              sotto il top-layer e la lista non si apre digitando.
-              autofocus: showModal() focalizza nativamente l'elemento [autofocus]
-              (senza, il focus finisce sul focus-trap nascosto del gem). %>
-          <%= combobox_tag "classe_ids",
-                @classi,
-                multiselect_chip_src: classi_chips_path,
-                placeholder: "Seleziona classi...",
-                autofocus: true %>
-        </div>
+        <% if @classe_fissa %>
+          <%# Aperta dalla show classe: la classe è quella, niente multiselect. %>
+          <%= hidden_field_tag "classe_ids", @classe.id %>
+          <%= hidden_field_tag "fissa", "1" %>
+        <% else %>
+          <%# cb-tax (NON cb-tax-fancy: classe fantasma senza CSS). Nessuna classe
+              preselezionata: quella del path è solo il segnaposto del bottone. %>
+          <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
+            <label class="txt-small txt-bold">Classi</label>
+            <%# Niente mobile_at "0px": dentro <dialog> il listbox mobile finisce
+                sotto il top-layer e la lista non si apre digitando.
+                autofocus: showModal() focalizza nativamente l'elemento [autofocus]
+                (senza, il focus finisce sul focus-trap nascosto del gem). %>
+            <%= combobox_tag "classe_ids",
+                  @classi,
+                  multiselect_chip_src: classi_chips_path,
+                  placeholder: "Seleziona classi...",
+                  autofocus: true %>
+          </div>
+        <% end %>
 
         <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
           <label class="txt-small txt-bold">Libri</label>
           <%= combobox_tag "adozione_ids",
                 adozioni_catalogo_index_path(anno_corso: @classe.anno_corso),
                 multiselect_chip_src: adozione_chips_path,
-                placeholder: "Cerca titolo o ISBN..." %>
+                placeholder: "Cerca titolo o ISBN...",
+                autofocus: @classe_fissa %>
         </div>
 
         <div class="flex flex-column gap-half margin-block-start">

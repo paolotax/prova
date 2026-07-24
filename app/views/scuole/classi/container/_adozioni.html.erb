@@ -7,7 +7,13 @@
 </style>
 
 <section class="group" id="<%= dom_id(classe, :adozioni) %>">
-  <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-block-end">Adozioni</h3>
+  <div class="flex align-center justify-between gap margin-block-end">
+    <h3 class="divider divider--fade divider--card txt-medium font-weight-black margin-none" style="flex: 1;">Adozioni</h3>
+    <%= link_to "Aggiungi adozione",
+          new_scuola_classe_adozione_path(scuola, classe, fissa: 1),
+          class: "btn btn--small",
+          data: { turbo_frame: :modal } %>
+  </div>
 
   <% if adozioni.any? %>
     <%

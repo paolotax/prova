@@ -6,6 +6,9 @@ module Scuole
 
       def new
         @classi = @scuola.classi.attive.order(:anno_corso, :sezione)
+        # Aperta dalla show classe: la classe del path è quella vera, non un
+        # segnaposto — la dialog la fissa e salta il multiselect.
+        @classe_fissa = params[:fissa].present?
       end
 
       # Inserimento MULTIPLO: prodotto cartesiano classi x esemplari (adozioni-catalogo).
@@ -17,6 +20,7 @@ module Scuole
 
         if classi.empty? || esemplari.empty?
           @classi = @scuola.classi.attive.order(:anno_corso, :sezione)
+          @classe_fissa = params[:fissa].present?
           @errore = "Seleziona almeno una classe e un libro."
           return render :new, status: :unprocessable_entity
         end
@@ -38,12 +42,26 @@ module Scuole
             # anche se i libri non sono "miei" (nessun mandato).
             @scope = "tutte"
             @adozioni = Adozione.per_frame_scuola(@scuola)
-            render turbo_stream: [
+            streams = [
               turbo_stream_flash(notice: messaggio),
               turbo_stream.update("modal", ""),
               turbo_stream.replace("scuola_adozioni",
                 render_to_string(template: "scuole/adozioni/show", layout: false))
             ]
+            # Dalla show classe (fissa) i target sono tabella+meta della classe;
+            # sulla pagina scuola quei target mancano e gli stream sono no-op.
+            if params[:fissa].present?
+              adozioni_classe = @classe.adozioni.correnti
+                                       .includes(:saggi, :kit_consegne, :seguiti, :libro)
+                                       .order(:disciplina, :titolo)
+              streams << turbo_stream.replace(helpers.dom_id(@classe, :adozioni),
+                render_to_string(partial: "scuole/classi/container/adozioni",
+                                 locals: { classe: @classe, scuola: @scuola, adozioni: adozioni_classe }))
+              streams << turbo_stream.replace(helpers.dom_id(@classe, :meta),
+                render_to_string(partial: "scuole/classi/display/perma/meta",
+                                 locals: { classe: @classe, adozioni: adozioni_classe }))
+            end
+            render turbo_stream: streams
           end
           format.html { redirect_to scuola_path(@scuola), notice: messaggio }
         end

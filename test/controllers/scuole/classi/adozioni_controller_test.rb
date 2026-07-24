@@ -194,6 +194,30 @@ class Scuole::Classi::AdozioniControllerTest < ActionDispatch::IntegrationTest
     assert_response :unprocessable_entity
   end
 
+  test "new con fissa: classe fissata, niente multiselect classi" do
+    get new_scuola_classe_adozione_path(@scuola, @classe, account_id: @account.id, fissa: 1)
+
+    assert_response :success
+    assert_match "Aggiungi adozioni in #{@classe.nome_breve}", response.body
+    assert_match %(name="classe_ids" id="classe_ids" value="#{@classe.id}"), response.body
+    assert_no_match(/Seleziona classi/, response.body)
+  end
+
+  test "create con fissa in turbo_stream aggiorna tabella e meta della classe" do
+    post scuola_classe_adozioni_path(@scuola, @classe, account_id: @account.id),
+      as: :turbo_stream,
+      params: {
+        fissa: "1",
+        classe_ids: @classe.id.to_s,
+        adozione_ids: @es1.id.to_s,
+        da_acquistare: "1"
+      }
+
+    assert_response :success
+    assert_match ActionView::RecordIdentifier.dom_id(@classe, :adozioni), response.body
+    assert_match ActionView::RecordIdentifier.dom_id(@classe, :meta), response.body
+  end
+
   test "destroy elimina l'adozione della classe e accoda il ricalcolo" do
     assert_difference("Adozione.count", -1) do
       assert_enqueued_with(job: UpdateScuolaMieAdozioniJob) do
