@@ -11,6 +11,15 @@ export default class extends Controller {
 
   static ASYNC_ATTR = "data-hw-combobox-async-src-value"
 
+  // All'apertura showModal() manda il focus sul focus-trap nascosto di
+  // hw-combobox, che inghiotte la digitazione: focus esplicito sull'input
+  // visibile della prima combobox (classi).
+  focusClassi() {
+    requestAnimationFrame(() => {
+      this.element.querySelector("input.hw-combobox__input")?.focus({ preventScroll: true })
+    })
+  }
+
   syncAnni() {
     const hidden = this.element.querySelector('input[name="classe_ids"]')
     const fieldset = this.element.querySelector(`[${this.constructor.ASYNC_ATTR}]`)

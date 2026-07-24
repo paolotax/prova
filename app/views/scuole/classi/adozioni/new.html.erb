@@ -3,7 +3,7 @@
        data-dialog-modal-value="true"
        data-dialog-auto-open-value="true"
        data-bulk-adozioni-classi-anni-value="<%= @classi.to_h { |c| [c.id, c.anno_corso] }.to_json %>"
-       data-action="hw-combobox:selection->bulk-adozioni#syncAnni hw-combobox:removal->bulk-adozioni#syncAnni">
+       data-action="hw-combobox:selection->bulk-adozioni#syncAnni hw-combobox:removal->bulk-adozioni#syncAnni dialog:show->bulk-adozioni#focusClassi">
     <dialog class="dialog panel" style="--panel-size: 44ch;"
             data-dialog-target="dialog"
             data-action="keydown.esc->dialog#close:stop">
