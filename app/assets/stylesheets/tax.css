@@ -63,6 +63,15 @@
     text-align: left;
     padding-top: 0.125rem;
     padding-bottom: 0.125rem;
+    /* Multiselect: senza width l'input resta uno spillo a sinistra e il resto
+       del campo è wrapper non focusabile — i click "nel campo" cadono nel vuoto. */
+    width: 100%;
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .hw-combobox__main__wrapper {
+    cursor: text;
   }
 
   .hw-combobox__listbox {
