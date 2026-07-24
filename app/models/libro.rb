@@ -79,6 +79,9 @@ class Libro < ApplicationRecord
   belongs_to :user
   belongs_to :editore, optional: true
   belongs_to :categoria
+
+  belongs_to :prosegue_in, class_name: "Libro", optional: true
+  has_one :precedente, class_name: "Libro", foreign_key: :prosegue_in_id, inverse_of: :prosegue_in
   
   has_one :giacenza, dependent: :destroy
   
@@ -205,6 +208,15 @@ class Libro < ApplicationRecord
 
   def to_combobox_display
     self.titolo
+  end
+
+  # Candidati volume successivo: stessa collana, classe + 1, stesso account.
+  # Disciplina come tie-break se piu' di uno.
+  def candidati_prosegui
+    return Libro.none if collana.blank? || classe.blank?
+
+    scope = Libro.where(account_id: account_id, collana: collana, classe: classe + 1)
+    scope.count > 1 && disciplina.present? ? scope.where(disciplina: disciplina).presence || scope : scope
   end
 
   def prezzo
