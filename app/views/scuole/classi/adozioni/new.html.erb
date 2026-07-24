@@ -37,11 +37,9 @@
           </select>
         </div>
 
-        <div class="flex flex-column gap-quarter">
+        <div class="flex flex-column gap-quarter cb-tax" style="min-inline-size: 0; inline-size: 100%;">
           <label class="txt-small txt-bold" for="libro_id">Libro</label>
-          <%= f.combobox :libro_id, libri_path,
-              placeholder: "Cerca libro...",
-              class: "input" %>
+          <%= f.combobox :libro_id, libri_path, placeholder: "Cerca libro..." %>
         </div>
 
         <div class="flex flex-column gap-half margin-block-start">
