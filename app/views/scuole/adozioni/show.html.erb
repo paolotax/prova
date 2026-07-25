@@ -13,10 +13,12 @@
             data: { turbo_frame: "scuola_adozioni" } %>
       </h3>
       <% if prima_classe %>
-        <%= link_to "Aggiungi adozione",
-            new_scuola_classe_adozione_path(@scuola, prima_classe),
-            class: "btn btn--small",
-            data: { turbo_frame: :modal } %>
+        <%= link_to new_scuola_classe_adozione_path(@scuola, prima_classe),
+            class: "btn btn--circle btn--small",
+            data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Aggiungi adozioni" } do %>
+          <%= icon_tag "add", size: "small" %>
+          <span class="for-screen-reader">Aggiungi adozioni</span>
+        <% end %>
       <% end %>
     </div>
 
