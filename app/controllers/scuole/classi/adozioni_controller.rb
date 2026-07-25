@@ -26,8 +26,16 @@ module Scuole
         end
 
         righe = build_righe(classi, esemplari)
-        inserite = Adozione.insert_all(righe, unique_by: :index_adozioni_on_classe_isbn_anno).count
+        risultato = Adozione.insert_all(righe, unique_by: :index_adozioni_on_classe_isbn_anno,
+                                        returning: [:id])
+        inserite = risultato.count
         gia_presenti = righe.size - inserite
+
+        # Flag mia sincrono SOLO sulle righe inserite (query puntuale): così la
+        # striscia copertine "mie adozioni" le mostra subito, senza aspettare il
+        # ricalcolo async e senza il perform_now che bloccava il submit.
+        Adozione::Ricalcolo.marca_flag!(account: Current.account,
+                                        adozione_ids: risultato.rows.flatten)
 
         # Async: il frame ricarica in scope "tutte", che non dipende dal flag mia —
         # il ricalcolo contatori può girare in background (perform_now bloccava il
@@ -60,6 +68,9 @@ module Scuole
               streams << turbo_stream.replace(helpers.dom_id(@classe, :meta),
                 render_to_string(partial: "scuole/classi/display/perma/meta",
                                  locals: { classe: @classe, adozioni: adozioni_classe }))
+              streams << turbo_stream.replace(helpers.dom_id(@classe, :adozioni_tiles),
+                render_to_string(partial: "scuole/classi/container/adozioni_tiles",
+                                 locals: { classe: @classe, scuola: @scuola }))
             end
             render turbo_stream: streams
           end
@@ -81,7 +92,9 @@ module Scuole
                               .order(:disciplina, :titolo)
             render turbo_stream: [
               turbo_stream_flash(notice: "Adozione eliminata: #{adozione.titolo}."),
-              turbo_stream.remove(helpers.dom_id(adozione, :tile)),
+              turbo_stream.replace(helpers.dom_id(@classe, :adozioni_tiles),
+                render_to_string(partial: "scuole/classi/container/adozioni_tiles",
+                                 locals: { classe: @classe, scuola: @scuola })),
               turbo_stream.replace(helpers.dom_id(@classe, :adozioni),
                 render_to_string(partial: "scuole/classi/container/adozioni",
                                  locals: { classe: @classe, scuola: @scuola, adozioni: adozioni })),

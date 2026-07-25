@@ -22,6 +22,34 @@ class Adozione::Ricalcolo
 
   CLASSE_SCOPE = "classe_id IN (SELECT id FROM classi WHERE scuola_id IN (:scuola_ids))".freeze
 
+  # Flag mia/disdetta SINCRONO per un set puntuale di adozioni appena inserite:
+  # stesse regole di set_mia/set_disdetta ma scoped su :adozione_ids — poche
+  # righe, niente ricalcolo per direzione+plessi (quello resta al job async).
+  def self.marca_flag!(account:, adozione_ids:)
+    return if adozione_ids.blank?
+
+    params = { account_id: account.id, adozione_ids: adozione_ids }
+
+    [
+      <<~SQL,
+        UPDATE adozioni SET mia = true
+        WHERE adozioni.account_id = :account_id
+        AND adozioni.id IN (:adozione_ids)
+        AND #{MANDATO_ATTIVO}
+        AND NOT #{DISDETTA_AREA}
+      SQL
+      <<~SQL
+        UPDATE adozioni SET disdetta = true
+        WHERE adozioni.account_id = :account_id
+        AND adozioni.id IN (:adozione_ids)
+        AND adozioni.mia = true
+        AND #{DISDETTA_WILDCARD}
+      SQL
+    ].each do |sql|
+      ActiveRecord::Base.connection.execute(ActiveRecord::Base.sanitize_sql([sql, params]))
+    end
+  end
+
   def sql_params
     { account_id: @account.id, scuola_ids: @scuola_ids }
   end
@@ -32,58 +60,72 @@ class Adozione::Ricalcolo
       .update_all(mia: false, disdetta: false)
   end
 
+  # Frammenti condivisi fra il ricalcolo per scuola e marca_flag! per-adozione:
+  # tenerli unici evita che le due strade divergano.
+  MANDATO_ATTIVO = <<~SQL.freeze
+    EXISTS (
+      SELECT 1 FROM mandati m
+      JOIN editori e ON e.id = m.editore_id
+      JOIN classi c ON c.id = adozioni.classe_id
+      JOIN scuole s ON s.id = c.scuola_id
+      WHERE m.account_id = adozioni.account_id
+        AND e.editore = adozioni.editore
+        AND m.provincia = s.provincia
+        AND m.grado = s.grado
+        AND (m.area IS NULL OR m.area = s.area)
+        AND NOT (m.area IS NOT NULL AND m.disdetta = true)
+    )
+  SQL
+
+  DISDETTA_AREA = <<~SQL.freeze
+    EXISTS (
+      SELECT 1 FROM mandati m2
+      JOIN editori e2 ON e2.id = m2.editore_id
+      JOIN classi c2 ON c2.id = adozioni.classe_id
+      JOIN scuole s2 ON s2.id = c2.scuola_id
+      WHERE m2.account_id = adozioni.account_id
+        AND m2.disdetta = true
+        AND m2.area IS NOT NULL
+        AND m2.area = s2.area
+        AND e2.editore = adozioni.editore
+        AND m2.provincia = s2.provincia
+        AND m2.grado = s2.grado
+    )
+  SQL
+
+  # Solo wildcard disdette (area NULL)
+  DISDETTA_WILDCARD = <<~SQL.freeze
+    EXISTS (
+      SELECT 1 FROM mandati m
+      JOIN editori e ON e.id = m.editore_id
+      JOIN classi c ON c.id = adozioni.classe_id
+      JOIN scuole s ON s.id = c.scuola_id
+      WHERE m.account_id = adozioni.account_id
+        AND m.disdetta = true
+        AND m.area IS NULL
+        AND e.editore = adozioni.editore
+        AND m.provincia = s.provincia
+        AND m.grado = s.grado
+    )
+  SQL
+
   def set_mia
     execute(<<~SQL)
       UPDATE adozioni SET mia = true
       WHERE adozioni.account_id = :account_id
       AND #{CLASSE_SCOPE}
-      AND EXISTS (
-        SELECT 1 FROM mandati m
-        JOIN editori e ON e.id = m.editore_id
-        JOIN classi c ON c.id = adozioni.classe_id
-        JOIN scuole s ON s.id = c.scuola_id
-        WHERE m.account_id = adozioni.account_id
-          AND e.editore = adozioni.editore
-          AND m.provincia = s.provincia
-          AND m.grado = s.grado
-          AND (m.area IS NULL OR m.area = s.area)
-          AND NOT (m.area IS NOT NULL AND m.disdetta = true)
-      )
-      AND NOT EXISTS (
-        SELECT 1 FROM mandati m2
-        JOIN editori e2 ON e2.id = m2.editore_id
-        JOIN classi c2 ON c2.id = adozioni.classe_id
-        JOIN scuole s2 ON s2.id = c2.scuola_id
-        WHERE m2.account_id = adozioni.account_id
-          AND m2.disdetta = true
-          AND m2.area IS NOT NULL
-          AND m2.area = s2.area
-          AND e2.editore = adozioni.editore
-          AND m2.provincia = s2.provincia
-          AND m2.grado = s2.grado
-      )
+      AND #{MANDATO_ATTIVO}
+      AND NOT #{DISDETTA_AREA}
     SQL
   end
 
-  # Solo wildcard disdette (area NULL)
   def set_disdetta
     execute(<<~SQL)
       UPDATE adozioni SET disdetta = true
       WHERE adozioni.account_id = :account_id
       AND adozioni.mia = true
       AND #{CLASSE_SCOPE}
-      AND EXISTS (
-        SELECT 1 FROM mandati m
-        JOIN editori e ON e.id = m.editore_id
-        JOIN classi c ON c.id = adozioni.classe_id
-        JOIN scuole s ON s.id = c.scuola_id
-        WHERE m.account_id = adozioni.account_id
-          AND m.disdetta = true
-          AND m.area IS NULL
-          AND e.editore = adozioni.editore
-          AND m.provincia = s.provincia
-          AND m.grado = s.grado
-      )
+      AND #{DISDETTA_WILDCARD}
     SQL
   end
 
