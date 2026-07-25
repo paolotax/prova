@@ -81,7 +81,7 @@
 
   <%= link_to new_scuola_classe_adozione_path(scuola, classe, fissa: 1),
         class: "btn btn--circle btn--small",
-        style: "align-self: center; margin-inline-start: 0.5em;",
+        style: "--btn-size: 1.8em; align-self: center; margin-inline-start: 0.5em;",
         data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Aggiungi adozione" } do %>
     <%= icon_tag "add", size: "small" %>
     <span class="for-screen-reader">Aggiungi adozione</span>
