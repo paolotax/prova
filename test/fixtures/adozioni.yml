@@ -21,6 +21,7 @@
 #  numero_copie       :integer          default(0)
 #  nuova_adozione     :boolean          default(FALSE)
 #  prezzo_cents       :integer          default(0)
+#  riportata          :boolean          default(FALSE), not null
 #  titolo             :string
 #  created_at         :datetime         not null
 #  updated_at         :datetime         not null
