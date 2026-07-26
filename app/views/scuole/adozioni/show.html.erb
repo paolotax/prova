@@ -1,8 +1,8 @@
 <%= turbo_frame_tag "scuola_adozioni" do %>
   <% prima_classe = @scuola.classi.attive.order(:anno_corso, :sezione).first %>
-  <section class="group">
-    <div class="flex align-center justify-between gap margin-block-end">
-      <h3 class="divider divider--fade txt-medium font-weight-black margin-none" style="flex: 1;">
+  <section class="margin-block-end-double">
+    <div class="group-header">
+      <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
         <%= link_to "Mie adozioni", scuola_adozioni_path(@scuola, scope: "mie"),
             class: "txt-undecorated #{'font-weight-black' if @scope == 'mie'}",
             style: "color: inherit; #{'opacity: 0.4;' unless @scope == 'mie'}",
@@ -13,13 +13,14 @@
             data: { turbo_frame: "scuola_adozioni" } %>
       </h3>
       <% if prima_classe %>
-        <%= link_to new_scuola_classe_adozione_path(@scuola, prima_classe),
-            class: "btn btn--circle btn--small",
-            style: "--btn-size: 1.8em;",
-            data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Aggiungi adozioni" } do %>
-          <%= icon_tag "add", size: "small" %>
-          <span class="for-screen-reader">Aggiungi adozioni</span>
-        <% end %>
+        <div class="group-header__actions group-header__actions--end">
+          <%= link_to new_scuola_classe_adozione_path(@scuola, prima_classe),
+              class: "btn btn--circle",
+              data: { turbo_frame: :modal, controller: "tooltip", tooltip_content_value: "Aggiungi adozioni" } do %>
+            <%= icon_tag "add", size: "small" %>
+            <span class="for-screen-reader">Aggiungi adozioni</span>
+          <% end %>
+        </div>
       <% end %>
     </div>
 

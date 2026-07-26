@@ -39,33 +39,7 @@
 	</div>
 
 	<div class="card-perma__actions card-perma__actions--right">
-		<% if scuola.promuovibile? %>
-			<%= link_to new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale),
-					class: "btn", data: { turbo_frame: :modal, controller: "tooltip" } do %>
-				<%= icon_tag "academic-cap" %>
-				<span class="for-screen-reader">Passaggio anno</span>
-			<% end %>
-		<% end %>
-
-		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf),
-				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
-			<%= icon_tag "printer" %>
-			<span class="for-screen-reader">Foglio scuola PDF</span>
-		<% end %>
-		<%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, solo_sovrapacchi: true),
-				target: "_blank", class: "btn", data: { controller: "tooltip", turbo: false } do %>
-			<%= icon_tag "tag" %>
-			<span class="for-screen-reader">Sovrapacchi PDF</span>
-		<% end %>
-
-		<% bolle_aperte_count = scuola.bolle_visione_aperte_count %>
-		<% if bolle_aperte_count.positive? %>
-			<%= link_to scuola_ritiro_path(scuola), class: "btn btn--negative",
-					data: { controller: "tooltip" } do %>
-				<%= icon_tag "refresh" %>
-				<span class="for-screen-reader">Ritiro bolle in visione(<%= bolle_aperte_count %>)</span>
-			<% end %>
-		<% end %>
+		<%= render "scuole/container/actions", scuola: scuola %>
 	</div>
 
 	<div class="card-perma__notch card-perma__notch--bottom">

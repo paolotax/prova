@@ -1,7 +1,7 @@
 <%# locals: (scuola:) -%>
-<div id="<%= dom_id(scuola, :disponibilita) %>" class="margin-block-start">
+<div id="<%= dom_id(scuola, :disponibilita) %>" class="margin-block-end-double">
   <div class="group-header">
-    <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Disponibilità</h3>
+    <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">Calendario, orario lezioni</h3>
     <div class="group-header__actions group-header__actions--end">
       <button type="button" class="btn btn--circle"
               data-controller="toggle tooltip" data-action="toggle#toggle"
@@ -97,6 +97,6 @@
 
   <%# Messaggio vuoto %>
   <% if orari.empty? && seggi.empty? && patroni.empty? && chiusure.empty? && riunioni.empty? %>
-    <p class="txt-small txt-subtle">Nessuna disponibilità configurata.</p>
+    <div class="blank-slate blank-slate--empty txt-small txt-subtle txt-balance">Nessun orario o calendario configurati.</div>
   <% end %>
 </div>

@@ -23,6 +23,7 @@
   .txt-underline { text-decoration: underline; }
   .txt-tight-lines { line-height: 1.2; }
   .txt-nowrap { white-space: nowrap; }
+  .txt-balance { text-wrap: balance; }
   .txt-break { word-break: break-word; }
   .txt-uppercase { text-transform: uppercase; }
   .txt-capitalize { text-transform: capitalize; }

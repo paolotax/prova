@@ -1,0 +1,53 @@
+<%# locals: (scuola:) -%>
+<% bolle_aperte_count = scuola.bolle_visione_aperte_count %>
+
+<div id="<%= dom_id(scuola, :actions_menu) %>" data-controller="dialog"
+     data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
+  <button type="button" class="btn btn--circle" data-action="click->dialog#toggle">
+    <%= icon_tag "menu-dots-horizontal" %>
+    <span class="for-screen-reader">Altre azioni</span>
+  </button>
+
+  <dialog class="popup panel flex-column gap fill-white shadow txt-small margin-block-double" data-dialog-target="dialog">
+    <ul class="popup__list">
+      <% if scuola.promuovibile? %>
+        <li class="popup__item">
+          <%= link_to new_controllo_adozioni_promozione_path(codicescuola: scuola.codice_ministeriale),
+                class: "popup__btn btn",
+                data: { turbo_frame: :modal, action: "click->dialog#close" } do %>
+            <%= icon_tag "academic-cap" %>
+            <span>Passaggio anno</span>
+          <% end %>
+        </li>
+      <% end %>
+
+      <li class="popup__item">
+        <%= link_to scuola_foglio_scuola_path(scuola, format: :pdf),
+              target: "_blank", class: "popup__btn btn",
+              data: { turbo: false, action: "click->dialog#close" } do %>
+          <%= icon_tag "printer" %>
+          <span>Foglio scuola PDF</span>
+        <% end %>
+      </li>
+
+      <li class="popup__item">
+        <%= link_to scuola_foglio_scuola_path(scuola, format: :pdf, solo_sovrapacchi: true),
+              target: "_blank", class: "popup__btn btn",
+              data: { turbo: false, action: "click->dialog#close" } do %>
+          <%= icon_tag "tag" %>
+          <span>Sovrapacchi PDF</span>
+        <% end %>
+      </li>
+
+      <% if bolle_aperte_count.positive? %>
+        <li class="popup__item">
+          <%= link_to scuola_ritiro_path(scuola), class: "popup__btn btn txt-negative",
+                data: { action: "click->dialog#close" } do %>
+            <%= icon_tag "refresh" %>
+            <span>Ritiro bolle in visione (<%= bolle_aperte_count %>)</span>
+          <% end %>
+        </li>
+      <% end %>
+    </ul>
+  </dialog>
+</div>

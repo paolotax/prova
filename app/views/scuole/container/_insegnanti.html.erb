@@ -23,7 +23,7 @@
 %>
 
 <% if persone.any? %>
-  <section class=" margin-block-end-double">
+  <section class="margin-block-end-double">
     <div class="group-header">
       <div class="group-header__actions group-header__actions--start">
         <%= link_to scuola_cattedre_path(scuola), class: "btn btn-circle" do %>
@@ -145,7 +145,7 @@
         <%= render "persone/search_dialog", scuola: scuola %>
       </div>
     </div>
-    <p class="txt-small txt-subtle margin-none">Nessun insegnante.</p>
+    <p class="blank-slate blank-slate--empty txt-small txt-subtle margin-auto">Nessun insegnante.</p>
   </section>
 <% end %>
 </div>
