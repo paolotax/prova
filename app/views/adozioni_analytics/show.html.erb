@@ -17,7 +17,7 @@
 <% end %>
 
 <div class="stats-container" data-controller="tab-loading">
-  <nav class="analytics-tabs">
+  <nav class="analytics-tabs divider divider--fade txt-medium font-weight-black margin-block-double">
     <% query = request.query_parameters %>
     <%= link_to "Mie adozioni", adozioni_analytics_path(query.merge(tab: "mie")),
         class: "analytics-tabs__tab #{'analytics-tabs__tab--active' if @tab == 'mie'}",
