@@ -1,6 +1,8 @@
 <%# locals: (source:) -%>
 
-<% return unless source&.tappa_target %>
+<%# persisted?: documenti#new renderizza la show con un documento non salvato,
+    senza id il frame pianifica farebbe find(nil) → RecordNotFound %>
+<% return unless source&.persisted? && source.tappa_target %>
 
 <% frame_id = "pianifica_#{source.class.name}_#{source.id}" %>
 
