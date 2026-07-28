@@ -16,8 +16,10 @@
         action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
       } do %>
 
-  <%# Link overlay: apre il dettaglio %>
+  <%# Link overlay: apre il dettaglio. Il title sta qui perché l'overlay copre
+      la riga e intercetta l'hover: i title delle celle sotto non scatterebbero %>
   <%= link_to documento_path(documento), class: "data-row__link", tabindex: -1,
+        title: [documento.causale&.causale, "##{documento.numero_documento}", documento.clientable&.denominazione].compact_blank.join(" · "),
         data: { turbo_frame: "_top" } do %>
     <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>
   <% end %>

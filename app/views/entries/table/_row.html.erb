@@ -12,7 +12,10 @@
         role: "row",
         tabindex: 0 do %>
 
+    <%# Title sull'overlay: copre la riga e intercetta l'hover, i title delle
+        celle sotto non scatterebbero %>
     <%= link_to documento_path(documento), class: "data-row__link", tabindex: -1,
+          title: [documento.causale&.causale, "##{documento.numero_documento}", documento.clientable&.denominazione].compact_blank.join(" · "),
           data: { turbo_frame: "_top" } do %>
       <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>
     <% end %>
@@ -35,9 +38,11 @@
         role: "row",
         tabindex: 0 do %>
 
+    <% titolo_appunto = appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %>
     <%= link_to appunto_path(appunto), class: "data-row__link", tabindex: -1,
+          title: [titolo_appunto, (truncate(appunto.content.to_plain_text, length: 150) if appunto.content.present?)].compact_blank.join(" — "),
           data: { turbo_frame: "_top" } do %>
-      <span class="for-screen-reader"><%= appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %></span>
+      <span class="for-screen-reader"><%= titolo_appunto %></span>
     <% end %>
 
     <div class="data-row__cell data-row__cell--check">
@@ -71,6 +76,7 @@
         tabindex: 0 do %>
 
     <%= link_to tappa_path(tappa), class: "data-row__link", tabindex: -1,
+          title: [tappa.giri.map(&:titolo).compact_blank.join(" · ").presence, tappa.titolo.presence || tappa.descrizione.presence].compact.join(" — "),
           data: { turbo_frame: "_top" } do %>
       <span class="for-screen-reader"><%= tappa.tappable&.denominazione || "Tappa" %></span>
     <% end %>

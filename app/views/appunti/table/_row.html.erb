@@ -14,9 +14,13 @@
         action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
       } do %>
 
+  <%# Title sull'overlay: copre la riga e intercetta l'hover, i title delle
+      celle sotto non scatterebbero %>
+  <% titolo_appunto = appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %>
   <%= link_to appunto_path(appunto), class: "data-row__link", tabindex: -1,
+        title: [titolo_appunto, (truncate(appunto.content.to_plain_text, length: 150) if appunto.content.present?)].compact_blank.join(" — "),
         data: { turbo_frame: "_top" } do %>
-    <span class="for-screen-reader"><%= appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %></span>
+    <span class="for-screen-reader"><%= titolo_appunto %></span>
   <% end %>
 
   <div class="data-row__cell data-row__cell--check">
