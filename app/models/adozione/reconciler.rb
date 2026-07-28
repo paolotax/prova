@@ -43,6 +43,7 @@ class Adozione::Reconciler
       upsert_classi
       archivia_classi_orfane
       upsert_adozioni
+      collega_libri
       cancella_adozioni_orfane
     end
     ricalcola
@@ -196,6 +197,28 @@ class Adozione::Reconciler
     SQL
     exec_sql(sql)
   end
+  # Collega al catalogo per ISBN le adozioni ancora scollegate (set-based,
+  # idempotente). Senza questa fase le adozioni del nuovo anno restavano con
+  # libro_id nullo finché non girava UpdateMieAdozioniJob (solo da mandati,
+  # assegnazioni o pulsante aggiorna): niente copertine nelle schede classe.
+  # La creazione dei libri mancanti dagli ISBN orfani resta a quel job.
+  def collega_libri
+    sql = <<~SQL
+      UPDATE adozioni SET libro_id = l.id
+      FROM libri l, classi cl, scuole sc
+      WHERE adozioni.account_id = :account_id
+        AND adozioni.libro_id IS NULL
+        AND adozioni.anno_scolastico = :anno
+        AND cl.id = adozioni.classe_id
+        AND sc.id = cl.scuola_id
+        AND sc.account_id = :account_id
+        AND sc.provincia = :provincia
+        AND l.account_id = :account_id
+        AND l.codice_isbn = adozioni.codice_isbn
+    SQL
+    exec_sql(sql)
+  end
+
   # DELETE raw: bypassa dependent: :destroy — per questo le orfane con dati
   # utente (consegne_saggio, numero_copie, note) o dell'editore (mia) NON si
   # toccano. mia è derivato dai mandati (Ricalcolo): se il mandato regge, la

@@ -4,7 +4,7 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
   # miur/scuole fissa Miur.anno_corrente = "202627" (max anno_scolastico in
   # anagrafe): senza queste righe anno_corrente sarebbe nil e lo stato derivato
   # collasserebbe sempre a "archiviata".
-  fixtures :accounts, "miur/scuole"
+  fixtures :accounts, :categorie, "miur/scuole"
 
   setup do
     @account = accounts(:fizzy)
@@ -248,5 +248,21 @@ class Adozione::ReconcilerTest < ActiveSupport::TestCase
     Miur::Scuola.delete_all   # anagrafe vuota -> Miur.anno_corrente nil
     assert_nil Miur.anno_corrente
     assert_raises(Miur::ImportError) { reconciler.call }
+  end
+
+  test "call collega le adozioni al libro in catalogo per ISBN" do
+    libro = @account.libri.create!(titolo: "Libro Uno", codice_isbn: "111", user: @account.users.first,
+                                   categoria: categorie(:ministeriali), prezzo_in_cents: 1250)
+    seed_miur([
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "111", daacquist: "Si", titolo: "Libro Uno", editore: "Giunti" },
+      { codicescuola: "XXEE00001A", annocorso: "1", sezioneanno: "A", combinazione: "TN",
+        codiceisbn: "999", daacquist: "Si", titolo: "Fuori catalogo", editore: "Giunti" }
+    ])
+
+    reconciler.call
+
+    assert_equal libro.id, @account.adozioni.find_by(codice_isbn: "111").libro_id
+    assert_nil @account.adozioni.find_by(codice_isbn: "999").libro_id
   end
 end
