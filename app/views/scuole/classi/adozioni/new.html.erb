@@ -4,7 +4,9 @@
        data-dialog-auto-open-value="true"
        data-bulk-adozioni-classi-anni-value="<%= @classi.to_h { |c| [c.id, c.anno_corso] }.to_json %>"
        data-action="hw-combobox:selection->bulk-adozioni#syncAnni hw-combobox:removal->bulk-adozioni#syncAnni">
-    <dialog class="dialog panel" style="--panel-size: 44ch;"
+    <%# overflow visible: il listbox della combobox deve uscire dal panel,
+        come nella dialog di inserimento riga dei documenti %>
+    <dialog class="dialog panel" style="--panel-size: 44ch; overflow: visible;"
             data-dialog-target="dialog"
             data-action="keydown.esc->dialog#close:stop">
       <h3 class="txt-large txt-bold">
