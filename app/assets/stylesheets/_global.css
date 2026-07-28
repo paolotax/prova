@@ -473,3 +473,21 @@ html[data-theme="dark"] {
               0 1.2em 1.6em -2em oklch(var(--lch-black) / 1);
   }
 }
+
+/* Segnale ambiente development: canvas ambrato al posto del bianco/blu scuro,
+   la classe sta su <html> (application.html.erb, solo Rails.env.development?).
+   Override di --lch-canvas: vince su :root per specificità, le varianti dark
+   ripetono i selettori dei blocchi tema qui sopra. */
+html.env-development {
+  --lch-canvas: 96.5% 0.045 85;
+}
+
+html.env-development[data-theme="dark"] {
+  --lch-canvas: 23% 0.045 85;
+}
+
+@media (prefers-color-scheme: dark) {
+  html.env-development:not([data-theme]) {
+    --lch-canvas: 23% 0.045 85;
+  }
+}

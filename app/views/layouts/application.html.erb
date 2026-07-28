@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <!--  <%= "data-hotwire-native-app" if turbo_native_app? %> -->
-<html <%= "data-hotwire-native-app" if turbo_native_app? %>
+<html <%= "data-hotwire-native-app" if turbo_native_app? %> <%= 'class="env-development"'.html_safe if Rails.env.development? %>
 
 	<%= render "layouts/shared/head" %>
 
