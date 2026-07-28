@@ -12,7 +12,10 @@
         action: "click->navigable-list#hoverSelect mouseenter->navigable-list#hoverSelect contextmenu->navigable-list#toggleSelection"
       } do %>
 
+  <%# Title sull'overlay: copre la riga e intercetta l'hover, i title delle
+      celle sotto non scatterebbero %>
   <%= link_to libro_path(libro), class: "data-row__link", tabindex: -1,
+        title: [libro.titolo, libro.editore&.editore, libro.codice_isbn].compact_blank.join(" · "),
         data: { turbo_frame: "_top" } do %>
     <span class="for-screen-reader"><%= libro.titolo %></span>
   <% end %>
