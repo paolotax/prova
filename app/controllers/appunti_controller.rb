@@ -64,6 +64,10 @@ class AppuntiController < ApplicationController
   end
 
   def new
+    # new crea la bozza (create-then-edit): un prefetch non deve mai arrivarci.
+    # Doppia barriera oltre al data-turbo-prefetch=false sui link.
+    return head :no_content if prefetch_request?
+
     creator = Appunti::AppuntoCreator.new(appuntabile_value: find_appuntabile&.to_appuntabile_value)
     creator.create
     redirect_to creator.appunto
@@ -141,6 +145,12 @@ class AppuntiController < ApplicationController
   end
 
   private
+
+    # Prefetch di Turbo (X-Sec-Purpose) o del browser (Sec-Purpose)
+    def prefetch_request?
+      [request.headers["X-Sec-Purpose"], request.headers["Sec-Purpose"]].compact
+        .any? { |purpose| purpose.include?("prefetch") }
+    end
 
     def set_appunto
       @appunto = Current.account.appunti.find(params[:id])

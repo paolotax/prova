@@ -15,8 +15,10 @@
   </h1>
 
   <div class="header__actions header__actions--end">
+    <%# turbo_prefetch false: appunti#new CREA la bozza (create-then-edit),
+        il prefetch on-hover ne creava una a ogni passaggio del mouse %>
     <%= link_to new_appunto_path, class: "btn btn--link",
-        data: { controller:"tooltip" } do %>
+        data: { controller:"tooltip", turbo_prefetch: false } do %>
       <%= icon_tag "add" %>
       <span class="for-screen-reader">Nuovo appunto</span>
     <% end %>
