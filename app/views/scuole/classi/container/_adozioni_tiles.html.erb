@@ -25,6 +25,17 @@
         <%= link_to adozione.libro, data: { turbo_frame: "_top", controller: "tooltip" }, title: adozione.titolo do %>
           <%= copertina_tag adozione.libro, class: "copertina--shadow", style: "--copertina-size: 80px;" %>
         <% end %>
+      <% else %>
+        <%# Adozione senza libro in catalogo: placeholder con le iniziali,
+            stesso stile di libri/copertine/show.svg %>
+        <span data-controller="tooltip" title="<%= adozione.titolo %> (senza libro in catalogo)">
+          <svg viewBox="0 0 384 512" class="copertina copertina--shadow" style="--copertina-size: 80px;" aria-hidden="true">
+            <rect width="100%" height="100%" rx="12" fill="#6B7280" />
+            <text x="50%" y="50%" fill="#FFFFFF" text-anchor="middle" dy="0.35em"
+              font-family="-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, sans-serif"
+              font-size="150" font-weight="800" letter-spacing="-5"><%= adozione.titolo.to_s.split.map(&:first).join[0..1].upcase %></text>
+          </svg>
+        </span>
       <% end %>
       <%= button_to scuola_classe_adozione_path(scuola, classe, adozione),
             method: :delete,
