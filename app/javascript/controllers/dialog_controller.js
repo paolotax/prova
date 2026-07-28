@@ -50,6 +50,12 @@ export default class extends Controller {
     if (!this.element.contains(target)) this.close()
   }
 
+  // Modali: il click sul ::backdrop arriva col <dialog> stesso come target
+  // (i click sul contenuto hanno target più profondi)
+  closeOnBackdrop({ target }) {
+    if (target === this.dialogTarget) this.close()
+  }
+
   preventCloseOnMorphing(event) {
     if (event.detail?.attributeName === "open") {
       event.preventDefault()

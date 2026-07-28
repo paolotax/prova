@@ -92,17 +92,9 @@ module ApplicationHelper
 
 
 
-  def new_appunto_link(appuntabile, style: :icon)
-    path = new_appunto_path(appuntabile_type: appuntabile.class.name, appuntabile_id: appuntabile.id)
-    if style == :button
-      link_to path, class: "btn btn--link full-width", data: { turbo_frame: "_top" } do
-        icon_tag("pencil") + tag.span("Nuovo Appunto")
-      end
-    else
-      link_to path, class: "btn", data: { controller: "tooltip", turbo_frame: "_top" } do
-        icon_tag("note") + tag.span("Nuovo Appunto", class: "for-screen-reader")
-      end
-    end
+  # Menu "nuovo" delle schede: appunto oppure documento con causale già scelta
+  def new_entry_menu(record)
+    render "shared/new_entry_menu", record: record
   end
 
   BLANK_SLATES = {

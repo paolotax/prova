@@ -31,6 +31,17 @@
       transform: translateX(0);
     }
 
+    /* Variante modale (showModal, top layer): centrata nel viewport come il
+       picker colonne, annulla l'ancoraggio assoluto del popup. Per i menu
+       nei footer delle schede, dove il dropdown ancorato non ha spazio. */
+    &.popup--modal {
+      position: fixed;
+      inset: 0;
+      margin: auto;
+      transform: none;
+      block-size: fit-content;
+    }
+
     form {
       display: contents;
     }

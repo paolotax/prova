@@ -29,7 +29,7 @@
     </template>
 
     <%= tag.dialog class: "popup panel flex-column align-start gap-half fill-white shadow txt-small",
-        data: { dialog_target: "dialog", action: "turbo:before-cache@document->dialog#close" },
+        data: { dialog_target: "dialog", action: "turbo:before-cache@document->dialog#close click->dialog#closeOnBackdrop" },
         aria: { label: "Colonne" } do %>
       <strong class="popup__title">Colonne</strong>
 
