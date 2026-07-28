@@ -1,9 +1,11 @@
 <%# locals: (url:, vista:) -%>
 
 <% vista_alt = vista == "tabella" ? "card" : "tabella" %>
+<%# turbo_prefetch false: il prefetch on-hover farebbe la GET della vista
+    opposta e resolve_vista riscriverebbe il cookie senza click %>
 <%= link_to "#{url}?#{request.query_parameters.merge(vista: vista_alt).to_query}",
     class: "btn",
-    data: { turbo_action: "advance", controller: "tooltip vista-toggle", vista_toggle_to_value: vista_alt } do %>
+    data: { turbo_action: "advance", turbo_prefetch: false, controller: "tooltip vista-toggle", vista_toggle_to_value: vista_alt } do %>
   <%= icon_tag(vista == "tabella" ? "grid" : "table") %>
   <span class="for-screen-reader"><%= vista_alt == "card" ? "Vista a card" : "Vista a tabella" %></span>
 <% end %>
