@@ -1,19 +1,43 @@
-<%# locals: (closed_entries:, frame_id: nil, group_by: :month) -%>
+<%# locals: (closed_entries:, frame_id: nil, group_by: :year, vista: "card") -%>
 
 <% content = capture do %>
   <% if closed_entries.any? %>
     <% months = I18n.t("date.month_names").compact %>
+    <%# Data "di dominio" per raggruppamento e ordinamento: data_documento /
+        data_tappa quando presenti, altrimenti created_at %>
+    <% entry_date = ->(e) {
+         case e.entryable_type
+         when "Documento" then e.entryable&.data_documento || e.created_at
+         when "Tappa"     then e.entryable&.data_tappa || e.created_at
+         else e.created_at
+         end
+       } %>
     <% grouped = closed_entries.group_by { |e|
-         d = e.entryable_type == "Documento" && e.entryable&.data_documento ? e.entryable.data_documento : e.created_at
+         d = entry_date.call(e)
          group_by == :month ? [d.year, d.month] : [d.year]
        }
+       # A parità di data le tappe vanno sopra (il sort è ascendente poi rovesciato)
+       .transform_values { |entries| entries.sort_by { |e| [entry_date.call(e).to_date, e.entryable_type == "Tappa" ? 1 : 0, e.created_at] }.reverse }
        .sort_by { |key, _| key.map { |k| -k } } %>
+    <% vista_alt = vista == "tabella" ? "card" : "tabella" %>
+    <%# Larghezze allineate alla riga fissa di entries/table/_row: %>
+    <%# check | stato | tipo | soggetto | importo (+ 4 gap da 1ch) %>
+    <% tabella_style = "--cols: 2.25rem 7.5rem 11rem minmax(10rem, 1fr) 7rem; --min-inline-size: calc(37.75rem + 4ch);" %>
 
     <div data-controller="bulk-actions" data-action="click->bulk-actions#toggleCard">
-      <div class="group-header margin-block-start">
-        <h4 class="group-header__title divider divider--fade txt-small txt-subtle txt-uppercase margin-none">
-          Chiusi <span class="txt-xx-small"><span data-bulk-actions-target="listCounter">(<%= closed_entries.size %>)</span></span>
-        </h4>
+      <div class="group-header">
+        <h3 class="group-header__title divider divider--fade txt-medium font-weight-black margin-none">
+          Storico <span data-bulk-actions-target="listCounter">(<%= closed_entries.size %>)</span>
+          <%# turbo_prefetch false: il prefetch on-hover farebbe la GET della vista
+              opposta (il cursore resta sul toggle dopo lo swap del frame) e
+              resolve_vista riscriverebbe il cookie appena salvato %>
+          <%= link_to "#{request.path}?vista=#{vista_alt}", class: "btn",
+              data: { controller: "tooltip", turbo_prefetch: false,
+                      tooltip_content_value: vista_alt == "card" ? "Vista a card" : "Vista a tabella" } do %>
+            <%= icon_tag(vista == "tabella" ? "grid" : "table") %>
+            <span class="for-screen-reader"><%= vista_alt == "card" ? "Vista a card" : "Vista a tabella" %></span>
+          <% end %>
+        </h3>
         <div class="group-header__actions group-header__actions--end">
           <button type="button" class="btn btn--circle" data-action="bulk-actions#enterSelectionMode"
               data-controller="tooltip" data-tooltip-content-value="Seleziona">
@@ -36,13 +60,21 @@
             <span class="txt-xx-small">(<%= group_entries.size %>)</span>
           </h4>
         </div>
-        <div class="cards cards--grid cards--in-context">
-          <div class="cards__list">
+        <% if vista == "tabella" %>
+          <div class="data-table data-table--scroller" style="<%= tabella_style %>">
             <% group_entries.each do |entry| %>
-              <%= render "entries/entry", entry: entry, draggable: false %>
+              <%= render "entries/table/row", entry: entry %>
             <% end %>
           </div>
-        </div>
+        <% else %>
+          <div class="cards cards--grid cards--in-context">
+            <div class="cards__list">
+              <% group_entries.each do |entry| %>
+                <%= render "entries/entry", entry: entry, draggable: false %>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
       <% end %>
     </div>
   <% end %>

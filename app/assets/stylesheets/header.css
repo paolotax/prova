@@ -183,6 +183,13 @@
     text-align: center;
   }
 
+  /* Come .header__title .btn: il toggle vista dentro il titolo non eredita
+     il font del titolo, stessa misura dei btn delle azioni */
+  .group-header__title .btn {
+    font-size: var(--text-x-small);
+    vertical-align: middle;
+  }
+
   .group-header__actions {
     display: flex;
     font-size: var(--text-x-small);

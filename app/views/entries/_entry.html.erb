@@ -1,6 +1,9 @@
 <%# locals: (entry:, draggable: true, as: nil) -%>
 <% if entry.entryable %>
-  <% if entry.entryable_type == "Appunto" %>
+  <% if as.to_s == "storico_row" %>
+    <%# Riga unificata dello storico delle schede (vista tabella di _closed_list) %>
+    <%= render "entries/table/row", entry: entry %>
+  <% elsif entry.entryable_type == "Appunto" %>
     <% if as.to_s == "row" %>
       <%= render partial: "appunti/table/row", locals: { appunto: entry.entryable, entry: entry } %>
     <% else %>

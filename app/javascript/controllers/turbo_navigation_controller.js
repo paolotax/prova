@@ -82,6 +82,13 @@ document.addEventListener("turbo:load", () => {
     if (vista === "tabella") variant = "&as=row"
   }
 
+  // Nelle schede (scuola/cliente/classe) lo storico in vista tabella usa la
+  // riga unificata entries/table/_row: variante dedicata "storico_row"
+  if (!variant && /\/(scuole|clienti)\/[^/]+/.test(window.location.pathname)) {
+    const vista = (document.cookie.match(/(?:^|;\s*)closed_entries_vista=([^;]+)/) || [])[1] || "card"
+    if (vista === "tabella") variant = "&as=storico_row"
+  }
+
   renderStream(`/${match[1]}/entries/${entryId}?_=${Date.now()}${variant}`).then(() => {
     selectInList(`entry_${entryId}`)
   })

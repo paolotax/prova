@@ -1,0 +1,120 @@
+<%# locals: (entry:) -%>
+<%# Riga unificata dello storico (vista tabella di entries/_closed_list), %>
+<%# colonne fisse: check | stato | tipo | soggetto | importo. Il template %>
+<%# --cols arriva dal wrapper in _closed_list. Niente data-row--closed né %>
+<%# colori di stato (nello storico è tutto chiuso: sarebbe tutto grigio): %>
+<%# --card-color viene dalla causale, dal giro o dal default appunti. %>
+
+<% if entry.entryable_type == "Documento" && (documento = entry.entryable) %>
+  <%= tag.div id: dom_id(entry),
+        class: class_names("data-row", documento_causale_modifier(documento), documento_golden_class(documento)),
+        style: "--card-color: #{causale_color(documento.causale)}; view-transition-name: #{dom_id(documento)};",
+        role: "row",
+        tabindex: 0 do %>
+
+    <%= link_to documento_path(documento), class: "data-row__link", tabindex: -1,
+          data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= documento.causale&.causale %> #<%= documento.numero_documento %></span>
+    <% end %>
+
+    <div class="data-row__cell data-row__cell--check">
+      <label>
+        <%= check_box_tag "ids[]", entry.id, false, data: { action: "change->bulk-actions#count" } %>
+      </label>
+    </div>
+
+    <%= render "documenti/table/cells/stato", documento: documento %>
+    <%= render "documenti/table/cells/documento", documento: documento %>
+    <%= render "documenti/table/cells/cliente", documento: documento %>
+    <%= render "documenti/table/cells/importo", documento: documento %>
+  <% end %>
+<% elsif entry.entryable_type == "Appunto" && (appunto = entry.entryable) %>
+  <%= tag.div id: dom_id(entry),
+        class: class_names("data-row", appunto_stato_modifier(appunto), appunto_golden_class(appunto)),
+        style: "--card-color: oklch(var(--lch-blue-medium)); view-transition-name: #{dom_id(appunto)};",
+        role: "row",
+        tabindex: 0 do %>
+
+    <%= link_to appunto_path(appunto), class: "data-row__link", tabindex: -1,
+          data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= appunto.nome.presence || appunto.appuntabile&.denominazione || "Appunto ##{appunto.numero}" %></span>
+    <% end %>
+
+    <div class="data-row__cell data-row__cell--check">
+      <label>
+        <%= check_box_tag "ids[]", entry.id, false, data: { action: "change->bulk-actions#count" } %>
+      </label>
+    </div>
+
+    <%= render "appunti/table/cells/stato", appunto: appunto %>
+
+    <div class="data-row__cell data-row__cell--stacked">
+      <span class="data-row__primary">APPUNTO</span>
+      <span class="data-row__meta">
+        <span class="margin-inline-end-quarter">#<%= appunto.numero %></span>
+        <%= appunto.created_at.strftime("%d/%m/%Y") %>
+      </span>
+    </div>
+
+    <%= render "appunti/table/cells/appunto", appunto: appunto %>
+
+    <div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile">
+      <span class="data-row__muted">—</span>
+    </div>
+  <% end %>
+<% elsif entry.entryable_type == "Tappa" && (tappa = entry.entryable) %>
+  <%# Il colore riga arriva dal primo giro (tappa_color in storico è sempre grigio-chiusa) %>
+  <%= tag.div id: dom_id(entry),
+        class: class_names("data-row", tappa_type_modifier(tappa)),
+        style: "--card-color: #{tappa.giri.first&.color.presence || tappa_color(tappa)}; view-transition-name: #{dom_id(tappa)};",
+        role: "row",
+        tabindex: 0 do %>
+
+    <%= link_to tappa_path(tappa), class: "data-row__link", tabindex: -1,
+          data: { turbo_frame: "_top" } do %>
+      <span class="for-screen-reader"><%= tappa.tappable&.denominazione || "Tappa" %></span>
+    <% end %>
+
+    <div class="data-row__cell data-row__cell--check">
+      <label>
+        <%= check_box_tag "ids[]", entry.id, false, data: { action: "change->bulk-actions#count" } %>
+      </label>
+    </div>
+
+    <div class="data-row__cell data-row__cell--badge">
+      <span class="data-row__muted">—</span>
+    </div>
+
+    <div class="data-row__cell data-row__cell--stacked">
+      <span class="data-row__primary">TAPPA</span>
+      <span class="data-row__meta">
+        <%= (tappa.data_tappa || tappa.created_at).strftime("%d/%m/%Y") %>
+      </span>
+    </div>
+
+    <%# Il destinatario si deduce dal contesto (scheda scuola/cliente): qui
+        contano i giri della tappa e le eventuali bolle di visione %>
+    <div class="data-row__cell data-row__cell--stacked">
+      <% giri = tappa.giri.select { |giro| giro.titolo.present? } %>
+      <% if giri.any? %>
+        <span class="data-row__title">
+          <%= safe_join(giri.map { |giro| tag.span(giro.titolo, style: "color: #{giro.color}") }, " · ") %>
+        </span>
+      <% else %>
+        <span class="data-row__title data-row__muted">—</span>
+      <% end %>
+      <% sottotitolo = tappa.titolo.presence || tappa.descrizione.presence %>
+      <% if sottotitolo.present? %>
+        <span class="data-row__subtitle"><%= sottotitolo %></span>
+      <% end %>
+    </div>
+
+    <div class="data-row__cell data-row__cell--end">
+      <% if tappa.bolle_visione.any? %>
+        <strong><%= tappa.bolle_visione.size %></strong> <%= tappa.bolle_visione.size == 1 ? "bolla" : "bolle" %>
+      <% else %>
+        <span class="data-row__muted">—</span>
+      <% end %>
+    </div>
+  <% end %>
+<% end %>
