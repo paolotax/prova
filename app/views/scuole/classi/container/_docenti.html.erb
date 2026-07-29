@@ -7,7 +7,7 @@
     <% cattedra = persona.persona_classi.find { |pc| pc.classe_id == classe.id }&.materia %>
     <%= link_to persona_path(persona, scuola_id: scuola.id), class: "flex flex-column align-center gap-quarter txt-undecorated", style: "color: inherit;", data: { turbo_frame: "_top" } do %>
       <%= persona_avatar_tag(persona, size: "4ch") %>
-      <strong class="txt-x-small"><%= persona.cognome %></strong>
+      <strong class="txt-x-small"><%= persona.nome_completo %></strong>
       <span class="txt-xx-small txt-subtle"><%= cattedra&.titleize %></span>
     <% end %>
   <% end %>
@@ -15,7 +15,7 @@
   <div class="position-relative"
       data-controller="dialog"
       data-action="keydown.esc->dialog#close click@document->dialog#closeOnClickOutside">
-    <button class="btn btn--circle" style="--avatar-size: 4ch;"
+    <button class="btn btn--circle btn--small"
         data-action="click->dialog#toggle:stop keydown.p@document->hotkey#click"
         data-controller="tooltip hotkey"
         data-tooltip-content-value="Aggiungi insegnante (P)">

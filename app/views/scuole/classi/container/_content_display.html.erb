@@ -20,6 +20,18 @@
   </div>
 <% end %>
 
-<%= render "scuole/classi/container/docenti", classe: classe, scuola: scuola %>
+<!-- Info griglia -->
+<div class="flex gap flex-wrap margin-block-start">
+  <!-- Docenti -->
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
+    <span class="txt-x-small txt-subtle txt-uppercase">Docenti</span>
+    <%= render "scuole/classi/container/docenti", classe: classe, scuola: scuola %>
+  </div>
 
-<%= render "scuole/classi/container/adozioni_tiles", classe: classe, scuola: scuola %>
+  <!-- Mie Adozioni -->
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
+    <span class="txt-x-small txt-subtle txt-uppercase">Mie adozioni</span>
+      <%= render "scuole/classi/container/adozioni_tiles", classe: classe, scuola: scuola %>
+  </div>
+</div>
+
