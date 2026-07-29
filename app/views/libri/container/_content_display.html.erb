@@ -50,18 +50,20 @@
   </div>
 </div>
 
+<% if suggeriti || libro.fascicoli_count.positive? || libro.confezioni_count.positive? %>
+<div class="flex gap flex-wrap margin-block-start">
 <% if suggeriti %>
-  <div class="margin-block-start" data-controller="dialog" data-dialog-modal-value="true">
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;" data-controller="dialog" data-dialog-modal-value="true">
     <span class="txt-x-small txt-subtle txt-uppercase">Fascicoli</span>
-    <div class="margin-block-start-quarter">
+    <div>
       <%= render "libri/container/fascicoli_tiles", libro: libro %>
     </div>
     <%= render "libri/fascicoli/dialog", libro: libro, suggeriti: suggeriti %>
   </div>
 <% elsif libro.fascicoli_count.positive? %>
-  <div class="margin-block-start">
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
     <span class="txt-x-small txt-subtle txt-uppercase">Fascicoli</span>
-    <div class="flex gap-half flex-wrap margin-block-start-quarter">
+    <div class="flex gap-half flex-wrap">
       <% libro.fascicoli.each do |fascicolo| %>
         <%= link_to fascicolo, class: "flex flex-column align-center gap-quarter", style: "max-width: 100px; text-decoration: none;", data: { turbo_frame: "_top" } do %>
           <%= copertina_tag fascicolo, class: "copertina--shadow", style: "--copertina-size: 80px;" %>
@@ -76,9 +78,9 @@
 <% end %>
 
 <% if libro.confezioni_count.positive? %>
-  <div class="margin-block-start">
+  <div class="flex flex-column gap-quarter" style="flex: 1; min-width: 200px;">
     <span class="txt-x-small txt-subtle txt-uppercase">Contenuto di</span>
-    <div class="flex gap-half flex-wrap margin-block-start-quarter">
+    <div class="flex gap-half flex-wrap">
       <% libro.fascicolo_righe.includes(:confezione).each do |pivot| %>
         <div id="<%= dom_id(pivot) %>" class="fascicolo-tile">
           <%= link_to pivot.confezione, class: "flex flex-column align-center gap-quarter", style: "max-width: 100px; text-decoration: none;", data: { turbo_frame: "_top" } do %>
@@ -98,4 +100,6 @@
       <% end %>
     </div>
   </div>
+<% end %>
+</div>
 <% end %>
