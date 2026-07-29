@@ -1,0 +1,9 @@
+<%# locals: (libro:) -%>
+
+<div class="data-row__cell data-row__cell--hide-mobile">
+  <% if libro.categoria.present? %>
+    <%= libro.categoria.nome_categoria.upcase %>
+  <% else %>
+    <span class="data-row__muted">—</span>
+  <% end %>
+</div>
