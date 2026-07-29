@@ -130,22 +130,24 @@
   }
 }
 
-/* Dark mode support for combobox listbox (rendered as portal) */
-@media (prefers-color-scheme: dark) {
-  .hw-combobox__listbox {
-    background-color: var(--color-canvas, #1a1a2e) !important;
-    color: var(--color-ink, #e0e0e0);
-    border-color: var(--color-ink-lighter, #444) !important;
-  }
+/* Listbox e opzioni: il gem porta il listbox fuori da .cb-tax (portal), le
+   regole scoped non lo raggiungono. Niente media query: i token tema
+   risolvono da :root in chiaro e in scuro — la sola prefers-color-scheme
+   non copriva il tema forzato via data-theme (listbox bianco, opzioni
+   scure). */
+.hw-combobox__listbox {
+  background-color: var(--color-canvas, white) !important;
+  color: var(--color-ink, inherit);
+  border-color: var(--color-ink-lighter, #ccc) !important;
+}
 
-  .hw-combobox__option {
-    background-color: var(--color-canvas, #1a1a2e) !important;
-    color: var(--color-ink, #e0e0e0) !important;
-  }
+.hw-combobox__option {
+  background-color: var(--color-canvas, white) !important;
+  color: var(--color-ink, inherit) !important;
+}
 
-  .hw-combobox__option:hover,
-  .hw-combobox__option--navigated,
-  .hw-combobox__option--selected {
-    background-color: var(--color-ink-lightest, #333) !important;
-  }
+.hw-combobox__option:hover,
+.hw-combobox__option--navigated,
+.hw-combobox__option--selected {
+  background-color: var(--color-ink-lightest, #E5E7EB) !important;
 }
