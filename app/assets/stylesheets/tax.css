@@ -151,3 +151,16 @@
 .hw-combobox__option--selected {
   background-color: var(--color-ink-lightest, #E5E7EB) !important;
 }
+
+/* Variante mobile del gem (listbox dentro un dialog proprio): stessi token */
+.hw-combobox__dialog,
+.hw-combobox__dialog__listbox {
+  background-color: var(--color-canvas, white);
+  color: var(--color-ink, inherit);
+}
+
+.hw-combobox__dialog__input {
+  background-color: var(--color-canvas, white);
+  color: var(--color-ink, inherit);
+  border-color: var(--color-ink-lighter, #ccc);
+}

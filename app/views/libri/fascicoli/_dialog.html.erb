@@ -1,7 +1,9 @@
 <%# locals: (libro:, suggeriti:) -%>
+<%# overflow visible: il listbox della combobox deve uscire dal panel
+    (stesso pattern della dialog aggiungi adozioni) %>
 <dialog id="<%= dom_id(libro, :aggiungi_fascicolo_dialog) %>"
         class="dialog panel fill-white shadow gap flex-column"
-        style="--panel-size: 60ch;"
+        style="--panel-size: 60ch; overflow: visible;"
         data-dialog-target="dialog">
   <header class="flex align-center gap">
     <h3 class="txt-large txt-bold margin-none" style="flex: 1;">Aggiungi fascicolo</h3>
@@ -13,9 +15,10 @@
   <%= form_with url: libro_fascicoli_path(libro), method: :post, scope: :confezione_riga do |f| %>
     <div class="flex gap-half align-center">
       <div class="form-field cb-tax" style="flex: 1;">
+        <%# Niente mobile_at "0px": dentro <dialog> modale il listbox mobile
+            (dialog proprio del gem) finisce sotto il top-layer %>
         <%= combobox_tag "confezione_riga[fascicolo_id]", libro_fascicoli_path(libro),
-              placeholder: "Cerca libro...",
-              mobile_at: "0px" %>
+              placeholder: "Cerca libro..." %>
       </div>
       <%= f.button type: :submit, class: "btn btn--link" do %>
         <%= icon_tag "add", size: "small" %>
