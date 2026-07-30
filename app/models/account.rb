@@ -86,7 +86,7 @@ class Account < ApplicationRecord
       gradi.each do |gr|
         zona = zone.find_or_create_by!(provincia: prov, grado: gr) do |z|
           z.regione = regione
-          z.anno_scolastico = "2025/2026"
+          z.anno_scolastico = AnnoScolastico.corrente&.esteso || "2025/2026"
           z.stato = "conteggio"
         end
 

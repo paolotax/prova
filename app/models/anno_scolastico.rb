@@ -21,6 +21,9 @@ class AnnoScolastico
 
   def label = "#{valore[0, 4]}/#{valore[4, 2]}"
 
+  # Formato esteso usato da account_zone.anno_scolastico: "2026/2027".
+  def esteso = "#{valore[0, 4]}/#{valore[0, 4].to_i + 1}"
+
   def <=>(other) = valore <=> other.to_s
   def eql?(other) = other.is_a?(self.class) && valore == other.valore
   def hash = valore.hash
