@@ -3,9 +3,15 @@
 <section id="<%= dom_id(cliente, :container) %>" class="card-perma" style="--card-color: <%= cliente_color(cliente) %>;">
   <div class="card-perma__actions card-perma__actions--left">
     <%= render "tappe/pianifica", source: cliente %>
+
+    <%= link_to mappe_path("cliente-#{cliente.id}"),
+        class: "btn", data: { controller: "tooltip" } do %>
+      <%= icon_tag "mappa" %>
+      <span class="for-screen-reader">Posizione nella mappa</span>
+    <% end %>
   </div>
-  
-  
+
+
   <div class="card-perma__bg">
     <article class="card" style="view-transition-name: <%= dom_id(cliente) %>;">
       <header class="card__header">
@@ -34,12 +40,6 @@
     </article>
   </div>
 
-  <div class="card-perma__actions card-perma__actions--right">
-    <%= link_to new_documento_path(clientable_id: cliente.id, clientable_type: "Cliente"), class: "btn btn--primary", data: { controller: "tooltip", tooltip_content_value: "Nuovo documento" } do %>
-      <%= icon_tag "add" %>
-      <span class="for-screen-reader">Nuovo documento</span>
-    <% end %>
-  </div>
 
   <div class="card-perma__notch card-perma__notch--bottom">
     <%= turbo_frame_tag cliente, :footer do %>
