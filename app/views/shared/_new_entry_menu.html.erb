@@ -3,9 +3,11 @@
     documento con la causale già scelta, intestati al record della scheda.
     Le causali dipendono dal tipo di intestatario; "Altro documento" apre
     il form vuoto senza causale preimpostata. %>
+<%# Le causali lato scuola/classe/persona non vanno mai mostrate ai clienti
+    (vedi causali.clientable_types) e viceversa. %>
 <% causali_menu = case record
-     when Classe, Scuola then ["Ordine Scuola", "Conto visione", "Scarico saggi"]
-     else ["Ordine Cliente", "Documento di trasporto", "Conto visione", "Scarico saggi"]
+     when Classe, Scuola, Persona then ["Ordine Scuola", "Conto visione", "Scarico saggi"]
+     else ["Ordine Cliente", "Documento di trasporto", "Resa Cliente"]
    end %>
 
 <div id="<%= dom_id(record, :new_entry_menu) %>" data-controller="dialog" data-dialog-modal-value="true"
