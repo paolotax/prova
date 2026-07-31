@@ -3,7 +3,7 @@ wb = xlsx_package.workbook
 header_fields = %w[causale numero data_documento cliente
                    stato consegnato_il pagato_il tipo_pagamento
                    codice_isbn titolo editore categoria disciplina classe
-                   quantita prezzo sconto
+                   quantita prezzo sconto importo
                    comune referente note documento_id riga_id libro_id]
 
 wb.add_worksheet(name: "Documenti") do |sheet|
@@ -38,8 +38,9 @@ wb.add_worksheet(name: "Documenti") do |sheet|
         riga.libro&.disciplina,
         riga.libro&.classe,
         riga.quantita,
-        riga.prezzo_cents,
+        riga.prezzo,
         riga.sconto,
+        riga.importo,
         documento.clientable&.try(:comune),
         documento.referente,
         documento.note,
