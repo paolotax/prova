@@ -43,7 +43,6 @@
 #
 #  fk_rails_...  (account_id => accounts.id)
 #  fk_rails_...  (classe_id => classi.id)
-#  fk_rails_...  (libro_id => libri.id)
 #
 class Adozione < ApplicationRecord
   include AccountScoped

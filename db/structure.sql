@@ -7685,14 +7685,6 @@ ALTER TABLE ONLY public.appunti
 
 
 --
--- Name: adozioni fk_rails_6feb4175d9; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.adozioni
-    ADD CONSTRAINT fk_rails_6feb4175d9 FOREIGN KEY (libro_id) REFERENCES public.libri(id);
-
-
---
 -- Name: scuole fk_rails_70040b189f; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -8059,6 +8051,7 @@ ALTER TABLE ONLY public.closures
 SET search_path TO "$user", public;
 
 INSERT INTO "schema_migrations" (version) VALUES
+('20260802065547'),
 ('20260724074842'),
 ('20260724074841'),
 ('20260724074840'),

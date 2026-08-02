@@ -85,7 +85,11 @@ class Libro < ApplicationRecord
   has_one :precedente, class_name: "Libro", foreign_key: :prosegue_in_id, inverse_of: :prosegue_in
   
   has_one :giacenza, dependent: :destroy
-  
+
+  # Le adozioni sopravvivono al libro: libro_id torna NULL e il matching
+  # per ISBN (UpdateMieAdozioniJob/Reconciler) puo' riagganciarle.
+  has_many :adozioni, dependent: :nullify
+
   has_many :confezione_righe, foreign_key: :confezione_id, class_name: "ConfezioneRiga",
            dependent: :destroy, inverse_of: :confezione
   has_many :fascicoli, through: :confezione_righe

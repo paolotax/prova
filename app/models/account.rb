@@ -30,9 +30,8 @@ class Account < ApplicationRecord
   has_many :appunti, dependent: :destroy
   has_many :documenti, dependent: :destroy
   has_many :clienti, dependent: :destroy
-  # Le adozioni PRIMA dei libri: adozioni.libro_id ha una FK reale e le
-  # cascate seguono l'ordine di dichiarazione — vanno svuotate prima di
-  # toccare i libri.
+  # Le adozioni PRIMA dei libri: cosi' la cascata non passa dal
+  # dependent: :nullify di Libro#adozioni su record gia' destinati al destroy.
   has_many :adozioni, dependent: :destroy
   has_many :libri, dependent: :destroy
   has_many :categorie, dependent: :destroy
