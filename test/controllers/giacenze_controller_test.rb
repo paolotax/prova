@@ -10,7 +10,7 @@ class GiacenzeControllerTest < ActionDispatch::IntegrationTest
     sign_in_as(@user, @account)
   end
 
-  test "la testata mostra sei card, i conteggi dell'anno e il venduto in euro" do
+  test "la testata mostra sette card, i conteggi dell'anno e il venduto in euro" do
     libro = crea_libro("Zibaldone Conteggi")
     libro.update_column(:adozioni_count, 12)
     crea_documento(causali(:campionario), libro: libro, quantita: 10)
@@ -23,19 +23,20 @@ class GiacenzeControllerTest < ActionDispatch::IntegrationTest
 
     assert_response :success
     assert_select "h1", /Giacenze di magazzino/
-    assert_select ".analytics-summary .analytics-summary__card", count: 6
+    assert_select ".analytics-summary .analytics-summary__card", count: 7
     assert_no_match(/Fabbisogno/, response.body)
     assert_match "Zibaldone Conteggi", response.body
 
-    # Ordine card: adottati, campionario, scarico saggi, vendute, da consegnare, venduto.
+    # Ordine card: adottati, campionario, scarico saggi, acquisti, vendute, da consegnare, venduto.
     valori = css_select(".analytics-summary__card .analytics-summary__value").map { |n| n.text.strip }
-    assert_equal 6, valori.size
+    assert_equal 7, valori.size
     assert_equal "12", valori[0]           # adottati (counter)
     assert_equal "10", valori[1]           # campionario
     assert_equal "0",  valori[2]           # scarico saggi
-    assert_equal "4",  valori[3]           # vendute (copie consegnate)
-    assert_equal "2",  valori[4]           # da consegnare (residuo)
-    assert_match(/400,00/, valori[5])      # venduto in euro, formato italiano
+    assert_equal "0",  valori[3]           # acquisti (saldo carichi fornitore)
+    assert_equal "4",  valori[4]           # vendute (copie consegnate)
+    assert_equal "2",  valori[5]           # da consegnare (residuo)
+    assert_match(/400,00/, valori[6])      # venduto in euro, formato italiano
 
     labels = css_select(".analytics-summary__card .analytics-summary__label").map { |n| n.text.strip }
     assert_equal %w[adottati campionario], labels.first(2)
@@ -209,8 +210,8 @@ class GiacenzeControllerTest < ActionDispatch::IntegrationTest
     get giacenze_path(account_id: @account.id)
     assert_response :success
 
-    # 5 card cliccabili + la card venduto (div, non link).
-    assert_select "a.analytics-summary__card--link", count: 5
+    # 6 card cliccabili + la card venduto (div, non link).
+    assert_select "a.analytics-summary__card--link", count: 6
     venduto = css_select(".analytics-summary__card").last
     assert_equal "venduto", venduto.css(".analytics-summary__label").text.strip
     assert_nil venduto["href"]

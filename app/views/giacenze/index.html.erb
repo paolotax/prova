@@ -27,6 +27,7 @@
           { key: "adottati",      value: number_with_delimiter(@totali.fetch(:adottati)),      label: "adottati" },
           { key: "campionario",   value: number_with_delimiter(@totali.fetch(:campionario)),   label: "campionario" },
           { key: "scarico_saggi", value: number_with_delimiter(@totali.fetch(:scarico_saggi)), label: "scarico saggi" },
+          { key: "acquisti",      value: number_with_delimiter(@totali.fetch(:acquisti)),      label: "acquisti" },
           { key: "venduti",       value: number_with_delimiter(@totali.fetch(:venduti)),       label: "vendute", value_class: "txt-positive" },
           { key: "impegnati",     value: number_with_delimiter(@totali.fetch(:da_consegnare)), label: "da consegnare" },
           { key: nil,             value: number_to_currency(@totali.fetch(:venduto_cents) / 100.0, locale: :it), label: "venduto", value_class: "txt-positive" }

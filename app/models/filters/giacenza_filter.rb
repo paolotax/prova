@@ -33,6 +33,7 @@ module Filters
       "saggi_100"     => "Saggi 100",
       "saggi_50"      => "Saggi 50",
       "scarico_saggi" => "Scarico saggi",
+      "acquisti"      => "Acquisti",
       "venduti"       => "Venduti",
       "impegnati"     => "Da consegnare"
     }.freeze
@@ -45,6 +46,7 @@ module Filters
       "saggi_100"     => "COALESCE(conteggi.saggi_100, 0) > 0",
       "saggi_50"      => "COALESCE(conteggi.saggi_50, 0) > 0",
       "scarico_saggi" => "COALESCE(conteggi.scarico_saggi, 0) > 0",
+      "acquisti"      => "COALESCE(conteggi.acquisti, 0) <> 0",
       "venduti"       => "COALESCE(conteggi.venduti, 0) > 0",
       "impegnati"     => "COALESCE(conteggi.da_consegnare, 0) > 0"
     }.freeze
@@ -80,7 +82,7 @@ module Filters
 
       # Alias COALESCE-ati così celle e sort leggono valori mai NULL.
       def conteggi_select
-        (Giacenza::Conteggi::CAUSALI.keys + %i[venduti da_consegnare venduto_cents]).map do |col|
+        (Giacenza::Conteggi::CAUSALI.keys + %i[acquisti venduti da_consegnare venduto_cents]).map do |col|
           "COALESCE(conteggi.#{col}, 0) AS #{col}"
         end
       end

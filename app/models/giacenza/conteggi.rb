@@ -1,5 +1,6 @@
 # Conteggi annuali per libro della pagina giacenze: colonne per causale
-# (quantità piene, senza segni: riferimenti, non saldi) più venduti e
+# (quantità piene, senza segni: riferimenti, non saldi) più acquisti
+# (saldo a segni dei carichi da fornitore: carichi meno rese), venduti e
 # da consegnare (logica a segni dei documenti vendita, come Giacenza).
 class Giacenza::Conteggi
   # Mapping esplicito causali → colonne (le causali non hanno codice stabile).
@@ -11,12 +12,15 @@ class Giacenza::Conteggi
   }.freeze
 
   VENDITA_SQL = "causali.magazzino = 'vendita' AND causali.tipo_movimento = 1".freeze
+  ACQUISTI_SQL = "causali.magazzino = 'vendita' AND causali.tipo_movimento = 2".freeze
 
   AGGREGATI_SQL = <<~SQL.freeze
     COALESCE(SUM(righe.quantita) FILTER (WHERE causali.causale = 'Campionario'), 0)::integer AS campionario,
     COALESCE(SUM(righe.quantita) FILTER (WHERE causali.causale = 'saggi 100'), 0)::integer AS saggi_100,
     COALESCE(SUM(righe.quantita) FILTER (WHERE causali.causale = 'saggi 50'), 0)::integer AS saggi_50,
     COALESCE(SUM(righe.quantita) FILTER (WHERE causali.causale = 'Scarico saggi'), 0)::integer AS scarico_saggi,
+    COALESCE(SUM((#{Causale::SEGNO_SQL}) * righe.quantita)
+      FILTER (WHERE #{ACQUISTI_SQL}), 0)::integer AS acquisti,
     COALESCE(SUM(-(#{Causale::SEGNO_SQL}) * COALESCE(cons.consegnate, 0))
       FILTER (WHERE #{VENDITA_SQL}), 0)::integer AS venduti,
     COALESCE(SUM(-(#{Causale::SEGNO_SQL}) * (righe.quantita - COALESCE(cons.consegnate, 0)))

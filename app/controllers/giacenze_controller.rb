@@ -27,11 +27,11 @@ class GiacenzeController < ApplicationController
   private
 
     def totali(scope)
-      colonne = %w[campionario scarico_saggi venduti da_consegnare venduto_cents]
+      colonne = %w[campionario scarico_saggi acquisti venduti da_consegnare venduto_cents]
       row = scope.except(:select).reorder(nil).pick(
         Arel.sql("COALESCE(SUM(libri.adozioni_count), 0)"),
         *colonne.map { |c| Arel.sql("COALESCE(SUM(conteggi.#{c}), 0)") }
       )
-      %i[adottati campionario scarico_saggi venduti da_consegnare venduto_cents].zip(row.map(&:to_i)).to_h
+      %i[adottati campionario scarico_saggi acquisti venduti da_consegnare venduto_cents].zip(row.map(&:to_i)).to_h
     end
 end

@@ -1,0 +1,3 @@
+<%# locals: (libro:) -%>
+
+<div class="data-row__cell data-row__cell--end data-row__cell--hide-mobile <%= "txt-negative" if libro[:acquisti].to_i.negative? %>"><%= dash_if_zero(libro[:acquisti].to_i) %></div>

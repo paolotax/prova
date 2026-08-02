@@ -15,6 +15,8 @@ class Giacenza::Columns < DataTable::Columns
          sort: "COALESCE(conteggi.saggi_50, 0)"
   column :scarico_saggi, label: "Scarico saggi", width: "6.5rem", align: :end, hide_mobile: true,
          sort: "COALESCE(conteggi.scarico_saggi, 0)"
+  column :acquisti,      label: "Acquisti",      width: "5.5rem", align: :end, hide_mobile: true,
+         sort: "COALESCE(conteggi.acquisti, 0)"
   column :venduti,       label: "Venduti",       width: "7rem", align: :end, hide_mobile: true,
          sort: "COALESCE(conteggi.venduti, 0)"
   column :da_consegnare, label: "Da consegnare", width: "6.5rem", align: :end, hide_mobile: true,

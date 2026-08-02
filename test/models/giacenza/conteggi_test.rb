@@ -41,6 +41,17 @@ class Giacenza::ConteggiTest < ActiveSupport::TestCase
     assert_equal 5, conteggi[:scarico_saggi]
   end
 
+  test "acquisti e' il saldo a segni dei carichi da fornitore" do
+    resa = Causale.create!(causale: "Resa a Fornitore", magazzino: "vendita",
+                           tipo_movimento: :carico, movimento: :uscita)
+    crea_documento(causali(:carico_fornitore), quantita: 10)
+    crea_documento(resa, quantita: 3)
+
+    conteggi = conteggi_libro
+    assert_equal 7, conteggi[:acquisti]
+    assert_equal 0, conteggi[:venduti]
+  end
+
   test "venduti conta solo le copie consegnate, da_consegnare il residuo" do
     vendita = crea_documento(causali(:fattura), quantita: 6)
     vendita.consegna_parziale!({ vendita.documento_righe.first.id => 4 })
