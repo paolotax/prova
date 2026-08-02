@@ -112,48 +112,6 @@ class Adozione < ApplicationRecord
     titolo
   end
 
-  # Crea da una riga ministeriale (Miur::Adozione, partizione 202526)
-  def self.create_from_import(import_adozione, classe:, account: Current.account)
-    libro = account.libri.find_by(codice_isbn: import_adozione.codiceisbn)
-
-    create!(
-      account: account,
-      classe: classe,
-      libro: libro,
-      import_adozione_id: import_adozione.id,
-      anno_scolastico: classe.anno_scolastico,
-      anno_corso: classe.anno_corso,
-      codicescuola: classe.codice_ministeriale_origine,
-      codice_isbn: import_adozione.codiceisbn,
-      titolo: import_adozione.titolo,
-      editore: import_adozione.editore,
-      autori: import_adozione.autori,
-      disciplina: import_adozione.disciplina,
-      prezzo_cents: (import_adozione.prezzo.to_s.gsub(',', '.').to_f * 100).to_i,
-      nuova_adozione: import_adozione.nuovaadoz == "Si",
-      da_acquistare: import_adozione.daacquist == "Si",
-      consigliato: import_adozione.consigliato == "Si"
-    )
-  end
-
-  # Importa tutte le adozioni per una classe
-  def self.import_for_classe(classe)
-    return 0 unless classe.codice_ministeriale_origine.present?
-
-    count = 0
-    Miur::Adozione.per_anno("202526").where(
-      codicescuola: classe.codice_ministeriale_origine,
-      annocorso: classe.classe_origine,
-      sezioneanno: classe.sezione_origine
-    ).find_each do |import|
-      create_from_import(import, classe: classe, account: classe.account)
-      count += 1
-    rescue ActiveRecord::RecordInvalid
-      # già importata, skip
-    end
-    count
-  end
-
   def prezzo
     prezzo_cents / 100.0
   end

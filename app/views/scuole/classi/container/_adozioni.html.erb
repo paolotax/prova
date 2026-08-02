@@ -95,10 +95,6 @@
   <% else %>
     <div class="txt-align-center margin-block">
       <p class="txt-small txt-subtle margin-block-end">Nessuna adozione registrata.</p>
-      <%= button_to "Importa Adozioni",
-          import_adozioni_scuola_classe_path(scuola, classe),
-          method: :post,
-          class: "btn btn--primary" %>
     </div>
   <% end %>
 </section>

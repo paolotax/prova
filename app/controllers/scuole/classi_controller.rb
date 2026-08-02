@@ -3,7 +3,7 @@
 module Scuole
   class ClassiController < ApplicationController
     before_action :set_scuola
-    before_action :set_classe, only: [:show, :edit, :update, :destroy, :import_adozioni]
+    before_action :set_classe, only: [:show, :edit, :update, :destroy]
 
     def index
       @classi = @scuola.classi.attive.includes(:adozioni).order(:anno_corso, :sezione)
@@ -52,11 +52,6 @@ module Scuole
     def destroy
       @classe.destroy
       redirect_to scuola_path(@scuola), notice: "Classe eliminata"
-    end
-
-    def import_adozioni
-      count = Adozione.import_for_classe(@classe)
-      redirect_to scuola_classe_path(@scuola, @classe), notice: "Importate #{count} adozioni"
     end
 
     private

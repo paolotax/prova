@@ -530,9 +530,6 @@ Rails.application.routes.draw do
         resources :classe_chips, only: [:create], controller: 'classe_chips', param: :combobox_value
         resources :persone, only: %i[show create]
         resources :classi, only: %i[index show edit update create destroy] do
-          member do
-            post :import_adozioni
-          end
           scope module: :classi do
             resource :entries, only: [:show]
             resource :closed_entries, only: [:show]

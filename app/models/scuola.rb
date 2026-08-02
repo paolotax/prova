@@ -139,47 +139,6 @@ class Scuola < ApplicationRecord
     end
   end
 
-  # Crea Scuola da ImportScuola
-  def self.create_from_import(import_scuola, account: Current.account)
-    direzione = resolve_direzione(import_scuola, account: account)
-    create!(
-      account: account,
-      import_scuola: import_scuola,
-      direzione: direzione,
-      codice_ministeriale: import_scuola.CODICESCUOLA,
-      denominazione: import_scuola.DENOMINAZIONESCUOLA,
-      indirizzo: import_scuola.INDIRIZZOSCUOLA,
-      cap: import_scuola.CAPSCUOLA,
-      comune: import_scuola.DESCRIZIONECOMUNE,
-      provincia: import_scuola.PROVINCIA,
-      regione: import_scuola.REGIONE,
-      tipo_scuola: import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA,
-      email: import_scuola.INDIRIZZOEMAILSCUOLA,
-      pec: import_scuola.INDIRIZZOPECSCUOLA,
-      grado: TipoScuola.find_by(tipo: import_scuola.DESCRIZIONETIPOLOGIAGRADOISTRUZIONESCUOLA)&.grado,
-      latitude: import_scuola.latitude,
-      longitude: import_scuola.longitude
-    )
-  end
-
-  # Cerca/crea la scuola-direzione se il plesso ha CODICEISTITUTORIFERIMENTO diverso
-  def self.resolve_direzione(import_scuola, account:)
-    codice_rif = import_scuola.CODICEISTITUTORIFERIMENTO
-    return nil if codice_rif.blank? || codice_rif == import_scuola.CODICESCUOLA
-
-    import_dir = ImportScuola.find_by(CODICESCUOLA: codice_rif)
-    return nil unless import_dir
-
-    find_or_create_from_import(import_dir, account: account)
-  end
-
-  # Trova o crea da ImportScuola
-  def self.find_or_create_from_import(import_scuola, account: Current.account)
-    find_by(account: account, import_scuola: import_scuola) ||
-      find_by(account: account, codice_ministeriale: import_scuola.CODICESCUOLA) ||
-      create_from_import(import_scuola, account: account)
-  end
-
   def direzione?
     plessi.any?
   end

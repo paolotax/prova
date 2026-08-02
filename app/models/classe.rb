@@ -171,8 +171,7 @@ class Classe < ApplicationRecord
     sorgenti = new_adozioni.to_a
     return 0 if sorgenti.empty?
 
-    # Risolve i Libro per ISBN in un'unica query (no N+1), scopata per account
-    # come in Adozione.create_from_import (account.libri.find_by(codice_isbn:)).
+    # Risolve i Libro per ISBN in un'unica query (no N+1), scopata per account.
     isbns = sorgenti.map(&:codiceisbn).compact.uniq
     libro_id_per_isbn = Libro.where(account_id: account_id, codice_isbn: isbns)
       .pluck(:codice_isbn, :id).to_h

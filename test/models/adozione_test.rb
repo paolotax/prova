@@ -57,53 +57,13 @@ class AdozioneTest < ActiveSupport::TestCase
     Current.account = nil
   end
 
-  # Sorgente ministeriale (Miur::Adozione, partizione 202526) che combacia con
-  # la classe `prima_a` (origine MIIC123456 / 1 / A).
-  # insert_all! per il bulk load senza validazioni AR (come il backfill/importa);
-  # la variante ! evita ON CONFLICT.
-  def crea_import_adozione(isbn:)
-    Miur::Adozione.insert_all!([{
-      anno_scolastico: "202526",
-      codicescuola: "MIIC123456",
-      annocorso: "1",
-      sezioneanno: "A",
-      tipogradoscuola: "EE",
-      combinazione: "MQ",
-      codiceisbn: isbn,
-      titolo: "Libro Test #{isbn}",
-      editore: "Editore Test",
-      autori: "Rossi M.",
-      disciplina: "ITALIANO",
-      prezzo: "10,00",
-      nuovaadoz: "No",
-      daacquist: "Si",
-      consigliato: "No"
-    }])
-    Miur::Adozione.per_anno("202526").find_by(codiceisbn: isbn)
-  end
-
-  test "create_from_import stampa anno_scolastico e codicescuola dalla classe" do
-    classe = classi(:prima_a) # anno_scolastico 202526, origine MIIC123456
-    imp = crea_import_adozione(isbn: "9788899990001")
-
-    adozione = Adozione.create_from_import(imp, classe: classe, account: classe.account)
-
-    assert_equal classe.anno_scolastico, adozione.anno_scolastico
-    assert_equal "202526", adozione.anno_scolastico
-    assert_equal classe.codice_ministeriale_origine, adozione.codicescuola
-    assert_equal "MIIC123456", adozione.codicescuola
-  end
-
-  test "import_for_classe è idempotente (doppio run non duplica le adozioni)" do
+  test "un'adozione minima e' valida con classe e isbn" do
     classe = classi(:prima_a)
-    crea_import_adozione(isbn: "9788899990001")
-    crea_import_adozione(isbn: "9788899990002")
 
-    primo = Adozione.import_for_classe(classe)
-    assert_equal 2, primo
+    adozione = Adozione.create!(account: classe.account, classe: classe,
+                                codice_isbn: "9788899990001",
+                                anno_scolastico: classe.anno_scolastico)
 
-    assert_no_difference -> { Adozione.where(classe: classe).count } do
-      Adozione.import_for_classe(classe)
-    end
+    assert_equal "202526", adozione.anno_scolastico
   end
 end
